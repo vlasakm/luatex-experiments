@@ -311,35 +311,6 @@ void luainterpreter(void)
     lua_setglobal(L, "loadfile");
     open_oslibext(L);
     open_strlibext(L);
-    /*tex
-        The socket and mime libraries are a bit tricky to open because they use a
-        load-time dependency that has to be worked around for luatex, where the C
-        module is loaded way before the lua module.
-    */
-    if (!nosocket_option) {
-        /* todo: move this to common */
-        lua_getglobal(L, "package");
-        lua_getfield(L, -1, "loaded");
-        if (!lua_istable(L, -1)) {
-            lua_newtable(L);
-            lua_setfield(L, -2, "loaded");
-            lua_getfield(L, -1, "loaded");
-        }
-        /*tex |package.loaded.socket = nil| */
-        luaopen_socket_core(L);
-        lua_setfield(L, -2, "socket.core");
-        lua_pushnil(L);
-        lua_setfield(L, -2, "socket");
-        /*tex |package.loaded.mime = nil| */
-        luaopen_mime_core(L);
-        lua_setfield(L, -2, "mime.core");
-        lua_pushnil(L);
-        lua_setfield(L, -2, "mime");
-        /*tex pop the tables */
-        lua_pop(L, 2);
-        /*tex preload the pure \LUA\ modules */
-        luatex_socketlua_open(L);
-    }
     luaopen_zlib(L);
     luaopen_gzip(L);
     /*tex our own libraries register themselves */
