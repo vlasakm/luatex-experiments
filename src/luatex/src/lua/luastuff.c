@@ -183,15 +183,6 @@ static const luaL_Reg lualibs[] = {
     { "md5",       luaopen_md5 },
     { "sha2",      luaopen_sha2 },
     { "lfs",       luaopen_lfs },
-    /*tex extra standard lua libraries */
-#ifdef LuajitTeX
-    { "jit",       luaopen_jit },
-#endif
-    { "ffi",       luaopen_ffi },
-    /*tex more libraries will be loaded later */
-#ifdef LUATEX_HARFBUZZ_ENABLED
-    { "luaharfbuzz", luaopen_luaharfbuzz },
-#endif
     { NULL,        NULL }
 };
 
