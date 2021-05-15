@@ -11,20 +11,10 @@ w2c_c_args = [
 ]
 
 w2c_src = files(
-  'lib/basechsuffix.c',
-  'lib/chartostring.c',
-  'lib/coredump.c',
-  'lib/eofeoln.c',
-  'lib/fprintreal.c',
-  'lib/inputint.c',
-  'lib/input2int.c',
-  'lib/lib.h',
   'lib/openclose.c',
-  'lib/printversion.c',
   'lib/setupvar.c',
   'lib/uexit.c',
   'lib/usage.c',
-  'lib/version.c',
   'lib/zround.c',
 )
 
