@@ -310,7 +310,6 @@ void luainterpreter(void)
     luaopen_token(L);
     luaopen_node(L);
     luaopen_texio(L);
-    luaopen_kpse(L);
     luaopen_callback(L);
     /*tex now we plug in extra \LUA\ startup code */
     luaopen_lua(L, startup_filename);

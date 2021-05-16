@@ -115,11 +115,8 @@ static char *find_in_output_directory(const char *s)
 */
 
 int kpse_available(const char *m) {
-    if (!kpse_init) {
-        fprintf(stdout,"missing kpse replacement callback '%s', quitting\n",m);
-        exit(1);
-    }
-    return 1 ;
+    fprintf(stdout,"missing kpse replacement callback '%s', quitting\n",m);
+    exit(1);
 }
 
 char *luatex_find_read_file(const char *s, int n, int callback_index)
@@ -128,11 +125,8 @@ char *luatex_find_read_file(const char *s, int n, int callback_index)
     int callback_id = callback_defined(callback_index);
     if (callback_id > 0) {
         (void) run_callback(callback_id, "dS->R", n, s, &ftemp);
-    } else if (kpse_available("find_read_file")) {
-        /*tex Use kpathsea here. */
-        ftemp = find_in_output_directory(s);
-        if (!ftemp)
-            ftemp = kpse_find_file(s, kpse_tex_format, 1);
+    } else {
+        kpse_available("find_read_file");
     }
     if (ftemp) {
         if (fullnameoffile)
@@ -150,48 +144,8 @@ char *luatex_find_file(const char *s, int callback_index)
     int callback_id = callback_defined(callback_index);
     if (callback_id > 0) {
         (void) run_callback(callback_id, "S->R", s, &ftemp);
-    } else if (kpse_available("find_read_file")) {
-        /*tex Use kpathsea here. */
-        switch (callback_index) {
-            case find_enc_file_callback:
-                ftemp = kpse_find_file(s, kpse_enc_format, 0);
-                break;
-            case find_map_file_callback:
-                ftemp = kpse_find_file(s, kpse_fontmap_format, 0);
-                break;
-            case find_type1_file_callback:
-                ftemp = kpse_find_file(s, kpse_type1_format, 0);
-                break;
-            case find_truetype_file_callback:
-                ftemp = kpse_find_file(s, kpse_truetype_format, 0);
-                break;
-            case find_opentype_file_callback:
-                ftemp = kpse_find_file(s, kpse_opentype_format, 0);
-                if (ftemp == NULL)
-                    ftemp = kpse_find_file(s, kpse_truetype_format, 0);
-                break;
-            case find_data_file_callback:
-                ftemp = find_in_output_directory(s);
-                if (!ftemp)
-                    ftemp = kpse_find_file(s, kpse_tex_format, 1);
-                break;
-            case find_font_file_callback:
-                ftemp = kpse_find_file(s, kpse_ofm_format, 1);
-                if (ftemp == NULL)
-                    ftemp = kpse_find_file(s, kpse_tfm_format, 1);
-                break;
-            case find_vf_file_callback:
-                ftemp = kpse_find_file(s, kpse_ovf_format, 0);
-                if (ftemp == NULL)
-                    ftemp = kpse_find_file(s, kpse_vf_format, 0);
-                break;
-            case find_cidmap_file_callback:
-                ftemp = kpse_find_file(s, kpse_cid_format, 0);
-                break;
-            default:
-                printf("luatex_find_file(): do not know how to handle file %s of type %d\n", s, callback_index);
-                break;
-        }
+    } else {
+        kpse_available("find_read_file");
     }
     return ftemp;
 }

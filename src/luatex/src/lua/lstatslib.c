@@ -177,15 +177,6 @@ static lua_Number safer_option_state(void)
     }
 }
 
-static lua_Number kpse_used_state(void)
-{
-    if (kpse_init == 1) {
-        return (lua_Number) 1;
-    } else {
-        return (lua_Number) 0;
-    }
-}
-
 static lua_Number get_development_id(void)
 {
     return (lua_Number) luatex_svn_revision ;
@@ -228,7 +219,6 @@ static struct statistic stats[] = {
 
     {"shell_escape", 'N', &shell_escape_state},
     {"safer_option", 'N', &safer_option_state},
-    {"kpse_used", 'N', &kpse_used_state},
     /*
      * mem stat
      */

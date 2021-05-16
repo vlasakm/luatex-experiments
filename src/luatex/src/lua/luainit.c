@@ -23,9 +23,6 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include "ptexlib.h"
 
-#include <kpathsea/c-stat.h>
-#include <kpathsea/cnf.h>
-
 #include "lua/luatex-api.h"
 
 #include <locale.h>
@@ -35,19 +32,6 @@ extern int load_luatex_core_lua (lua_State * L);
 /*tex internalized strings: see luatex-api.h */
 
 set_make_keys;
-
-/*tex
-
-This file is getting a bit messy, but it is not simple to fix unilaterally. In
-fact, it sets three C variables:
-
-  |kpse_invocation_name| |kpse_invocation_short_name| |kpse->program_name|
-
-and five environment variables:
-
-  |SELFAUTOLOC| |SELFAUTODIR| |SELFAUTOPARENT| |SELFAUTOGRANDPARENT| |progname|
-
-*/
 
 const_string LUATEX_IHELP[] = {
     "Usage: " my_name " --lua=FILE [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
@@ -67,7 +51,6 @@ const_string LUATEX_IHELP[] = {
     "",
     "  The following regular options are understood: ",
     "",
-    "   --cnf-line =STRING            parse STRING as a configuration file line",
     "   --credits                     display credits and exit",
     "   --debug-format                enable format debugging",
     "   --[no-]file-line-error        disable/enable file:line:error style messages",
@@ -78,7 +61,6 @@ const_string LUATEX_IHELP[] = {
     "   --ini                         be ini" my_name ", for dumping formats",
     "   --interaction=STRING          set interaction mode (STRING=batchmode/nonstopmode/scrollmode/errorstopmode)",
     "   --jobname=STRING              set the job name to STRING",
-    "   --kpathsea-debug=NUMBER       set path searching debugging flags according to the bits of NUMBER",
     "   --lua=FILE                    load and execute a lua initialization script",
     "   --[no-]mktex=FMT              disable/enable mktexFMT generation (FMT=tex/tfm)",
     "   --nosocket                    disable the lua socket library",
@@ -126,40 +108,6 @@ const char *lc_numeric;
     "   --translate-file=FILE         ignored, input is assumed to be in UTF-8 encoding",
 */
 
-/*tex
-
-The return value will be the directory of the executable, e.g.: \.{c:/TeX/bin}
-
-*/
-
-static char *ex_selfdir(char *argv0)
-{
-#if defined(WIN32)
-#if defined(__MINGW32__)
-    char path[PATH_MAX], *fp;
-    /*tex SearchPath() always gives back an absolute directory */
-    if (SearchPath(NULL, argv0, ".exe", PATH_MAX, path, NULL) == 0)
-        FATAL1("Can't determine where the executable %s is.\n", argv0);
-    /*tex slashify the dirname */
-    for (fp = path; fp && *fp; fp++)
-        if (IS_DIR_SEP(*fp))
-            *fp = DIR_SEP;
-#else /* __MINGW32__ */
-#define PATH_MAX 512
-    char short_path[PATH_MAX], path[PATH_MAX], *fp;
-    /*tex SearchPath() always gives back an absolute directory */
-    if (SearchPath(NULL, argv0, ".exe", PATH_MAX, short_path, &fp) == 0)
-        FATAL1("Can't determine where the executable %s is.\n", argv0);
-    if (getlongpath(path, short_path, sizeof(path)) == 0) {
-        FATAL1("This path points to an invalid file : %s\n", short_path);
-    }
-#endif /* __MINGW32__ */
-    return xdirname(path);
-#else /* WIN32 */
-    return kpse_selfdir(argv0);
-#endif
-}
-
 static void prepare_cmdline(lua_State * L, char **av, int ac, int zero_offset)
 {
     int i;
@@ -172,23 +120,14 @@ static void prepare_cmdline(lua_State * L, char **av, int ac, int zero_offset)
     }
     lua_setglobal(L, "arg");
     lua_getglobal(L, "os");
-    s = ex_selfdir(argv[0]);
-    lua_pushstring(L, s);
-    xfree(s);
+    // TODO(mvlasak): absolute path to self directory?
+        //s = ex_selfdir(argv[0]);
+        //lua_pushstring(L, s);
+        //xfree(s);
+    lua_pushstring(L, argv[0]);
     lua_setfield(L, -2, "selfdir");
     return;
 }
-
-int kpse_init = -1;
-
-/*tex
-
-Array and count of values given with --cnf-line.
-
-*/
-static string *user_cnf_lines = NULL;
-static unsigned user_cnf_nlines = 0;
-
 
 
 string input_name = NULL;
@@ -239,8 +178,6 @@ static struct option long_options[] = {
     {"ini", 0, &ini_version, 1},
     {"interaction", 1, 0, 0},
     {"halt-on-error", 0, &haltonerrorp, 1},
-    {"kpathsea-debug", 1, 0, 0},
-    {"cnf-line", 1,0 ,0},
     {"progname", 1, 0, 0},
     {"version", 0, 0, 0},
     {"credits", 0, 0, 0},
@@ -263,8 +200,6 @@ static struct option long_options[] = {
     {"translate-file", 1, 0, 0},
     {"default-translate-file", 1, 0, 0},
     {"8bit", 0, 0, 0},
-    {"mktex", 1, 0, 0},
-    {"no-mktex", 1, 0, 0},
     /*tex Synchronization: just like ``interaction'' above */
     {"synctex", 1, 0, 0},
     {0, 0, 0, 0}
@@ -362,18 +297,6 @@ static void parse_options(int ac, char **av)
 #endif
         } else if (ARGUMENT_IS("luahashchars")) {
             show_luahashchars = 1;
-        } else if (ARGUMENT_IS("kpathsea-debug")) {
-            kpathsea_debug |= atoi(optarg);
-        } else if (ARGUMENT_IS ("cnf-line")) {
-	  if (user_cnf_lines == NULL) {
-	    user_cnf_nlines = 1;
-	    user_cnf_lines = xmalloc (sizeof (const_string));
-	  } else {
-	    user_cnf_nlines++;
-	    user_cnf_lines = xrealloc (user_cnf_lines,
-				       user_cnf_nlines * sizeof (const_string));
-	  }
-	  user_cnf_lines[user_cnf_nlines-1] = xstrdup (optarg);
         } else if (ARGUMENT_IS("progname")) {
             user_progname = optarg;
         } else if (ARGUMENT_IS("jobname")) {
@@ -383,10 +306,6 @@ static void parse_options(int ac, char **av)
         } else if (ARGUMENT_IS("shell-restricted")) {
             shellenabledp = 1;
             restrictedshell = 1;
-        } else if (ARGUMENT_IS("mktex")) {
-            kpse_maketex_option(optarg, true);
-        } else if (ARGUMENT_IS("no-mktex")) {
-            kpse_maketex_option(optarg, false);
         } else if (ARGUMENT_IS("interaction")) {
             /* These numbers match CPP defines */
             if (STREQ(optarg, "batchmode")) {
@@ -525,88 +444,6 @@ static char *find_filename(char *name, const char *envkey)
     return NULL;
 }
 
-static void init_kpse(void)
-{
-    if (!user_progname) {
-        user_progname = dump_name;
-    } else if (!dump_name) {
-        dump_name = user_progname;
-    }
-    if (!user_progname) {
-        if (ini_version) {
-            if (input_name) {
-                char *p = input_name + strlen(input_name) - 1;
-                while (p >= input_name) {
-                    if (IS_DIR_SEP (*p)) {
-                        p++;
-                        input_name = p;
-                        break;
-                    }
-                    p--;
-                }
-                user_progname = remove_suffix (input_name);
-            }
-            if (!user_progname) {
-                user_progname = kpse_program_basename(argv[0]);
-            }
-        } else {
-            if (!dump_name) {
-                dump_name = kpse_program_basename(argv[0]);
-            }
-            user_progname = dump_name;
-        }
-    }
-    kpse_set_program_enabled(kpse_fmt_format, MAKE_TEX_FMT_BY_DEFAULT, kpse_src_compile);
-    kpse_set_program_name(argv[0], user_progname);
-    /*tex set up 'restrictedshell' */
-    init_shell_escape();
-    init_start_time();
-    program_name_set = 1 ;
-    if (recorderoption) {
-        recorder_enabled = 1;
-    }
-}
-
-static void fix_dumpname(void)
-{
-    int dist;
-    if (dump_name) {
-        /*tex Adjust array for Pascal and provide extension, if needed. */
-        dist = (int) (strlen(dump_name) - strlen(DUMP_EXT));
-        if (strstr(dump_name, DUMP_EXT) == dump_name + dist)
-            TEX_format_default = dump_name;
-        else
-            TEX_format_default = concat(dump_name, DUMP_EXT);
-    } else {
-        /*tex For |dump_name| to be NULL is a bug. */
-        if (!ini_version) {
-          fprintf(stdout, "no format given, quitting\n");
-          exit(1);
-        }
-    }
-}
-
-/*tex
-    Auxiliary function for kpse search.
-*/
-
-static const char *luatex_kpse_find_aux(lua_State *L, const char *name,
-    kpse_file_format_type format, const char *errname)
-{
-    const char *filename;
-    const char *altname;
-    /*tex Lua convention */
-    altname = luaL_gsub(L, name, ".", "/");
-    filename = kpse_find_file(altname, format, false);
-    if (filename == NULL) {
-        filename = kpse_find_file(name, format, false);
-    }
-    if (filename == NULL) {
-        lua_pushfstring(L, "\n\t[kpse %s searcher] file not found: " LUA_QS, errname, name);
-    }
-    return filename;
-}
-
 /*tex
 
     Here comes the \LUA\ search function. When kpathsea is not initialized, then it
@@ -620,35 +457,21 @@ static const char *luatex_kpse_find_aux(lua_State *L, const char *name,
 
 static int lua_loader_function = 0;
 
-static int luatex_kpse_lua_find(lua_State * L)
+static int luatex_lua_find(lua_State * L)
 {
     const char *filename;
     const char *name;
     name = luaL_checkstring(L, 1);
-    if (program_name_set == 0) {
-        lua_rawgeti(L, LUA_REGISTRYINDEX, lua_loader_function);
-        lua_pushvalue(L, -2);
-        lua_call(L, 1, 1);
-        return 1;
-    }
-    filename = luatex_kpse_find_aux(L, name, kpse_lua_format, "lua");
-    if (filename == NULL) {
-        /*tex library not found in this path */
-        return 1;
-    }
-    recorder_record_input(filename);
-    if (luaL_loadfile(L, filename) != 0) {
-        luaL_error(L, "error loading module %s from file %s:\n\t%s",
-            lua_tostring(L, 1), filename, lua_tostring(L, -1));
-    }
-    /*tex library loaded successfully */
+    lua_rawgeti(L, LUA_REGISTRYINDEX, lua_loader_function);
+    lua_pushvalue(L, -2);
+    lua_call(L, 1, 1);
     return 1;
 }
 
 static int clua_loader_function = 0;
 extern int searcher_C_luatex (lua_State *L, const char *name, const char *filename);
 
-static int luatex_kpse_clua_find(lua_State * L)
+static int luatex_clua_find(lua_State * L)
 {
     const char *filename;
     const char *name;
@@ -658,82 +481,10 @@ static int luatex_kpse_clua_find(lua_State * L)
         return 1;
     }
     name = luaL_checkstring(L, 1);
-    if (program_name_set == 0) {
-        lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loader_function);
-        lua_pushvalue(L, -2);
-        lua_call(L, 1, 1);
-        return 1;
-    } else {
-        const char *path_saved;
-        char *prefix, *postfix, *p, *total;
-        char *extensionless;
-        char *temp_name;
-        int j;
-        filename = luatex_kpse_find_aux(L, name, kpse_clua_format, "C");
-        if (filename == NULL) {
-            /*tex library not found in this path */
-            return 1;
-        }
-        recorder_record_input(filename);
-        extensionless = strdup(filename);
-        if (!extensionless) {
-            /*tex allocation failure */
-            return 1;
-        }
-        /*tex Replace '.' with |LUA_DIRSEP| */
-        temp_name = strdup(name);
-        for(j=0; ; j++){
-          if ((unsigned char)temp_name[j]=='\0') {
-            break;
-          }
-          if ((unsigned char)temp_name[j]=='.'){
-            temp_name[j]=LUA_DIRSEP[0];
-          }
-        }
-        p = strstr(extensionless, temp_name);
-        if (!p) {
-            /*tex this would be exceedingly weird */
-            return 1;
-        }
-        *p = '\0';
-        prefix = strdup(extensionless);
-        if (!prefix) {
-            /*tex allocation failure */
-            return 1;
-        }
-        postfix = strdup(p+strlen(name));
-        if (!postfix) {
-            /*tex allocation failure */
-            return 1;
-        }
-        total = malloc(strlen(prefix)+strlen(postfix)+2);
-        if (!total) return 1;  /* allocation failure */
-        snprintf(total,strlen(prefix)+strlen(postfix)+2, "%s?%s", prefix, postfix);
-        /*tex save package.path */
-        lua_getglobal(L,"package");
-        lua_getfield(L,-1,"cpath");
-        path_saved = lua_tostring(L,-1);
-        lua_pop(L,1);
-        /*tex set package.path = "?" */
-        lua_pushstring(L,total);
-        lua_setfield(L,-2,"cpath");
-        /*tex pop ``package'' */
-        lua_pop(L,1);
-        /*tex run function */
-        lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loader_function);
-        lua_pushstring(L, name);
-        lua_call(L, 1, 1);
-        /*tex restore package.path */
-        lua_getglobal(L,"package");
-        lua_pushstring(L,path_saved);
-        lua_setfield(L,-2,"cpath");
-        /*tex pop ``package'' */
-        lua_pop(L,1);
-        free(extensionless);
-        free(total);
-        free(temp_name);
-        return 1;
-    }
+    lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loader_function);
+    lua_pushvalue(L, -2);
+    lua_call(L, 1, 1);
+    return 1;
 }
 
 /*tex
@@ -754,13 +505,13 @@ static void setup_lua_path(lua_State * L)
     /*tex package.searchers[2] */
     lua_rawgeti(L, -1, 2);
     lua_loader_function = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pushcfunction(L, luatex_kpse_lua_find);
+    lua_pushcfunction(L, luatex_lua_find);
     /*tex replace the normal lua loader */
     lua_rawseti(L, -2, 2);
     /*tex package.searchers[3] */
     lua_rawgeti(L, -1, 3);
     clua_loader_function = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pushcfunction(L, luatex_kpse_clua_find);
+    lua_pushcfunction(L, luatex_clua_find);
     /*tex replace the normal lua lib loader */
     lua_rawseti(L, -2, 3);
     /*tex pop the array and table */
@@ -886,27 +637,6 @@ void lua_initialize(int ac, char **av)
     banner = xmalloc(len);
     sprintf(banner, fmt, luatex_version_string);
     luatex_banner = banner;
-    kpse_invocation_name = kpse_program_basename(argv[0]);
-    /*tex be `luac' */
-    if (argc >1) {
-#ifdef LuajitTeX
-        if (FILESTRCASEEQ(kpse_invocation_name, "texluajitc"))
-            exit(luac_main(ac, av));
-        if (STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac")) {
-            char *argv1 = xmalloc (strlen ("luajittex") + 1);
-            av[1] = argv1;
-            strcpy (av[1], "luajittex");
-            exit(luac_main(--ac, ++av));
-        }
-#else
-        if (FILESTRCASEEQ(kpse_invocation_name, "texluac"))
-            exit(luac_main(ac, av));
-        if (STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac")) {
-            strcpy(av[1], "luatex");
-            exit(luac_main(--ac, ++av));
-        }
-#endif
-    }
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
     mk_suffixlist();
 #endif
@@ -982,15 +712,6 @@ void lua_initialize(int ac, char **av)
     putenv(LC_NUMERIC_C);
     /*tex this is sometimes needed */
     putenv(engine_luatex);
-    /*tex add user's cnf values*/
-    if (user_cnf_lines) {
-     unsigned i;
-     for (i = 0; i < user_cnf_nlines; i++) {
-      /* debug printf ("ucnf%d: %s\n", i, user_cnf_lines[i]); */
-      kpathsea_cnf_line_env_progname (kpse_def, user_cnf_lines[i]);
-      free (user_cnf_lines[i]);
-     }
-    }
     luainterpreter();
     /*tex init internalized strings */
     set_init_keys;
@@ -1069,14 +790,6 @@ void lua_initialize(int ac, char **av)
         if (!dump_name) {
             get_lua_string("texconfig", "formatname", &dump_name);
         }
-        kpse_init = -1;
-        get_lua_boolean("texconfig", "kpse_init", &kpse_init);
-        if (kpse_init != 0) {
-            /*tex re-enable loading of texmf.cnf values, see luatex.ch */
-            luainit = 0;
-            init_kpse();
-            kpse_init = 1;
-        }
         /*tex |prohibit_file_trace| (boolean) */
         get_lua_boolean("texconfig", "trace_file_names", &tracefilenames);
         /*tex |file_line_error| */
@@ -1135,11 +848,6 @@ void lua_initialize(int ac, char **av)
             fprintf(stdout, "No %s file given\n", (lua_only ? "script" : "configuration"));
         }
         exit(1);
-    } else {
-        /* init */
-        init_kpse();
-        kpse_init = 1;
-        fix_dumpname();
     }
     /*tex Here we load luatex-core.lua which takes care of some protection on demand. */
     if (load_luatex_core_lua(Luas)) {
