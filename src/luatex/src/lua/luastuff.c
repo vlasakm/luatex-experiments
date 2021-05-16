@@ -179,7 +179,6 @@ static const luaL_Reg lualibs[] = {
 #endif
     /*tex additional (public) libraries */
     { "unicode",   luaopen_unicode },
-    { "zip",       luaopen_zip },
     { "md5",       luaopen_md5 },
     { "sha2",      luaopen_sha2 },
     { "lfs",       luaopen_lfs },
