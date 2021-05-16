@@ -14,7 +14,6 @@ w2c_src = files(
   'lib/openclose.c',
   'lib/uexit.c',
   'lib/usage.c',
-  'lib/zround.c',
 )
 
 w2c_lib = static_library(
