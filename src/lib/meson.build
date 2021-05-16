@@ -12,7 +12,6 @@ w2c_c_args = [
 
 w2c_src = files(
   'lib/openclose.c',
-  'lib/setupvar.c',
   'lib/uexit.c',
   'lib/usage.c',
   'lib/zround.c',

@@ -350,9 +350,7 @@ handled by \LUA\ code and therefore not present in the format.
         if (C==0) \
             C=A; \
     } else { \
-        integer x; \
-        setupboundvariable(&x, B, A); \
-        C = (int)x; \
+        C = A; \
     } \
 } while (0)
 
@@ -371,19 +369,19 @@ int main_initialize(void)
         underscores, so we're stuck giving the names twice, once as a string,
         once as the identifier. How ugly. (We can change that now.)
     */
-    setup_bound_var(15000, "max_strings", max_strings);
+    setup_bound_var(500000, "max_strings", max_strings);
     setup_bound_var(100, "strings_free", strings_free);
-    setup_bound_var(3000, "buf_size", buf_size);
-    setup_bound_var(50, "nest_size", nest_size);
+    setup_bound_var(200000, "buf_size", buf_size);
+    setup_bound_var(500, "nest_size", nest_size);
     setup_bound_var(15, "max_in_open", max_in_open);
-    setup_bound_var(60, "param_size", param_size);
-    setup_bound_var(4000, "save_size", save_size);
-    setup_bound_var(300, "stack_size", stack_size);
+    setup_bound_var(10000, "param_size", param_size);
+    setup_bound_var(100000, "save_size", save_size);
+    setup_bound_var(5000, "stack_size", stack_size);
     setup_bound_var(16384, "dvi_buf_size", dvi_buf_size);
     setup_bound_var(79, "error_line", error_line);
     setup_bound_var(50, "half_error_line", half_error_line);
     setup_bound_var(79, "max_print_line", max_print_line);
-    setup_bound_var(0, "hash_extra", hash_extra);
+    setup_bound_var(600000, "hash_extra", hash_extra);
     setup_bound_var(72, "pk_dpi", pk_dpi);
     setup_bound_var(10000, "expand_depth", expand_depth);
     setup_bound_var(0, "level_max", level_max);
