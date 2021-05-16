@@ -218,7 +218,7 @@ luatex_c_args = [
 ]
 
 executable(
-  'mmluatex',
+  'mmtex',
   sources: luatex_src,
   include_directories: [luatex_inc, mmtex_inc],
   dependencies: luatex_dependencies,

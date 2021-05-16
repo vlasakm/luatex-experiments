@@ -1,4 +1,4 @@
-project('luatex', 'c')
+project('mmtex', 'c')
 
 #git = find_program('git', native: true)
 #git_tag = run_command([git, 'describe', '--tag'])
@@ -8,3 +8,4 @@ add_project_arguments('-DMMTEX_VERSION="@0@"'.format(mmtex_version), language: '
 mmtex_inc = include_directories('include')
 
 subdir('src')
+#install_subdir('texmf', install_dir: 'share', strip_directory: true)
