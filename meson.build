@@ -8,4 +8,14 @@ add_project_arguments('-DMMTEX_VERSION="@0@"'.format(mmtex_version), language: '
 mmtex_inc = include_directories('include')
 
 subdir('src')
-#install_subdir('texmf', install_dir: 'share', strip_directory: true)
+
+install_subdir('texmf', install_dir: 'share/mmtex', strip_directory: true)
+
+mmtex_fmt = custom_target(
+  'mmtex.fmt',
+  input: files('texmf/tex/mmtex/mmtex.ini'),
+  output: 'mmtex.fmt',
+  command: ['env', 'TEXMF=' + meson.current_source_dir() + '/texmf', mmtex, '-ini', '@INPUT@'],
+  install_dir: 'share/mmtex/web2c',
+  install: true,
+)
