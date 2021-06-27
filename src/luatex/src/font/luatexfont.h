@@ -24,7 +24,6 @@
 #define LUATEXFONT_H
 
 #include "ptexlib.h"
-#include "sfnt.h"
 
 #define ASCENT_CODE       0
 #define CAPHEIGHT_CODE    1
@@ -53,8 +52,6 @@ typedef struct {
 } key_entry;
 
 extern const key_entry font_key[FONT_KEYS_NUM];
-
-#include "mapfile.h"
 
 typedef struct {
     int val;                         /* value */

@@ -327,13 +327,7 @@ void luainterpreter(void)
     luaopen_font(L);
     luaopen_lang(L);
     luaopen_mplib(L);
-    luaopen_vf(L);
-    luaopen_pdf(L);
-    luaopen_pdfe(L);
     luaopen_pdfscanner(L);
-    if (!lua_only) {
-        luaopen_img(L);
-    }
     lua_createtable(L, 0, 0);
     lua_setglobal(L, "texconfig");
     Luas = L;
@@ -552,24 +546,25 @@ void luacall_vf(int p, int f, int c)
     lua_active--;
 }
 
-void late_lua(PDF pdf, halfword p)
-{
-    halfword t;
-    (void) pdf;
-    t = late_lua_type(p);
-    if (t == normal) {
-        /*tex sets |def_ref| */
-        expand_macros_in_tokenlist(p);
-        luacall(def_ref, late_lua_name(p), false);
-        flush_list(def_ref);
-    } else if (t == lua_refid_call) {
-        luafunctioncall(late_lua_data(p));
-    } else if (t == lua_refid_literal) {
-        luacall(late_lua_data(p), late_lua_name(p), true);
-    } else {
-        /*tex Let's just ignore it, could be some user specific thing. */
-    }
-}
+// TODO(mvlasak): why pdf parameter?
+//void late_lua(PDF pdf, halfword p)
+//{
+//    halfword t;
+//    (void) pdf;
+//    t = late_lua_type(p);
+//    if (t == normal) {
+//        /*tex sets |def_ref| */
+//        expand_macros_in_tokenlist(p);
+//        luacall(def_ref, late_lua_name(p), false);
+//        flush_list(def_ref);
+//    } else if (t == lua_refid_call) {
+//        luafunctioncall(late_lua_data(p));
+//    } else if (t == lua_refid_literal) {
+//        luacall(late_lua_data(p), late_lua_name(p), true);
+//    } else {
+//        /*tex Let's just ignore it, could be some user specific thing. */
+//    }
+//}
 
 void luatokencall(int p, int nameptr)
 {

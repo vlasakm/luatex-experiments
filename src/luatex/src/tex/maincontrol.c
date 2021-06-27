@@ -677,9 +677,6 @@ static void run_normal (void) {
             scan_int();
             late_lua_data(tail) = cur_val;
             break;
-        case expand_font_code:
-            read_expand_font();
-            break;
         default:
             confusion("int1");
             break;
@@ -959,8 +956,6 @@ static void init_main_control (void) {
     any_mode(set_math_param_cmd, prefixed_command);
     any_mode(set_font_cmd, prefixed_command);
     any_mode(def_font_cmd, prefixed_command);
-    any_mode(letterspace_font_cmd, prefixed_command);
-    any_mode(copy_font_cmd, prefixed_command);
     any_mode(set_font_id_cmd, prefixed_command);
     any_mode(register_cmd, prefixed_command);
     any_mode(advance_cmd, prefixed_command);
@@ -1739,7 +1734,8 @@ void box_end(int box_context)
             if (box_context != ship_out_flag) {
                 normal_error("scanner","shipout expected");
             }
-            ship_out(static_pdf, cur_box, SHIPPING_PAGE);
+	    // TODO(mvlasak): what is this?
+            //ship_out(static_pdf, cur_box, SHIPPING_PAGE);
         }
     }
 }
@@ -3302,12 +3298,6 @@ void prefixed_command(void)
                 define(p, lua_expandable_call_cmd, cur_val);
             }
             break;
-        case letterspace_font_cmd:
-            new_letterspaced_font((small_number) a);
-            break;
-        case copy_font_cmd:
-            make_font_copy((small_number) a);
-            break;
         case set_font_id_cmd:
             scan_int();
             if (is_valid_font(cur_val))
@@ -4120,14 +4110,11 @@ void initialize(void)
     initialize_marks();
     initialize_read();
 
-    static_pdf = init_pdf_struct(static_pdf); /* should be init_backend() */
-
     format_ident = 0;
     format_name = get_nullstr();
     initialize_directions();
     initialize_write_files();
     seconds_and_micros(epochseconds, microseconds);
-    initialize_start_time(static_pdf);
 
     edit_name_start = 0;
     stop_at_space = true;
@@ -4228,7 +4215,6 @@ void initialize(void)
         cs_text(frozen_primitive) = maketexstring("primitive");
         create_null_font();
         font_bytes = 0;
-        px_dimen_par = one_bp;
         math_eqno_gap_step_par = 1000 ;
         math_flatten_mode_par = 1; /* ord */
         cs_text(frozen_protection) = maketexstring("inaccessible");

@@ -159,7 +159,6 @@ typedef struct texfont {
     int         _font_max_stretch;
     int         _font_step;           /* amount of one step of expansion */
     char        _font_tounicode;      /* 1 if info is present */
-    fm_entry   *_font_map;
     int         _font_type;
     int         _font_format;
     int         _font_writingmode;
@@ -313,9 +312,6 @@ boolean cmp_font_area(int, str_number);
 
 #  define font_cidregistry(a)            font_tables[a]->_font_cidregistry
 #  define set_font_cidregistry(f,b)      font_reassign(font_cidregistry(f),b)
-
-#  define font_map(a)                    font_tables[a]->_font_map
-#  define set_font_map(a,b)              font_map(a) = b
 
 #  define font_cache_id(a)               font_tables[a]->_font_cache_id
 #  define set_font_cache_id(a,b)         font_cache_id(a) = b
@@ -596,7 +592,6 @@ extern texfont **font_tables;
 
 int new_font(void);
 extern void font_malloc_charinfo(internal_font_number f, int num);
-int copy_font(int id);
 int scale_font(int id, int atsize);
 int max_font_id(void);
 void set_max_font_id(int id);
@@ -650,14 +645,7 @@ typedef enum { packet_char_code,
 
 extern scaled store_scaled_f(scaled sq, int fw);
 
-extern void do_vf_packet(PDF pdf, internal_font_number vf_f, int c, int ex);
-extern int vf_packet_bytes(charinfo * co);
-
 extern charinfo *copy_charinfo(charinfo * ci);
-
-/* this function is in vfovf.c for the moment */
-
-extern int make_vf_table(lua_State * L, const char *name, scaled s);
 
 /* some bits of the old interface, used by e.g. writet3.c */
 
@@ -668,8 +656,6 @@ extern int make_vf_table(lua_State * L, const char *name, scaled s);
 #  define get_charheight(f,c) (char_exists(f,c) ? char_height(f,c) : 0)
 #  define get_chardepth(f,c) (char_exists(f,c) ? char_depth(f,c) : 0)
 
-extern int pk_dpi; /* PK pixel density value from \.{texmf.cnf} */
-
 extern internal_font_number tfm_lookup(char *s, scaled fs);
 
 extern int fix_expand_value(internal_font_number f, int e);
@@ -677,9 +663,5 @@ extern int fix_expand_value(internal_font_number f, int e);
 extern void set_expand_params(internal_font_number f, int stretch_limit, int shrink_limit, int font_step);
 
 extern void read_expand_font(void);
-extern void new_letterspaced_font(small_number a);
-extern void make_font_copy(small_number a);
-
-extern void glyph_to_unicode(void);
 
 #endif

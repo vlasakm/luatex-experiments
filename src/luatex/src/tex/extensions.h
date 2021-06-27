@@ -118,11 +118,6 @@ extern int restrictedshell;
 extern char *output_comment;
 extern boolean debug_format_file;
 
-extern int last_saved_box_index ;
-extern int last_saved_image_index ;
-extern int last_saved_image_pages ;
-extern scaledpos last_position ;
-
 typedef enum {
     /* traditional extensions */
     open_code = 0,
@@ -130,16 +125,6 @@ typedef enum {
     close_code,
     reserved_extension_code, // 3: we moved special below immediate //
     reserved_immediate_code, // 4: same number as main codes, expected value //
-    /* backend specific implementations */
-    special_code,
-    save_box_resource_code,
-    use_box_resource_code,
-    save_image_resource_code,
-    use_image_resource_code,
-    end_local_code,
-    /* backend */
-    dvi_extension_code,
-    pdf_extension_code,
 } extension_codes ;
 
 extern void wrapup_leader(halfword p);

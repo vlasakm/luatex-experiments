@@ -201,9 +201,6 @@ typedef enum {
     set_box_cmd,                          /* set a box ( \.{\\setbox} ) */
     hyph_data_cmd,                        /* hyphenation data ( \.{\\hyphenation}, \.{\\patterns} ) */
     set_interaction_cmd,                  /* define level of interaction ( \.{\\batchmode}, etc.~) */
-    letterspace_font_cmd,                 /* letterspace a font ( \.{\\letterspacefont} ) */
-    expand_font_cmd,                      /* expand glyphs ( \.{\\expandglyphsinfont} ) */
-    copy_font_cmd,                        /* create a new font instance ( \.{\\copyfont} ) */
     set_font_id_cmd,
     undefined_cs_cmd,                     /* initial state of most |eq_type| fields */
     expand_after_cmd,                     /* special expansion ( \.{\\expandafter} ) */

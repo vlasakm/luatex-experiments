@@ -3340,7 +3340,7 @@ static int lp_match (lua_State *L) {
 #endif
   const char *r;
   size_t l;
-  int ret_val;
+  //int ret_val; TODO(mvlasak): unused variable
   Pattern *p = (getpatt(L, 1, NULL), getpattern(L, 1));
   Instruction *code = (p->code != NULL) ? p->code : prepcompile(L, p, 1);
   const char *s = luaL_checklstring(L, SUBJIDX, &l);

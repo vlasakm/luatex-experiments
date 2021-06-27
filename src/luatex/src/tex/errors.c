@@ -939,15 +939,6 @@ void char_warning(internal_font_number f, int c)
     }
 }
 
-void wrapup_backend(void) {
-    ensure_output_state(static_pdf, ST_OMODE_FIX);
-    if (output_mode_used == OMODE_NONE) {
-        print_err(" ==> Fatal error occurred, no FMT file produced!");
-    } else {
-        backend_out_control[backend_control_finish_file](static_pdf,history == fatal_error_stop);
-    }
-}
-
 void normal_error(const char *t, const char *p)
 {
     normalize_selector();
@@ -974,7 +965,6 @@ void normal_error(const char *t, const char *p)
     if (p != NULL)
         tprint(p);
     history = fatal_error_stop;
-    wrapup_backend();
     exit(EXIT_FAILURE);
 }
 

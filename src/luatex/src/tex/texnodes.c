@@ -122,27 +122,9 @@ field_info node_fields_unset[12];
 field_info node_fields_whatsit_close[3];
 field_info node_fields_whatsit_late_lua[6];
 field_info node_fields_whatsit_open[6];
-field_info node_fields_whatsit_save_pos[2];
 field_info node_fields_whatsit_special[3];
 field_info node_fields_whatsit_user_defined[5];
 field_info node_fields_whatsit_write[4];
-
-field_info node_fields_whatsit_pdf_action[7];
-field_info node_fields_whatsit_pdf_annot[7];
-field_info node_fields_whatsit_pdf_colorstack[5];
-field_info node_fields_whatsit_pdf_dest[10];
-field_info node_fields_whatsit_pdf_end_link[2];
-field_info node_fields_whatsit_pdf_end_thread[2];
-field_info node_fields_whatsit_pdf_literal[4];
-field_info node_fields_whatsit_pdf_refobj[3];
-field_info node_fields_whatsit_pdf_restore[2];
-field_info node_fields_whatsit_pdf_link_state[3];
-field_info node_fields_whatsit_pdf_save[2];
-field_info node_fields_whatsit_pdf_setmatrix[3];
-field_info node_fields_whatsit_pdf_start_link[8];
-field_info node_fields_whatsit_pdf_start_thread[8];
-field_info node_fields_whatsit_pdf_thread[8];
-
 
 /*tex The values of fields. */
 
@@ -152,61 +134,6 @@ subtype_info node_values_dir[] = {
     { 2,  NULL, 0 },
     { 3,  NULL, 0 },
     { -1, NULL, 0 },
-};
-
-subtype_info node_values_pdf_destination[] = {
-    { 0,  NULL, 0 },
-    { 1,  NULL, 0 },
-    { 2,  NULL, 0 },
-    { 3,  NULL, 0 },
-    { 4,  NULL, 0 },
-    { 5,  NULL, 0 },
-    { 6,  NULL, 0 },
-    { 7,  NULL, 0 },
-    { -1, NULL, 0 },
-};
-
-subtype_info node_values_pdf_action[] = {
-    { 0,  NULL, 0 },
-    { 1,  NULL, 0 },
-    { 2,  NULL, 0 },
-    { 3,  NULL, 0 },
-    { -1, NULL, 0 },
-};
-
-subtype_info node_values_pdf_window[] = {
-    { 0,  NULL, 0 },
-    { 1,  NULL, 0 },
-    { 2,  NULL, 0 },
-    { -1, NULL, 0 },
-};
-
-subtype_info node_values_color_stack[] = {
-    { 0,  NULL, 0 },
-    { 1,  NULL, 0 },
-    { 2,  NULL, 0 },
-    { 3,  NULL, 0 },
-    { -1, NULL, 0 },
-};
-
-subtype_info node_values_fill[] = {
-    { normal, NULL, 0 },
-    { sfi,    NULL, 0 },
-    { fil,    NULL, 0 },
-    { fill,   NULL, 0 },
-    { filll,  NULL, 0 },
-    { -1,     NULL, 0 },
-};
-
-subtype_info node_values_pdf_literal[] = {
-    { set_origin,    NULL, 0 },
-    { direct_page,   NULL, 0 },
-    { direct_always, NULL, 0 },
-    { direct_raw,    NULL, 0 },
-    { direct_text,   NULL, 0 },
-    { direct_font,   NULL, 0 },
-    { scan_special,  NULL, 0 },
-    { -1,            NULL, 0 },
 };
 
 subtype_info other_values_page_states[] = {
@@ -963,43 +890,11 @@ node_info whatsit_node_data[] = {
     { open_node,             open_node_size,           NULL, node_fields_whatsit_open,             NULL, -1, 0 },
     { write_node,            write_node_size,          NULL, node_fields_whatsit_write,            NULL, -1, 0 },
     { close_node,            close_node_size,          NULL, node_fields_whatsit_close,            NULL, -1, 0 },
-    { special_node,          special_node_size,        NULL, node_fields_whatsit_special,          NULL, -1, 0 },
     { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
     { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
     { save_pos_node,         save_pos_node_size,       NULL, node_fields_whatsit_save_pos,         NULL, -1, 0 },
     { late_lua_node,         late_lua_node_size,       NULL, node_fields_whatsit_late_lua,         NULL, -1, 0 },
     { user_defined_node,     user_defined_node_size,   NULL, node_fields_whatsit_user_defined,     NULL, -1, 0 },
-    { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
-    { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
-    { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
-    { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
-    { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
-    { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
-    { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
-
-    /*tex Here starts the \DVI\ backend section, todo: a separate list. */
-
-    /*tex {\em There is nothing here.} */
-
-    /*tex Here starts the \PDF\ backend section, todo: a separate list.  */
-
-    { pdf_literal_node,      write_node_size,          NULL, node_fields_whatsit_pdf_literal,      NULL, -1, 0 },
-    { pdf_refobj_node,       pdf_refobj_node_size,     NULL, node_fields_whatsit_pdf_refobj,       NULL, -1, 0 },
-    { pdf_annot_node,        pdf_annot_node_size,      NULL, node_fields_whatsit_pdf_annot,        NULL, -1, 0 },
-    { pdf_start_link_node,   pdf_annot_node_size,      NULL, node_fields_whatsit_pdf_start_link,   NULL, -1, 0 },
-    { pdf_end_link_node,     pdf_end_link_node_size,   NULL, node_fields_whatsit_pdf_end_link,     NULL, -1, 0 },
-    { pdf_dest_node,         pdf_dest_node_size,       NULL, node_fields_whatsit_pdf_dest,         NULL, -1, 0 },
-    { pdf_action_node,       pdf_action_size,          NULL, node_fields_whatsit_pdf_action,       NULL, -1, 0 },
-    { pdf_thread_node,       pdf_thread_node_size,     NULL, node_fields_whatsit_pdf_thread,       NULL, -1, 0 },
-    { pdf_start_thread_node, pdf_thread_node_size,     NULL, node_fields_whatsit_pdf_start_thread, NULL, -1, 0 },
-    { pdf_end_thread_node,   pdf_end_thread_node_size, NULL, node_fields_whatsit_pdf_end_thread,   NULL, -1, 0 },
-    { pdf_thread_data_node,  pdf_thread_node_size,     NULL, NULL,                                 NULL, -1, 0 },
-    { pdf_link_data_node,    pdf_annot_node_size,      NULL, NULL,                                 NULL, -1, 0 },
-    { pdf_colorstack_node,   pdf_colorstack_node_size, NULL, node_fields_whatsit_pdf_colorstack,   NULL, -1, 0 },
-    { pdf_setmatrix_node,    pdf_setmatrix_node_size,  NULL, node_fields_whatsit_pdf_setmatrix,    NULL, -1, 0 },
-    { pdf_save_node,         pdf_save_node_size,       NULL, node_fields_whatsit_pdf_save,         NULL, -1, 0 },
-    { pdf_restore_node,      pdf_restore_node_size,    NULL, node_fields_whatsit_pdf_restore,      NULL, -1, 0 },
-    { pdf_link_state_node,   pdf_link_state_node_size, NULL, node_fields_whatsit_pdf_link_state,   NULL, -1, 0 },
 
     /*tex That's it. */
 
@@ -1011,7 +906,6 @@ void l_set_whatsit_data(void) {
     init_node_key(whatsit_node_data, open_node,         open)
     init_node_key(whatsit_node_data, write_node,        write)
     init_node_key(whatsit_node_data, close_node,        close)
-    init_node_key(whatsit_node_data, special_node,      special)
     init_node_key(whatsit_node_data, save_pos_node,     save_pos)
     init_node_key(whatsit_node_data, late_lua_node,     late_lua)
     init_node_key(whatsit_node_data, user_defined_node, user_defined)
@@ -1034,13 +928,6 @@ void l_set_whatsit_data(void) {
     init_field_key(node_fields_whatsit_open, 4, ext);
     init_field_nop(node_fields_whatsit_open, 5);
 
-    init_field_key(node_fields_whatsit_save_pos, 0, attr);
-    init_field_nop(node_fields_whatsit_save_pos, 1);
-
-    init_field_key(node_fields_whatsit_special, 0, attr);
-    init_field_key(node_fields_whatsit_special, 1, data);
-    init_field_nop(node_fields_whatsit_special, 2);
-
     init_field_key(node_fields_whatsit_user_defined, 0, attr);
     init_field_key(node_fields_whatsit_user_defined, 1, user_id);
     init_field_key(node_fields_whatsit_user_defined, 2, type);
@@ -1052,147 +939,9 @@ void l_set_whatsit_data(void) {
     init_field_key(node_fields_whatsit_write, 2, data);
     init_field_nop(node_fields_whatsit_write, 3);
 
-    init_node_key(whatsit_node_data, pdf_literal_node,     pdf_literal)
-    init_node_key(whatsit_node_data, pdf_refobj_node,      pdf_refobj)
-    init_node_key(whatsit_node_data, pdf_annot_node,       pdf_annot)
-    init_node_key(whatsit_node_data, pdf_start_link_node,  pdf_start_link)
-    init_node_key(whatsit_node_data, pdf_end_link_node,    pdf_end_link)
-    init_node_key(whatsit_node_data, pdf_dest_node,        pdf_dest)
-    init_node_key(whatsit_node_data, pdf_action_node,      pdf_action)
-    init_node_key(whatsit_node_data, pdf_thread_node,      pdf_thread)
-    init_node_key(whatsit_node_data, pdf_start_thread_node,pdf_start_thread)
-    init_node_key(whatsit_node_data, pdf_end_thread_node,  pdf_end_thread)
-    init_node_key(whatsit_node_data, pdf_thread_data_node, pdf_thread_data)
-    init_node_key(whatsit_node_data, pdf_link_data_node,   pdf_link_data)
-    init_node_key(whatsit_node_data, pdf_colorstack_node,  pdf_colorstack)
-    init_node_key(whatsit_node_data, pdf_setmatrix_node,   pdf_setmatrix)
-    init_node_key(whatsit_node_data, pdf_save_node,        pdf_save)
-    init_node_key(whatsit_node_data, pdf_restore_node,     pdf_restore)
-    init_node_key(whatsit_node_data, pdf_link_state_node,  pdf_link_state)
-
-    init_node_key(node_values_pdf_destination, 0, xyz)
-    init_node_key(node_values_pdf_destination, 1, fit)
-    init_node_key(node_values_pdf_destination, 2, fith)
-    init_node_key(node_values_pdf_destination, 3, fitv)
-    init_node_key(node_values_pdf_destination, 4, fitb)
-    init_node_key(node_values_pdf_destination, 5, fitbh)
-    init_node_key(node_values_pdf_destination, 6, fitbv)
-    init_node_key(node_values_pdf_destination, 7, fitr)
-
-    init_node_key(node_values_pdf_literal, set_origin,    origin)
-    init_node_key(node_values_pdf_literal, direct_page,   page)
-    init_node_key(node_values_pdf_literal, direct_always, always)
-    init_node_key(node_values_pdf_literal, direct_raw,    raw)
-    init_node_key(node_values_pdf_literal, direct_text,   text)
-    init_node_key(node_values_pdf_literal, direct_font,   font)
-    init_node_key(node_values_pdf_literal, scan_special,  special)
-
-    init_node_key(node_values_pdf_action, 0, page)
-    init_node_key(node_values_pdf_action, 1, goto)
-    init_node_key(node_values_pdf_action, 2, thread)
-    init_node_key(node_values_pdf_action, 3, user)
-
-    init_node_key(node_values_pdf_window, 0, unset)
-    init_node_key(node_values_pdf_window, 1, new)
-    init_node_key(node_values_pdf_window, 2, nonew)
-
-    init_node_key(node_values_color_stack, 0, set)
-    init_node_key(node_values_color_stack, 1, push)
-    init_node_key(node_values_color_stack, 2, pop)
-    init_node_key(node_values_color_stack, 3, current)
-
-    init_field_key(node_fields_whatsit_pdf_action, 0, action_type);
-    init_field_key(node_fields_whatsit_pdf_action, 1, named_id);
-    init_field_key(node_fields_whatsit_pdf_action, 2, action_id);
-    init_field_key(node_fields_whatsit_pdf_action, 3, file);
-    init_field_key(node_fields_whatsit_pdf_action, 4, new_window);
-    init_field_key(node_fields_whatsit_pdf_action, 5, data);
-    init_field_nop(node_fields_whatsit_pdf_action, 6);
-
-    init_field_key(node_fields_whatsit_pdf_annot, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_annot, 1, width);
-    init_field_key(node_fields_whatsit_pdf_annot, 2, depth);
-    init_field_key(node_fields_whatsit_pdf_annot, 3, height);
-    init_field_key(node_fields_whatsit_pdf_annot, 4, objnum);
-    init_field_key(node_fields_whatsit_pdf_annot, 5, data);
-    init_field_nop(node_fields_whatsit_pdf_annot, 6);
-
-    init_field_key(node_fields_whatsit_pdf_colorstack, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_colorstack, 1, stack);
-    init_field_key(node_fields_whatsit_pdf_colorstack, 2, cmd);
-    init_field_key(node_fields_whatsit_pdf_colorstack, 3, data);
-    init_field_nop(node_fields_whatsit_pdf_colorstack, 4);
-
-    init_field_key(node_fields_whatsit_pdf_dest, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_dest, 1, width);
-    init_field_key(node_fields_whatsit_pdf_dest, 2, depth);
-    init_field_key(node_fields_whatsit_pdf_dest, 3, height);
-    init_field_key(node_fields_whatsit_pdf_dest, 4, named_id);
-    init_field_key(node_fields_whatsit_pdf_dest, 5, dest_id);
-    init_field_key(node_fields_whatsit_pdf_dest, 6, dest_type);
-    init_field_key(node_fields_whatsit_pdf_dest, 7, xyz_zoom);
-    init_field_key(node_fields_whatsit_pdf_dest, 8, objnum);
-    init_field_nop(node_fields_whatsit_pdf_dest, 9);
-
-    init_field_key(node_fields_whatsit_pdf_end_link, 0, attr);
-    init_field_nop(node_fields_whatsit_pdf_end_link, 1);
-
-    init_field_key(node_fields_whatsit_pdf_link_state, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_link_state, 1, value);
-    init_field_nop(node_fields_whatsit_pdf_link_state, 2);
-
-    init_field_key(node_fields_whatsit_pdf_end_thread, 0, attr);
-    init_field_nop(node_fields_whatsit_pdf_end_thread, 1);
-
-    init_field_key(node_fields_whatsit_pdf_literal, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_literal, 1, mode);
-    init_field_key(node_fields_whatsit_pdf_literal, 2, data);
-    init_field_nop(node_fields_whatsit_pdf_literal, 3);
-
-    init_field_key(node_fields_whatsit_pdf_refobj, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_refobj, 1, objnum);
-    init_field_nop(node_fields_whatsit_pdf_refobj, 2);
-
-    init_field_key(node_fields_whatsit_pdf_restore, 0, attr);
-    init_field_nop(node_fields_whatsit_pdf_restore, 1);
-
-    init_field_key(node_fields_whatsit_pdf_save, 0, attr);
-    init_field_nop(node_fields_whatsit_pdf_save, 1);
-
-    init_field_key(node_fields_whatsit_pdf_setmatrix, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_setmatrix, 1, data);
-    init_field_nop(node_fields_whatsit_pdf_setmatrix, 2);
-
-    init_field_key(node_fields_whatsit_pdf_start_link, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_start_link, 1, width);
-    init_field_key(node_fields_whatsit_pdf_start_link, 2, depth);
-    init_field_key(node_fields_whatsit_pdf_start_link, 3, height);
-    init_field_key(node_fields_whatsit_pdf_start_link, 4, objnum);
-    init_field_key(node_fields_whatsit_pdf_start_link, 5, link_attr);
-    init_field_key(node_fields_whatsit_pdf_start_link, 6, action);
-    init_field_nop(node_fields_whatsit_pdf_start_link, 7);
-
-    init_field_key(node_fields_whatsit_pdf_start_thread, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_start_thread, 1, width);
-    init_field_key(node_fields_whatsit_pdf_start_thread, 2, depth);
-    init_field_key(node_fields_whatsit_pdf_start_thread, 3, height);
-    init_field_key(node_fields_whatsit_pdf_start_thread, 4, named_id);
-    init_field_key(node_fields_whatsit_pdf_start_thread, 5, thread_id);
-    init_field_key(node_fields_whatsit_pdf_start_thread, 6, thread_attr);
-    init_field_nop(node_fields_whatsit_pdf_start_thread, 7);
-
-    init_field_key(node_fields_whatsit_pdf_thread, 0, attr);
-    init_field_key(node_fields_whatsit_pdf_thread, 1, width);
-    init_field_key(node_fields_whatsit_pdf_thread, 2, depth);
-    init_field_key(node_fields_whatsit_pdf_thread, 3, height);
-    init_field_key(node_fields_whatsit_pdf_thread, 4, named_id);
-    init_field_key(node_fields_whatsit_pdf_thread, 5, thread_id);
-    init_field_key(node_fields_whatsit_pdf_thread, 6, thread_attr);
-    init_field_nop(node_fields_whatsit_pdf_thread, 7);
-
 }
 
-#define last_whatsit_node pdf_restore_node
+#define last_whatsit_node user_defined_node
 
 /*tex
 
@@ -1955,7 +1704,6 @@ static void copy_node_wrapup_core(halfword p, halfword r)
     halfword s ;
     switch (subtype(p)) {
         case write_node:
-        case special_node:
             add_token_ref(write_tokens(p));
             break;
         case late_lua_node:
@@ -1986,53 +1734,10 @@ static void copy_node_wrapup_core(halfword p, halfword r)
     }
 }
 
-void copy_node_wrapup_dvi(halfword p, halfword r)
-{
-}
-
-void copy_node_wrapup_pdf(halfword p, halfword r)
-{
-    switch(subtype(p)) {
-        case pdf_literal_node:
-            copy_pdf_literal(r, p);
-            break;
-        case pdf_colorstack_node:
-            if (pdf_colorstack_cmd(p) <= colorstack_data)
-                add_token_ref(pdf_colorstack_data(p));
-            break;
-        case pdf_setmatrix_node:
-            add_token_ref(pdf_setmatrix_data(p));
-            break;
-        case pdf_annot_node:
-            add_token_ref(pdf_annot_data(p));
-            break;
-        case pdf_start_link_node:
-            if (pdf_link_attr(r) != null)
-                add_token_ref(pdf_link_attr(r));
-            add_action_ref(pdf_link_action(r));
-            break;
-        case pdf_dest_node:
-            if (pdf_dest_named_id(p) > 0)
-                add_token_ref(pdf_dest_id(p));
-            break;
-        case pdf_thread_node:
-        case pdf_start_thread_node:
-            if (pdf_thread_named_id(p) > 0)
-                add_token_ref(pdf_thread_id(p));
-            if (pdf_thread_attr(p) != null)
-                add_token_ref(pdf_thread_attr(p));
-            break;
-        default:
-            break;
-    }
-}
-
 halfword copy_node(const halfword p)
 {
     /*tex current node being fabricated for new list */
     halfword r;
-    /*tex whatsit subtype */
-    halfword w;
     /*tex type of node */
     halfword t;
     /*tex a helper variable for copying into variable mem  */
@@ -2190,14 +1895,7 @@ halfword copy_node(const halfword p)
         case boundary_node:
             break;
         case whatsit_node:
-            w = subtype(p) ;
-            if (w >= backend_first_pdf_whatsit) {
-                copy_node_wrapup_pdf(p,r);
-            } else if (w >= backend_first_dvi_whatsit) {
-                copy_node_wrapup_dvi(p,r);
-            } else {
-                copy_node_wrapup_core(p,r);
-            }
+            copy_node_wrapup_core(p,r);
             break;
     }
     return r;
@@ -2213,9 +1911,6 @@ static void flush_node_wrapup_core(halfword p)
         case write_node:
         case close_node:
         case save_pos_node:
-            break;
-        case special_node:
-            delete_token_ref(write_tokens(p));
             break;
         case late_lua_node:
             free_late_lua(p);
@@ -2256,71 +1951,8 @@ static void flush_node_wrapup_core(halfword p)
     }
 }
 
-void flush_node_wrapup_dvi(halfword p)
-{
-}
-
-void flush_node_wrapup_pdf(halfword p)
-{
-    switch(subtype(p)) {
-        case pdf_save_node:
-        case pdf_restore_node:
-        case pdf_link_state_node:
-        case pdf_refobj_node:
-        case pdf_end_link_node:
-        case pdf_end_thread_node:
-            break;
-        case pdf_literal_node:
-            free_pdf_literal(p);
-            break;
-        case pdf_colorstack_node:
-            if (pdf_colorstack_cmd(p) <= colorstack_data)
-                delete_token_ref(pdf_colorstack_data(p));
-            break;
-        case pdf_setmatrix_node:
-            delete_token_ref(pdf_setmatrix_data(p));
-            break;
-        case pdf_annot_node:
-            delete_token_ref(pdf_annot_data(p));
-            break;
-        case pdf_link_data_node:
-            break;
-        case pdf_start_link_node:
-            if (pdf_link_attr(p) != null)
-                delete_token_ref(pdf_link_attr(p));
-            delete_action_ref(pdf_link_action(p));
-            break;
-        case pdf_dest_node:
-            if (pdf_dest_named_id(p) > 0)
-                delete_token_ref(pdf_dest_id(p));
-            break;
-        case pdf_action_node:
-            if (pdf_action_type(p) == pdf_action_user) {
-                delete_token_ref(pdf_action_tokens(p));
-            } else {
-                if (pdf_action_file(p) != null)
-                    delete_token_ref(pdf_action_file(p));
-                if (pdf_action_type(p) == pdf_action_page)
-                    delete_token_ref(pdf_action_tokens(p));
-                else if (pdf_action_named_id(p) > 0)
-                    delete_token_ref(pdf_action_id(p));
-            }
-            break;
-        case pdf_thread_data_node:
-            break;
-        case pdf_thread_node:
-        case pdf_start_thread_node:
-            if (pdf_thread_named_id(p) > 0)
-                delete_token_ref(pdf_thread_id(p));
-            if (pdf_thread_attr(p) != null)
-                delete_token_ref(pdf_thread_attr(p));
-            break;
-    }
-}
-
 void flush_node(halfword p)
 {
-    halfword w;
     if (p == null){
         /*tex legal, but no-op. */
         return;
@@ -2362,14 +1994,7 @@ void flush_node(halfword p)
         case boundary_node:
             break;
         case whatsit_node:
-            w = subtype(p) ;
-            if (w >= backend_first_pdf_whatsit) {
-                flush_node_wrapup_pdf(p);
-            } else if (w >= backend_first_dvi_whatsit) {
-                flush_node_wrapup_dvi(p);
-            } else {
-                flush_node_wrapup_core(p);
-            }
+            flush_node_wrapup_core(p);
             break;
         case ins_node:
             flush_node_list(ins_ptr(p));
@@ -2518,70 +2143,12 @@ static void check_node_wrapup_core(halfword p)
         case open_node:
         case write_node:
         case close_node:
-        case save_pos_node:
-            break;
-    }
-}
-
-void check_node_wrapup_dvi(halfword p)
-{
-}
-
-void check_node_wrapup_pdf(halfword p)
-{
-    switch (subtype(p)) {
-        case pdf_literal_node:
-            if (pdf_literal_type(p) == normal)
-                check_token_ref(p);
-            break;
-        case pdf_colorstack_node:
-            if (pdf_colorstack_cmd(p) <= colorstack_data)
-                check_token_ref(p);
-            break;
-        case pdf_setmatrix_node:
-            check_token_ref(p);
-            break;
-        case late_lua_node:
-            if (late_lua_name(p) > 0)
-                check_token_ref(p);
-            if (late_lua_type(p) == normal)
-                check_token_ref(p);
-            break;
-        case pdf_annot_node:
-            check_token_ref(p);
-            break;
-        case pdf_start_link_node:
-            if (pdf_link_attr(p) != null)
-                check_token_ref(p);
-            check_action_ref(pdf_link_action(p));
-            break;
-        case pdf_dest_node:
-            if (pdf_dest_named_id(p) > 0)
-                check_token_ref(p);
-            break;
-        case pdf_thread_node:
-        case pdf_start_thread_node:
-            if (pdf_thread_named_id(p) > 0)
-                check_token_ref(p);
-            if (pdf_thread_attr(p) != null)
-                check_token_ref(p);
-            break;
-        case pdf_save_node:
-        case pdf_restore_node:
-        case pdf_link_state_node:
-        case pdf_refobj_node:
-        case pdf_end_link_node:
-        case pdf_end_thread_node:
-            break;
-        default:
-            confusion("wrapup pdf nodes");
             break;
     }
 }
 
 void check_node(halfword p)
 {
-    halfword w ;
     switch (type(p)) {
         case glyph_node:
             dorangetest(p, lig_ptr(p), var_mem_max);
@@ -2599,14 +2166,7 @@ void check_node(halfword p)
             dorangetest(p, ins_ptr(p), var_mem_max);
             break;
         case whatsit_node:
-            w = subtype(p) ;
-            if (w >= backend_first_pdf_whatsit) {
-                check_node_wrapup_pdf(p);
-            } else if (w >= backend_first_dvi_whatsit) {
-                check_node_wrapup_dvi(p);
-            } else {
-                check_node_wrapup_core(p);
-            }
+            check_node_wrapup_core(p);
             break;
         case margin_kern_node:
             check_node(margin_char(p));
@@ -3462,16 +3022,6 @@ void print_short_node_contents(halfword p)
     }
 }
 
-static void show_pdftex_whatsit_rule_spec(int p)
-{
-    tprint("(");
-    print_rule_dimen(height(p));
-    print_char('+');
-    print_rule_dimen(depth(p));
-    tprint(")x");
-    print_rule_dimen(width(p));
-}
-
 /*tex
 
     Each new type of node that appears in our data structure must be capable of
@@ -3507,15 +3057,8 @@ static void show_node_wrapup_core(int p)
         case close_node:
             print_write_whatsit("closeout", p);
             break;
-        case special_node:
-            tprint_esc("special");
-            print_mark(write_tokens(p));
-            break;
         case late_lua_node:
             show_late_lua(p);
-            break;
-        case save_pos_node:
-            tprint_esc("savepos");
             break;
         case user_defined_node:
             tprint_esc("whatsit");
@@ -3542,205 +3085,6 @@ static void show_node_wrapup_core(int p)
                 print_int(user_node_value(p));
                 break;
             }
-            break;
-    }
-}
-
-void show_node_wrapup_dvi(int p)
-{
-}
-
-void show_node_wrapup_pdf(int p)
-{
-    switch (subtype(p)) {
-        case pdf_literal_node:
-            show_pdf_literal(p);
-            break;
-        case pdf_colorstack_node:
-            tprint_esc("pdfcolorstack ");
-            print_int(pdf_colorstack_stack(p));
-            switch (pdf_colorstack_cmd(p)) {
-                case colorstack_set:
-                    tprint(" set ");
-                    break;
-                case colorstack_push:
-                    tprint(" push ");
-                    break;
-                case colorstack_pop:
-                    tprint(" pop");
-                    break;
-                case colorstack_current:
-                    tprint(" current");
-                    break;
-                default:
-                    confusion("colorstack");
-                    break;
-            }
-            if (pdf_colorstack_cmd(p) <= colorstack_data)
-                print_mark(pdf_colorstack_data(p));
-            break;
-        case pdf_setmatrix_node:
-            tprint_esc("pdfsetmatrix");
-            print_mark(pdf_setmatrix_data(p));
-            break;
-        case pdf_save_node:
-            tprint_esc("pdfsave");
-            break;
-        case pdf_restore_node:
-            tprint_esc("pdfrestore");
-            break;
-        case pdf_link_state_node:
-            tprint_esc("pdflinkstate ");
-            print_int(pdf_link_state(p));
-            break;
-        case pdf_refobj_node:
-            tprint_esc("pdfrefobj");
-            if (obj_obj_is_stream(static_pdf, pdf_obj_objnum(p))) {
-                if (obj_obj_stream_attr(static_pdf, pdf_obj_objnum(p)) != LUA_NOREF) {
-                    tprint(" attr");
-                    lua_rawgeti(Luas, LUA_REGISTRYINDEX, obj_obj_stream_attr(static_pdf, pdf_obj_objnum(p)));
-                    print_char(' ');
-                    tprint((const char *) lua_tostring(Luas, -1));
-                    lua_pop(Luas, 1);
-                }
-                tprint(" stream");
-            }
-            if (obj_obj_is_file(static_pdf, pdf_obj_objnum(p)))
-                tprint(" file");
-            if (obj_obj_data(static_pdf, pdf_obj_objnum(p)) != LUA_NOREF) {
-                lua_rawgeti(Luas, LUA_REGISTRYINDEX, obj_obj_data(static_pdf, pdf_obj_objnum(p)));
-                print_char(' ');
-                tprint((const char *) lua_tostring(Luas, -1));
-                lua_pop(Luas, 1);
-            }
-            break;
-        case pdf_annot_node:
-            tprint_esc("pdfannot");
-            show_pdftex_whatsit_rule_spec(p);
-            print_mark(pdf_annot_data(p));
-            break;
-        case pdf_start_link_node:
-            tprint_esc("pdfstartlink");
-            show_pdftex_whatsit_rule_spec(p);
-            if (pdf_link_attr(p) != null) {
-                tprint(" attr");
-                print_mark(pdf_link_attr(p));
-            }
-            tprint(" action");
-            if (pdf_action_type(pdf_link_action(p)) == pdf_action_user) {
-                tprint(" user");
-                print_mark(pdf_action_tokens(pdf_link_action(p)));
-                return;
-            }
-            if (pdf_action_file(pdf_link_action(p)) != null) {
-                tprint(" file");
-                print_mark(pdf_action_file(pdf_link_action(p)));
-            }
-            switch (pdf_action_type(pdf_link_action(p))) {
-            case pdf_action_goto:
-                if (pdf_action_named_id(pdf_link_action(p)) > 0) {
-                    tprint(" goto name");
-                    print_mark(pdf_action_id(pdf_link_action(p)));
-                } else {
-                    tprint(" goto num");
-                    print_int(pdf_action_id(pdf_link_action(p)));
-                }
-                break;
-            case pdf_action_page:
-                tprint(" page");
-                print_int(pdf_action_id(pdf_link_action(p)));
-                print_mark(pdf_action_tokens(pdf_link_action(p)));
-                break;
-            case pdf_action_thread:
-                if (pdf_action_named_id(pdf_link_action(p)) > 0) {
-                    tprint(" thread name");
-                    print_mark(pdf_action_id(pdf_link_action(p)));
-                } else {
-                    tprint(" thread num");
-                    print_int(pdf_action_id(pdf_link_action(p)));
-                }
-                break;
-            default:
-                normal_error("pdf backend", "unknown action type for link");
-                break;
-            }
-            break;
-        case pdf_end_link_node:
-            tprint_esc("pdfendlink");
-            break;
-        case pdf_dest_node:
-            tprint_esc("pdfdest");
-            if (pdf_dest_named_id(p) > 0) {
-                tprint(" name");
-                print_mark(pdf_dest_id(p));
-            } else {
-                tprint(" num");
-                print_int(pdf_dest_id(p));
-            }
-            print_char(' ');
-            switch (pdf_dest_type(p)) {
-            case pdf_dest_xyz:
-                tprint("xyz");
-                if (pdf_dest_xyz_zoom(p) != null) {
-                    tprint(" zoom");
-                    print_int(pdf_dest_xyz_zoom(p));
-                }
-                break;
-            case pdf_dest_fitbh:
-                tprint("fitbh");
-                break;
-            case pdf_dest_fitbv:
-                tprint("fitbv");
-                break;
-            case pdf_dest_fitb:
-                tprint("fitb");
-                break;
-            case pdf_dest_fith:
-                tprint("fith");
-                break;
-            case pdf_dest_fitv:
-                tprint("fitv");
-                break;
-            case pdf_dest_fitr:
-                tprint("fitr");
-                show_pdftex_whatsit_rule_spec(p);
-                break;
-            case pdf_dest_fit:
-                tprint("fit");
-                break;
-            default:
-                tprint("unknown!");
-                break;
-            }
-            break;
-        case pdf_thread_node:
-        case pdf_start_thread_node:
-            if (subtype(p) == pdf_thread_node)
-                tprint_esc("pdfthread");
-            else
-                tprint_esc("pdfstartthread");
-            tprint("(");
-            print_rule_dimen(height(p));
-            print_char('+');
-            print_rule_dimen(depth(p));
-            tprint(")x");
-            print_rule_dimen(width(p));
-            if (pdf_thread_attr(p) != null) {
-                tprint(" attr");
-                print_mark(pdf_thread_attr(p));
-            }
-            if (pdf_thread_named_id(p) > 0) {
-                tprint(" name");
-                print_mark(pdf_thread_id(p));
-            } else {
-                tprint(" num");
-                print_int(pdf_thread_id(p));
-            }
-            break;
-        case pdf_end_thread_node:
-            tprint_esc("pdfendthread");
-            break;
-        default:
             break;
     }
 }
@@ -3783,7 +3127,6 @@ void show_node_list(int p)
 {
     /*tex The number of items already printed at this level: */
     int n = 0;
-    halfword w;
     /*tex A glue ratio, as a floating point number: */
     real g;
     if ((int) cur_length > depth_threshold) {
@@ -3995,14 +3338,7 @@ void show_node_list(int p)
                     }
                     break;
                 case whatsit_node:
-                    w = subtype(p) ;
-                    if (w >= backend_first_pdf_whatsit) {
-                        show_node_wrapup_pdf(p);
-                    } else if (w >= backend_first_dvi_whatsit) {
-                        show_node_wrapup_dvi(p);
-                    } else {
-                        show_node_wrapup_core(p);
-                    }
+                    show_node_wrapup_core(p);
                     break;
                 case glue_node:
                     /*tex Display glue |p|. */

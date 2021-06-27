@@ -115,6 +115,9 @@ extern int luaopen_sha2(lua_State * L);
 extern int luaopen_luaharfbuzz(lua_State * L);
 #endif
 
+// TODO(mvlasak):
+#include <zlib.h>
+
 extern int luaopen_zlib(lua_State * L);
 extern int luaopen_gzip(lua_State * L);
 extern int luaopen_profiler(lua_State * L);
@@ -662,7 +665,6 @@ make_lua_key(compresslevel);\
 make_lua_key(conditionalmathskip);\
 make_lua_key(contrib_head);\
 make_lua_key(convert);\
-make_lua_key(copy_font);\
 make_lua_key(core);\
 make_lua_key(cost);\
 make_lua_key(count);\
@@ -852,7 +854,6 @@ make_lua_key(left_right);\
 make_lua_key(leftskip);\
 make_lua_key(let);\
 make_lua_key(letter);\
-make_lua_key(letterspace_font);\
 make_lua_key(level);\
 make_lua_key(ligature);\
 make_lua_key(ligatures);\
@@ -1373,7 +1374,6 @@ init_lua_key(compresslevel);\
 init_lua_key(conditionalmathskip);\
 init_lua_key(contrib_head);\
 init_lua_key(convert);\
-init_lua_key(copy_font);\
 init_lua_key(core);\
 init_lua_key(cost);\
 init_lua_key(count);\
@@ -1439,7 +1439,6 @@ init_lua_key(etex);\
 init_lua_key(ex_space);\
 init_lua_key(exactly);\
 init_lua_key(expand_after);\
-init_lua_key(expand_font);\
 init_lua_key(expandable);\
 init_lua_key(expansion_factor);\
 init_lua_key(explicit);\
@@ -1562,7 +1561,6 @@ init_lua_key(left_right);\
 init_lua_key(leftskip);\
 init_lua_key(let);\
 init_lua_key(letter);\
-init_lua_key(letterspace_font);\
 init_lua_key(level);\
 init_lua_key(ligature);\
 init_lua_key(ligatures);\
@@ -2133,7 +2131,6 @@ use_lua_key(compresslevel);
 use_lua_key(conditionalmathskip);
 use_lua_key(contrib_head);
 use_lua_key(convert);
-use_lua_key(copy_font);
 use_lua_key(core);
 use_lua_key(cost);
 use_lua_key(count);
@@ -2200,7 +2197,6 @@ use_lua_key(etex);
 use_lua_key(ex_space);
 use_lua_key(exactly);
 use_lua_key(expand_after);
-use_lua_key(expand_font);
 use_lua_key(expandable);
 use_lua_key(expansion_factor);
 use_lua_key(explicit);
@@ -2323,7 +2319,6 @@ use_lua_key(left_right);
 use_lua_key(leftskip);
 use_lua_key(let);
 use_lua_key(letter);
-use_lua_key(letterspace_font);
 use_lua_key(level);
 use_lua_key(ligature);
 use_lua_key(ligatures);
@@ -2472,30 +2467,6 @@ use_lua_key(parfillskip);
 use_lua_key(parshape);
 use_lua_key(parskip);
 use_lua_key(passive);
-use_lua_key(pdf);
-use_lua_key(pdfe);
-use_lua_key(pdf_action);
-use_lua_key(pdf_annot);
-use_lua_key(pdf_colorstack);
-use_lua_key(pdf_data);
-use_lua_key(pdf_dest);
-use_lua_key(pdf_destination);
-use_lua_key(pdf_end_link);
-use_lua_key(pdf_end_thread);
-use_lua_key(pdf_link_data);
-use_lua_key(pdf_link_state);
-use_lua_key(pdf_literal);
-use_lua_key(pdf_refobj);
-use_lua_key(pdf_restore);
-use_lua_key(pdf_save);
-use_lua_key(pdf_setmatrix);
-use_lua_key(pdf_setobj);
-use_lua_key(pdf_start);
-use_lua_key(pdf_start_link);
-use_lua_key(pdf_start_thread);
-use_lua_key(pdf_thread);
-use_lua_key(pdf_thread_data);
-use_lua_key(pdf_window);
 use_lua_key(pen_broken);
 use_lua_key(pen_inter);
 use_lua_key(penalty);

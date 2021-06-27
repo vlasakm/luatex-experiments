@@ -165,7 +165,6 @@ void initialize_commands(void)
     primitive_tex("emergencystretch", assign_dimen_cmd, dimen_base + emergency_stretch_code, dimen_base);
     primitive_luatex("pagewidth", assign_dimen_cmd, dimen_base + page_width_code, dimen_base);
     primitive_luatex("pageheight", assign_dimen_cmd, dimen_base + page_height_code, dimen_base);
-    primitive_luatex("pxdimen", assign_dimen_cmd, dimen_base + px_dimen_code, dimen_base);
     primitive_luatex("predisplaygapfactor", assign_int_cmd, int_base + math_pre_display_gap_factor_code, int_base);
     primitive_luatex("hyphenpenaltymode", assign_int_cmd, int_base + hyphen_penalty_mode_code, int_base);
     primitive_luatex("automatichyphenpenalty", assign_int_cmd, int_base + automatic_hyphen_penalty_code, int_base);
@@ -205,9 +204,6 @@ void initialize_commands(void)
     eqtb[frozen_end_group] = eqtb[cur_val];
     primitive_tex("expandafter", expand_after_cmd, 0, 0);
     primitive_tex("font", def_font_cmd, 0, 0);
-    primitive_luatex("letterspacefont", letterspace_font_cmd, 0, 0);
-    primitive_luatex("expandglyphsinfont", normal_cmd, expand_font_code, 0);
-    primitive_luatex("copyfont", copy_font_cmd, 0, 0);
     primitive_luatex("setfontid", set_font_id_cmd, 0, 0);
     primitive_tex("fontdimen", assign_font_dimen_cmd, 0, 0);
     primitive_tex("halign", halign_cmd, 0, 0);
@@ -319,11 +315,6 @@ void initialize_commands(void)
     primitive_tex("inputlineno", last_item_cmd, input_line_no_code, 0);
     primitive_tex("badness", last_item_cmd, badness_code, 0);
     primitive_luatex("luatexversion", last_item_cmd, luatex_version_code, 0);
-    primitive_luatex("lastsavedboxresourceindex", last_item_cmd, last_saved_box_resource_index_code, 0);
-    primitive_luatex("lastsavedimageresourceindex", last_item_cmd, last_saved_image_resource_index_code, 0);
-    primitive_luatex("lastsavedimageresourcepages", last_item_cmd, last_saved_image_resource_pages_code, 0);
-    primitive_luatex("lastxpos", last_item_cmd, last_x_pos_code, 0);
-    primitive_luatex("lastypos", last_item_cmd, last_y_pos_code, 0);
     primitive_luatex("randomseed", last_item_cmd, random_seed_code, 0);
 
     primitive_tex("number", convert_cmd, number_code, 0);
@@ -706,9 +697,6 @@ void initialize_commands(void)
     write_loc = cur_val;
     primitive_tex("closeout", extension_cmd, close_code, 0);
     primitive_luatex("endlocalcontrol", extension_cmd, end_local_code, 0);
-    primitive_tex("special", extension_cmd, special_code, 0);
-    cs_text(frozen_special) = maketexstring("special");
-    eqtb[frozen_special] = eqtb[cur_val];
     primitive_tex("immediate", extension_cmd, immediate_code, 0);
     primitive_luatex("localinterlinepenalty", assign_int_cmd, int_base + local_inter_line_penalty_code, int_base);
     primitive_luatex("localbrokenpenalty", assign_int_cmd, int_base + local_broken_penalty_code, int_base);
@@ -733,12 +721,6 @@ void initialize_commands(void)
     primitive_luatex("latelua", normal_cmd, late_lua_code, 0);
     primitive_luatex("lateluafunction", normal_cmd, late_lua_call_code, 0);
     primitive_luatex("insertht", convert_cmd, insert_ht_code, 0);
-    primitive_luatex("dviextension", extension_cmd, dvi_extension_code, 0);
-    primitive_luatex("dvifeedback", feedback_cmd, dvi_feedback_code, 0);
-    primitive_luatex("dvivariable", variable_cmd, dvi_variable_code, 0);
-    primitive_luatex("pdfextension", extension_cmd, pdf_extension_code, 0);
-    primitive_luatex("pdffeedback", feedback_cmd, pdf_feedback_code, 0);
-    primitive_luatex("pdfvariable", variable_cmd, pdf_variable_code, 0);
     primitive_luatex("mathoption", option_cmd, math_option_code, 0);
 
     primitive_luatex("luacopyinputnodes", assign_int_cmd, int_base + copy_lua_input_nodes_code, int_base);

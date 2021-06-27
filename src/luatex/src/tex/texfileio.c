@@ -1062,11 +1062,6 @@ void start_input(void)
     incr(open_parens);
     update_terminal();
     istate = new_line;
-    /*tex Prepare new file {\sl Sync\TeX} information. */
-    if (! synctex_get_no_files()) {
-        /*tex Give control to the {\sl Sync\TeX} controller. */
-        synctexstartinput();
-    }
     /*tex
 
         Read the first line of the new file. Here we have to remember to tell the

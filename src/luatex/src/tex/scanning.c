@@ -687,8 +687,6 @@ void scan_something_internal(int level, boolean negative)
             case toks_register_cmd:
             case set_font_cmd:
             case def_font_cmd:
-            case letterspace_font_cmd:
-            case copy_font_cmd:
                 /*tex Fetch a token list or font identifier, provided that |level=tok_val|. */
                 if (level != tok_val_level) {
                     print_err("Missing number, treated as zero");
@@ -1297,7 +1295,6 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
 {
     /*tex should the answer be negated? */
     boolean negative = false;
-    boolean is_true  = false;
     /*tex numerator of a fraction whose denominator is $2^{16}$ */
     int f = 0;
     /*tex conversion ratio for the scanned units */
@@ -1469,8 +1466,6 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
         v = quad(get_cur_font());
     } else if (scan_keyword("ex")) {
         v = x_height(get_cur_font());
-    } else if (scan_keyword("px")) {
-        v = px_dimen_par;
     } else {
         goto PICKUP_UNIT;
     }
@@ -1521,30 +1516,12 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
     } else if (scan_keyword("nc")) {
         set_conversion(1370, 107);
         goto SCALE_VALUE;
-    } else if (!is_true && scan_keyword("true")) {
-        is_true = true;
-        goto PICKUP_UNIT;
     }
     /*tex Complain about unknown unit and |goto done2|. */
     scan_dimen_unknown_unit_error();
     goto BAD_NEWS;
   SCALE_VALUE:
     /*tex Adjust |f| for the magnification ratio. */
-    if (is_true) {
-        /*tex Maybe at some point we will drop mag completely, even in \DVI\ mode. */
-        if (output_mode_used <= OMODE_DVI) {
-            prepare_mag();
-            if (mag_par != 1000) {
-                cur_val = xn_over_d(cur_val, 1000, mag_par);
-                f = (1000 * f + 0200000 * tex_remainder) / mag_par;
-                cur_val = cur_val + (f / 0200000);
-                f = f % 0200000;
-            }
-        } else {
-            /*tex in \PDF\ mode we're always |true|. */
-            one_true_inch = one_inch;
-        }
-    }
     if (num) {
         cur_val = xn_over_d(cur_val, num, denom);
         f = (num * f + 0200000 * tex_remainder) / denom;
@@ -1919,7 +1896,7 @@ void scan_font_ident(void)
     do {
         get_x_token();
     } while (cur_cmd == spacer_cmd);
-    if ((cur_cmd == def_font_cmd) || (cur_cmd == letterspace_font_cmd) || (cur_cmd == copy_font_cmd)) {
+    if (cur_cmd == def_font_cmd) {
         f = get_cur_font();
     } else if (cur_cmd == set_font_cmd) {
         f = cur_chr;

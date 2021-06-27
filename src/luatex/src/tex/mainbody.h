@@ -59,9 +59,6 @@ in production versions of \TeX.
 #  define inf_stack_size   200
 #  define sup_stack_size   50000
 
-#  define inf_dvi_buf_size   800
-#  define sup_dvi_buf_size   65536
-
 #  define sup_hash_extra   sup_max_strings
 #  define inf_hash_extra   0
 

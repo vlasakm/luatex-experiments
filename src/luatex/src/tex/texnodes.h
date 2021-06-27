@@ -709,40 +709,12 @@ typedef enum {
     open_node = 0,
     write_node,
     close_node,
-    special_node,
-    use_box_resource_node,
-    use_image_resource_node,
-    save_pos_node,
     late_lua_node,
     user_defined_node,
-    /* dvi backend */
-    dvi_literal_node = 15,
-    /* pdf backend */
-    pdf_literal_node = 16,
-    pdf_refobj_node,
-    pdf_annot_node,
-    pdf_start_link_node,
-    pdf_end_link_node,
-    pdf_dest_node,
-    pdf_action_node,
-    pdf_thread_node,
-    pdf_start_thread_node,
-    pdf_end_thread_node,
-    pdf_thread_data_node,
-    pdf_link_data_node,
-    pdf_colorstack_node,
-    pdf_setmatrix_node,
-    pdf_save_node,
-    pdf_restore_node,
-    pdf_link_state_node,
 } whatsit_types;
 
 #  define first_common_whatsit      0
 #  define last_common_whatsit       user_defined_node
-#  define backend_first_dvi_whatsit 15
-#  define backend_last_dvi_whatsit  15
-#  define backend_first_pdf_whatsit 16
-#  define backend_last_pdf_whatsit  32
 
 /* add some slack for the future */
 
@@ -750,8 +722,6 @@ typedef enum {
 
 #  define known_whatsit_type(i) ( \
     (i >= first_common_whatsit      && i <= last_common_whatsit) || \
-    (i >= backend_first_dvi_whatsit && i <= backend_last_dvi_whatsit) || \
-    (i >= backend_first_pdf_whatsit && i <= backend_last_pdf_whatsit) \
 )
 
 #  define get_node_size(i,j) (i!=whatsit_node ? node_data[i].size : whatsit_node_data[j].size)
@@ -858,115 +828,6 @@ typedef enum {
 #  define lua_refid_literal 1 /* not a |normal| string */
 #  define lua_refid_call    2 /* not a |normal| string */
 
-/* begin of pdf backend nodes */
-
-/* literal ctm types */
-
-typedef enum {
-    set_origin = 0,
-    direct_page,
-    direct_always,
-    direct_raw,
-    direct_text,
-    direct_font,
-    scan_special,
-} ctm_transform_modes;
-
-#  define pdf_refobj_node_size 3
-
-#  define pdf_obj_objnum(a) vinfo((a) + 2)
-
-#  define pdf_annot_node_size 8
-#  define pdf_dest_node_size 8
-#  define pdf_thread_node_size 8
-
-/*
-    when a whatsit node representing annotation is created, words |1..3| are
-    width, height and depth of this annotation; after shipping out words |1..4|
-    are rectangle specification of annotation. For whatsit node representing
-    destination |pdf_ann_left| and |pdf_ann_top| are used for some types of destinations
-*/
-
-/*
-    coordinates of destinations/threads/annotations (in whatsit node)
-*/
-
-#  define pdf_ann_left(a)           varmem[(a) + 2].cint
-#  define pdf_ann_top(a)            varmem[(a) + 3].cint
-#  define pdf_ann_right(a)          varmem[(a) + 4].cint
-#  define pdf_ann_bottom(a)         varmem[(a) + 5].cint
-
-#  define pdf_literal_data(a)       vlink((a)+2)
-#  define pdf_literal_mode(a)       type((a)+2)
-#  define pdf_literal_type(a)       subtype((a)+2)
-
-#  define pdf_annot_data(a)         vinfo((a) + 6)
-#  define pdf_link_attr(a)          vinfo((a) + 6)
-#  define pdf_link_action(a)        vlink((a) + 6)
-#  define pdf_annot_objnum(a)       varmem[(a) + 7].cint
-#  define pdf_link_objnum(a)        varmem[(a) + 7].cint
-
-#  define pdf_dest_type(a)          type((a) + 6)
-#  define pdf_dest_named_id(a)      subtype((a) + 6)
-#  define pdf_dest_id(a)            vlink((a) + 6)
-#  define pdf_dest_xyz_zoom(a)      vinfo((a) + 7)
-#  define pdf_dest_objnum(a)        vlink((a) + 7)
-
-#  define pdf_thread_named_id(a)    subtype((a) + 6)
-#  define pdf_thread_id(a)          vlink((a) + 6)
-#  define pdf_thread_attr(a)        vinfo((a) + 7)
-
-#  define pdf_end_link_node_size    3
-#  define pdf_end_thread_node_size  3
-
-#  define pdf_setmatrix_node_size   3
-#  define pdf_save_node_size        3
-#  define pdf_restore_node_size     3
-
-#  define pdf_link_state_node_size  3
-
-#  define pdf_link_state(a) vinfo((a) + 2)
-
-#  define pdf_colorstack_node_size  4
-#  define pdf_colorstack_stack(a)   vlink((a)+2)
-#  define pdf_colorstack_cmd(a)     vinfo((a)+2)
-#  define pdf_colorstack_data(a)    vlink((a)+3)
-#  define pdf_setmatrix_data(a)     vlink((a)+2)
-
-typedef enum {
-    pdf_action_page = 0,
-    pdf_action_goto,
-    pdf_action_thread,
-    pdf_action_user
-} pdf_action_type;
-
-typedef enum {
-    pdf_window_notset,
-    pdf_window_new,
-    pdf_window_nonew,
-} pdf_window_type;
-
-#  define pdf_action_size           6
-
-#  define pdf_action_type(a)        vlink((a)+2) /* enum pdf_action_type */
-#  define pdf_action_named_id(a)    vinfo((a)+2) /* boolean */
-#  define pdf_action_id(a)          vlink((a)+3) /* number or toks */
-#  define pdf_action_file(a)        vinfo((a)+3) /* toks */
-#  define pdf_action_new_window(a)  vlink((a)+4) /* enum pdf_window_type */
-#  define pdf_action_tokens(a)      vinfo((a)+4) /* toks */
-#  define pdf_action_refcount(a)    vlink((a)+5) /* number */
-
-typedef enum {
-    colorstack_set = 0,
-    colorstack_push,
-    colorstack_pop,
-    colorstack_current
-} colorstack_commands;
-
-#  define colorstack_data colorstack_push     /* last value where data field is set */
-
-/* end of pdf backend nodes */
-
 /* user defined nodes */
 
 #  define user_defined_node_size 4
@@ -1066,12 +927,6 @@ extern subtype_info node_subtypes_radical[];
 extern subtype_info node_subtypes_accent[];
 extern subtype_info node_subtypes_fence[];
 
-extern subtype_info node_values_pdf_destination[];
-extern subtype_info node_values_pdf_literal[];
-extern subtype_info node_values_pdf_literal[];
-extern subtype_info node_values_pdf_action[];
-extern subtype_info node_values_pdf_window[];
-
 extern subtype_info node_values_fill[];
 extern subtype_info node_values_dir[];
 extern subtype_info node_values_color_stack[];
@@ -1091,15 +946,6 @@ extern char *sprint_node_mem_usage(void);
 extern halfword raw_glyph_node(void);
 extern halfword new_glyph_node(void);
 extern int valid_node(halfword);
-
-extern void flush_node_wrapup_dvi(halfword);
-extern void flush_node_wrapup_pdf(halfword);
-extern void copy_node_wrapup_dvi(halfword, halfword); /* original target */
-extern void copy_node_wrapup_pdf(halfword, halfword); /* original target */
-extern void check_node_wrapup_dvi(halfword); /* DEBUG_NODES mode */
-extern void check_node_wrapup_pdf(halfword); /* DEBUG_NODES mode */
-extern void show_node_wrapup_dvi(halfword);
-extern void show_node_wrapup_pdf(halfword);
 
 typedef enum {
     normal_g = 0, /* normal */
@@ -1134,7 +980,6 @@ typedef enum {
 #  define shrinking  2
 
 #  define last_normal_node  shape_node
-#  define last_whatsit_node pdf_restore_node
 
 #  define is_running(A) ((A)==null_flag)        /* tests for a running dimension */
 

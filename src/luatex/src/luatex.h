@@ -59,10 +59,6 @@
 
 #  define DUMP_FILE fmt_file
 #  define DUMP_FORMAT kpse_fmt_format
-#  define write_dvi WRITE_OUT
-#  define flush_dvi flush_out
-#  define OUT_FILE dvi_file
-#  define OUT_BUF dvi_buf
 
 /* Restore underscores.  */
 #  define kpsetexformat kpse_tex_format

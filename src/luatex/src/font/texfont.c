@@ -199,121 +199,6 @@ charinfo *get_charinfo(internal_font_number f, int c)
     return &(font_tables[f]->_charinfo[0]);
 }
 
-static void set_charinfo(internal_font_number f, int c, charinfo * ci)
-{
-    int glyph;
-    if (proper_char_index(c)) {
-        glyph = get_sa_item(font_tables[f]->_characters, c).int_value;
-        if (glyph) {
-            font_tables[f]->_charinfo[glyph] = *ci;
-        } else {
-            normal_error("font","character insertion failed");
-        }
-    } else if (c == left_boundarychar) {
-        set_left_boundary(f, ci);
-    } else if (c == right_boundarychar) {
-        set_right_boundary(f, ci);
-    }
-}
-
-charinfo *copy_charinfo(charinfo * ci)
-{
-    int x, k;
-    kerninfo *kern;
-    liginfo *lig;
-    eight_bits *packet;
-    charinfo *co = NULL;
-    if (ci == NULL)
-        return NULL;
-    co = xmalloc(sizeof(charinfo));
-    memcpy(co, ci, sizeof(charinfo));
-    set_charinfo_used(co, false);
-    co->name = NULL;
-    co->tounicode = NULL;
-    co->packets = NULL;
-    co->ligatures = NULL;
-    co->kerns = NULL;
-    co->vert_variants = NULL;
-    co->hor_variants = NULL;
-    if (ci->name != NULL) {
-        co->name = xstrdup(ci->name);
-    }
-    if (ci->tounicode != NULL) {
-        co->tounicode = xstrdup(ci->tounicode);
-    }
-    /*tex Kerns */
-    if ((kern = get_charinfo_kerns(ci)) != NULL) {
-        x = 0;
-        while (!kern_end(kern[x])) {
-            x++;
-        }
-        x++;
-        co->kerns = xmalloc((unsigned) (x * (int) sizeof(kerninfo)));
-        memcpy(co->kerns, ci->kerns, (size_t) (x * (int) sizeof(kerninfo)));
-    }
-    /*tex Ligatures */
-    if ((lig = get_charinfo_ligatures(ci)) != NULL) {
-        x = 0;
-        while (!lig_end(lig[x])) {
-            x++;
-        }
-        x++;
-        co->ligatures = xmalloc((unsigned) (x * (int) sizeof(liginfo)));
-        memcpy(co->ligatures, ci->ligatures,
-               (size_t) (x * (int) sizeof(liginfo)));
-    }
-    /*tex Packets */
-    if ((packet = get_charinfo_packets(ci)) != NULL) {
-        x = vf_packet_bytes(ci);
-        co->packets = xmalloc((unsigned) x);
-        memcpy(co->packets, ci->packets, (size_t) x);
-    }
-    /*tex Horizontal and vertical extenders */
-    if (get_charinfo_vert_variants(ci) != NULL) {
-        set_charinfo_vert_variants(co, copy_variants(get_charinfo_vert_variants(ci)));
-    }
-    if (get_charinfo_hor_variants(ci) != NULL) {
-        set_charinfo_hor_variants(co, copy_variants(get_charinfo_hor_variants(ci)));
-    }
-    x = ci->top_left_math_kerns;
-    co->top_left_math_kerns = x;
-    if (x > 0) {
-        co->top_left_math_kern_array = xmalloc((unsigned) (2 * (int) sizeof(scaled) * x));
-        for (k = 0; k < co->top_left_math_kerns; k++) {
-            co->top_left_math_kern_array[(2 * k)] = ci->top_left_math_kern_array[(2 * k)];
-            co->top_left_math_kern_array[(2 * k) + 1] = ci->top_left_math_kern_array[(2 * k) + 1];
-        }
-    }
-    x = ci->bottom_left_math_kerns;
-    co->bottom_left_math_kerns = x;
-    if (x > 0) {
-        co->bottom_left_math_kern_array = xmalloc((unsigned) (2 * (int) sizeof(scaled) * x));
-        for (k = 0; k < co->bottom_left_math_kerns; k++) {
-            co->bottom_left_math_kern_array[(2 * k)] = ci->bottom_left_math_kern_array[(2 * k)];
-            co->bottom_left_math_kern_array[(2 * k) + 1] = ci->bottom_left_math_kern_array[(2 * k) + 1];
-        }
-    }
-    x = ci->top_right_math_kerns;
-    co->top_right_math_kerns = x;
-    if (x > 0) {
-        co->top_right_math_kern_array = xmalloc((unsigned) (2 * (int) sizeof(scaled) * x));
-        for (k = 0; k < co->top_right_math_kerns; k++) {
-            co->top_right_math_kern_array[(2 * k)] = ci->top_right_math_kern_array[(2 * k)];
-            co->top_right_math_kern_array[(2 * k) + 1] = ci->top_right_math_kern_array[(2 * k) + 1];
-        }
-    }
-    x = ci->bottom_right_math_kerns;
-    co->bottom_right_math_kerns = x;
-    if (x > 0) {
-        co->bottom_right_math_kern_array = xmalloc((unsigned) (2 * (int) sizeof(scaled) * x));
-        for (k = 0; k < co->bottom_right_math_kerns; k++) {
-            co->bottom_right_math_kern_array[(2 * k)] = ci->bottom_right_math_kern_array[(2 * k)];
-            co->bottom_right_math_kern_array[(2 * k) + 1] = ci->bottom_right_math_kern_array[(2 * k) + 1];
-        }
-    }
-    return co;
-}
-
 charinfo *char_info(internal_font_number f, int c)
 {
     if (f > font_id_maxval)
@@ -588,11 +473,6 @@ void set_charinfo_ligatures(charinfo * ci, liginfo * val)
 void set_charinfo_kerns(charinfo * ci, kerninfo * val)
 {
     dxfree(ci->kerns, val);
-}
-
-void set_charinfo_packets(charinfo * ci, eight_bits * val)
-{
-    dxfree(ci->packets, val);
 }
 
 void set_charinfo_ef(charinfo * ci, scaled val)
@@ -891,11 +771,6 @@ kerninfo *get_charinfo_kerns(charinfo * ci)
     return ci->kerns;
 }
 
-eight_bits *get_charinfo_packets(charinfo * ci)
-{
-    return ci->packets;
-}
-
 int get_charinfo_ef(charinfo * ci)
 {
     return ci->ef;
@@ -1026,12 +901,6 @@ kerninfo *char_kerns(internal_font_number f, int c)
     return get_charinfo_kerns(ci);
 }
 
-eight_bits *char_packets(internal_font_number f, int c)
-{
-    charinfo *ci = char_info(f, c);
-    return get_charinfo_packets(ci);
-}
-
 void set_font_params(internal_font_number f, int b)
 {
     int i;
@@ -1068,79 +937,6 @@ void set_font_math_params(internal_font_number f, int b)
     }
 }
 
-int copy_font(int f)
-{
-    int i, ci_cnt, ci_size;
-    charinfo *ci;
-    int k = new_font();
-    {
-        ci = font_tables[k]->_charinfo;
-        ci_cnt = font_tables[k]->_charinfo_count;
-        ci_size = font_tables[k]->_charinfo_size;
-        memcpy(font_tables[k], font_tables[f], sizeof(texfont));
-        font_tables[k]->_charinfo = ci;
-        font_tables[k]->_charinfo_count = ci_cnt;
-        font_tables[k]->_charinfo_size = ci_size;
-    }
-    font_malloc_charinfo(k, font_tables[f]->_charinfo_count);
-    set_font_cache_id(k, 0);
-    set_font_used(k, 0);
-    set_font_touched(k, 0);
-    font_tables[k]->_font_name = NULL;
-    font_tables[k]->_font_filename = NULL;
-    font_tables[k]->_font_fullname = NULL;
-    font_tables[k]->_font_psname = NULL;
-    font_tables[k]->_font_encodingname = NULL;
-    font_tables[k]->_font_area = NULL;
-    font_tables[k]->_font_cidregistry = NULL;
-    font_tables[k]->_font_cidordering = NULL;
-    font_tables[k]->_left_boundary = NULL;
-    font_tables[k]->_right_boundary = NULL;
-    set_font_name(k, xstrdup(font_name(f)));
-    if (font_filename(f) != NULL)
-        set_font_filename(k, xstrdup(font_filename(f)));
-    if (font_fullname(f) != NULL)
-        set_font_fullname(k, xstrdup(font_fullname(f)));
-    if (font_psname(f) != NULL)
-        set_font_psname(k, xstrdup(font_psname(f)));
-    if (font_encodingname(f) != NULL)
-        set_font_encodingname(k, xstrdup(font_encodingname(f)));
-    if (font_area(f) != NULL)
-        set_font_area(k, xstrdup(font_area(f)));
-    if (font_cidregistry(f) != NULL)
-        set_font_cidregistry(k, xstrdup(font_cidregistry(f)));
-    if (font_cidordering(f) != NULL)
-        set_font_cidordering(k, xstrdup(font_cidordering(f)));
-    set_font_encodingbytes(k,font_encodingbytes(f));
-    set_font_subfont(k,font_subfont(f));
-    i = (int) (sizeof(*param_base(f)) * (unsigned) (font_params(f)+1));
-    font_bytes += i;
-    param_base(k) = xmalloc((unsigned) (i+1));
-    memcpy(param_base(k), param_base(f), (size_t) (i));
-    if (font_math_params(f) > 0) {
-        i = (int) (sizeof(*math_param_base(f)) *
-                   (unsigned) font_math_params(f));
-        font_bytes += i;
-        math_param_base(k) = xmalloc((unsigned) i);
-        memcpy(math_param_base(k), math_param_base(f), (size_t) i);
-    }
-    for (i = 0; i <= font_tables[f]->_charinfo_count; i++) {
-        ci = copy_charinfo(&font_tables[f]->_charinfo[i]);
-        font_tables[k]->_charinfo[i] = *ci;
-    }
-    if (left_boundary(f) != NULL) {
-        ci = copy_charinfo(left_boundary(f));
-        set_charinfo(k, left_boundarychar, ci);
-    }
-    if (right_boundary(f) != NULL) {
-        ci = copy_charinfo(right_boundary(f));
-        set_charinfo(k, right_boundarychar, ci);
-    }
-    /*tex Not updated yet: */
-    font_tables[k]->_charinfo_count = font_tables[f]->_charinfo_count;
-    return k;
-}
-
 void delete_font(int f)
 {
     int i;
@@ -1162,7 +958,6 @@ void delete_font(int f)
                 co = char_info(f, i);
                 set_charinfo_name(co, NULL);
                 set_charinfo_tounicode(co, NULL);
-                set_charinfo_packets(co, NULL);
                 set_charinfo_ligatures(co, NULL);
                 set_charinfo_kerns(co, NULL);
                 set_charinfo_vert_variants(co, NULL);
@@ -1472,12 +1267,6 @@ static void dump_charinfo(int f, int c)
     } else {
         dump_int(x);
     }
-    /*tex Packets */
-    x = vf_packet_bytes(co);
-    dump_int(x);
-    if (x > 0) {
-        dump_things(*get_charinfo_packets(co), x);
-    }
     if (get_charinfo_tag(co) == ext_tag) {
         dump_charinfo_variants(get_charinfo_vert_variants(co));
         dump_charinfo_variants(get_charinfo_hor_variants(co));
@@ -1570,7 +1359,6 @@ static int undump_charinfo(int f)
     char *s = NULL;
     liginfo *lig = NULL;
     kerninfo *kern = NULL;
-    eight_bits *packet = NULL;
     undump_int(i);
     co = get_charinfo(f, i);
     undump_int(x);
@@ -1634,14 +1422,6 @@ static int undump_charinfo(int f)
     }
     set_charinfo_kerns(co, kern);
 
-    /*tex Packets */
-    undump_int(x);
-    if (x > 0) {
-        font_bytes += x;
-        packet = xmalloc((unsigned) x);
-        undump_things(*packet, x);
-    }
-    set_charinfo_packets(co, packet);
     if (get_charinfo_tag(co) == ext_tag) {
         set_charinfo_vert_variants(co, undump_charinfo_variants());
         set_charinfo_hor_variants(co, undump_charinfo_variants());
@@ -1753,10 +1533,6 @@ void undump_font(int f)
     }
 }
 
-/* The \PK\ pixel density value from |texmf.cnf| */
-
-int pk_dpi;
-
 /*tex
 
     This one looks up the font for a \TFM\ with name |s| loaded at |fs| size and
@@ -1821,134 +1597,4 @@ void set_expand_params(internal_font_number f, int stretch_limit, int shrink_lim
     set_font_step(f, font_step);
     set_font_max_shrink(f, shrink_limit);
     set_font_max_stretch(f, stretch_limit);
-}
-
-/*tex
-
-    This reads font expansion spec and load expanded font.
-
-*/
-
-void read_expand_font(void)
-{
-    int shrink_limit, stretch_limit, font_step;
-    internal_font_number f;
-    scan_font_ident();
-    f = cur_val;
-    if (f == null_font)
-        normal_error("font expansion", "invalid font identifier");
-    scan_optional_equals();
-    scan_int();
-    stretch_limit = fix_int(cur_val, 0, 1000);
-    scan_int();
-    shrink_limit = fix_int(cur_val, 0, 500);
-    scan_int();
-    font_step = fix_int(cur_val, 0, 100);
-    if (font_step == 0)
-        normal_error("font expansion", "invalid step");
-    stretch_limit = stretch_limit - stretch_limit % font_step;
-    if (stretch_limit < 0)
-        stretch_limit = 0;
-    shrink_limit = shrink_limit - shrink_limit % font_step;
-    if (shrink_limit < 0)
-        shrink_limit = 0;
-    if ((stretch_limit == 0) && (shrink_limit == 0))
-        normal_error("font expansion", "invalid limit(s)");
-    if (scan_keyword("autoexpand")) {
-        normal_warning("font expansion", "autoexpand not supported");
-        /*tex scan an optional space */
-        get_x_token();
-        if (cur_cmd != spacer_cmd)
-            back_input();
-    }
-    if (font_step(f) != 0) {
-        /*tex This font has been expanded, ensure the expansion parameters are identical. */
-        if (font_step(f) != font_step)
-            normal_error("font expansion","font has been expanded with different expansion step");
-        if (((font_max_stretch(f) == 0) && (stretch_limit != 0)) ||
-            ((font_max_stretch(f) > 0) && (font_max_stretch(f) != stretch_limit)))
-            normal_error("font expansion","font has been expanded with different stretch limit");
-
-        if (((font_max_shrink(f) == 0) && (shrink_limit != 0)) ||
-            ((font_max_shrink(f) > 0) && (font_max_shrink(f) != shrink_limit)))
-            normal_error("font expansion","font has been expanded with different shrink limit");
-    } else {
-        if (font_used(f))
-            normal_warning("font expansion", "font should be expanded before its first use");
-        set_expand_params(f, stretch_limit, shrink_limit, font_step);
-    }
-}
-
-/*tex
-
-    Here's an old (sort of obsolete) letterspace-a-font helper. It does so by by
-    creating a virtual font.
-
-*/
-
-void new_letterspaced_font(small_number a)
-{
-    pointer u;
-    str_number t;
-    internal_font_number f, k;
-    boolean nolig = false;
-    get_r_token();
-    u = cur_cs;
-    if (u >= hash_base)
-        t = cs_text(u);
-    else
-        t = maketexstring("FONT");
-    define(u, set_font_cmd, null_font);
-    scan_optional_equals();
-    scan_font_ident();
-    k = cur_val;
-    scan_int();
-    if (scan_keyword("nolig"))
-       nolig=true;
-    f = letter_space_font(k, fix_int(cur_val, -1000, 1000), nolig);
-    equiv(u) = f;
-    eqtb[font_id_base + f] = eqtb[u];
-    font_id_text(f) = t;
-}
-
-/*tex
-
-    This makes a font copy for further use with font expansion. Again a
-    traditional font related helper.
-
-*/
-
-void make_font_copy(small_number a)
-{
-    pointer u;
-    str_number t;
-    internal_font_number f, k;
-    get_r_token();
-    u = cur_cs;
-    if (u >= hash_base)
-        t = cs_text(u);
-    else
-        t = maketexstring("FONT");
-    define(u, set_font_cmd, null_font);
-    scan_optional_equals();
-    scan_font_ident();
-    k = cur_val;
-    f = copy_font_info(k);
-    equiv(u) = f;
-    eqtb[font_id_base + f] = eqtb[u];
-    font_id_text(f) = t;
-}
-
-void glyph_to_unicode(void)
-{
-    str_number s1, s2;
-    scan_toks(false, true);
-    s1 = tokens_to_string(def_ref);
-    delete_token_ref(def_ref);
-    scan_toks(false, true);
-    s2 = tokens_to_string(def_ref);
-    delete_token_ref(def_ref);
-    def_tounicode(s1, s2);
-    flush_str(s2);
-    flush_str(s1);
 }

@@ -25,8 +25,8 @@
 
 #define LUA_CORE
 #include "lua.h"
-#ifdef LuajitTeX
 #include "lauxlib.h"
+#ifdef LuajitTeX
 #include "lualib.h"
 #else
 #include "luaconf.h"

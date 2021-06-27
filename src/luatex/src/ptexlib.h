@@ -150,53 +150,42 @@ size_t          T##_limit
 #  define str_prefix(s1, s2)  (strncmp((s1), (s2), strlen(s2)) == 0)
 
 #  include "tex/mainbody.h"
+/**********************************************************************/
+/* TODO(mvlasak): from deleted: */
+#include "lua/luatex-api.h"
+
+scaled round_xn_over_d(scaled x, int n, unsigned int d);
+
+extern scaled one_true_inch;
+extern scaled one_inch;
+
+extern boolean doing_leaders;
+
+typedef struct scaled_whd_ {
+    scaled wd; /* TeX width */
+    scaled ht; /* TeX height */
+    scaled dp; /* TeX depth */
+} scaled_whd;
+
+typedef struct scaledpos_ {
+    int64_t h;
+    int64_t v;
+} scaledpos;
+
+typedef int internal_font_number;                  /* |font| in a |char_node| */
+
+#  include "utils/managed-sa.h"
+#  include "font/texfont.h"
+
+/**********************************************************************/
 #  include "tex/expand.h"
 #  include "tex/conditional.h"
-
-#  include "pdf/pdftypes.h" /* the backend data structure, shared between dvi and pdf (might move to |tex/backend| */
-#  include "tex/backend.h"  /* more backend data  */
-
-#  include "synctex.h"
 
 #  include "utils/avlstuff.h"
 #  include "utils/managed-sa.h"
 
-#  include "image/writeimg.h"
-
-#  include "dvi/dvigen.h"
-
-#  include "pdf/pdftables.h"
-#  include "pdf/pdfpagetree.h"
-#  include "pdf/pdfgen.h"
-#  include "pdf/pdfpage.h"
-#  include "pdf/pdfaction.h"
-#  include "pdf/pdfannot.h"
-#  include "pdf/pdfcolorstack.h"
-#  include "pdf/pdfdest.h"
-#  include "pdf/pdffont.h"
-#  include "pdf/pdfglyph.h"
-#  include "pdf/pdfimage.h"
-#  include "pdf/pdflink.h"
-#  include "pdf/pdflistout.h"
-#  include "pdf/pdfliteral.h"
-#  include "pdf/pdfobj.h"
-#  include "pdf/pdfoutline.h"
-#  include "pdf/pdfrule.h"
-#  include "pdf/pdfsaverestore.h"
-#  include "pdf/pdfsetmatrix.h"
-#  include "pdf/pdfshipout.h"
-#  include "pdf/pdfthread.h"
-#  include "pdf/pdfxform.h"
-
-
-#  include "font/luatexfont.h"
-#  include "font/mapfile.h"
-
 #  include "utils/utils.h"
 #  include "utils/unistring.h"
-
-#  include "image/writejbig2.h"
-#  include "image/pdftoepdf.h"
 
 #  include "lang/texlang.h"
 
@@ -255,11 +244,6 @@ int lua_appendtovlist_callback(
     halfword box, int location, halfword prev_depth, boolean is_mirrored,
     halfword * result, int * next_depth, boolean * prev_set);
 
-void lua_pdf_literal(PDF pdf, int i, int noline);
-void copy_pdf_literal(pointer r, pointer p);
-void free_pdf_literal(pointer p);
-void show_pdf_literal(pointer p);
-
 void copy_late_lua(pointer r, pointer p);
 void copy_user_lua(pointer r, pointer p);
 void free_late_lua(pointer p);
@@ -286,9 +270,6 @@ int luacstring_final_line(void);
 int visible_last_node_type(int n);
 void print_node_mem_stats(void);
 
-/* lua/limglib.c */
-void vf_out_image(PDF pdf, unsigned i);
-
 /* lua/ltexiolib.c */
 void flush_loggable_info(void);
 
@@ -298,7 +279,6 @@ void luabytecodecall(int slot);
 
 /* lua/luastuff.c */
 void luatokencall(int p, int nameptr);
-extern void late_lua(PDF pdf, halfword p);
 
 extern void check_texconfig_init(void);
 
@@ -353,8 +333,6 @@ extern str_number makefullnamestring(void);
 
 #  include <kpathsea/version.h>
 
-extern PDF static_pdf;
-
 extern string normalize_quotes(const_string name, const_string mesg);
 extern string dump_name;
 extern const_string c_job_name;
@@ -377,5 +355,6 @@ extern int program_name_set;    /* in lkpselib.c */
 
 extern int kpse_init; /* in luainit.w */
 extern int kpse_available(const char * m); /* in texfileio.w */
+
 
 #endif                          /* PTEXLIB_H */

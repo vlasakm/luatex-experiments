@@ -153,9 +153,6 @@ command_item command_names[] = {
     { set_box_cmd,              NULL, 0},
     { hyph_data_cmd,            NULL, 0},
     { set_interaction_cmd,      NULL, 0},
-    { letterspace_font_cmd,     NULL, 0},
-    { expand_font_cmd,          NULL, 0},
-    { copy_font_cmd,            NULL, 0},
     { set_font_id_cmd,          NULL, 0},
     { undefined_cs_cmd,         NULL, 0},
     { expand_after_cmd,         NULL, 0},
@@ -318,9 +315,6 @@ void l_set_token_data(void)
     init_token_key(command_names, set_box_cmd,              set_box);
     init_token_key(command_names, hyph_data_cmd,            hyph_data);
     init_token_key(command_names, set_interaction_cmd,      set_interaction);
-    init_token_key(command_names, letterspace_font_cmd,     letterspace_font);
-    init_token_key(command_names, expand_font_cmd,          expand_font);
-    init_token_key(command_names, copy_font_cmd,            copy_font);
     init_token_key(command_names, set_font_id_cmd,          set_font_id);
     init_token_key(command_names, undefined_cs_cmd,         undefined_cs);
     init_token_key(command_names, expand_after_cmd,         expand_after);

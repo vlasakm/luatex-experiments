@@ -42,13 +42,6 @@ static const char *getlogname(void)
     return (const char *) texmf_log_name;
 }
 
-static const char *get_output_file_name(void)
-{
-    if (static_pdf != NULL)
-        return (const char *) static_pdf->file_name;
-    return NULL;
-}
-
 /*
 static const char *getfilename(void)
 {
@@ -156,76 +149,6 @@ static const char *get_luatexhashtype(void)
 #endif
 }
 
-static lua_Number get_pdf_gone(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->gone;
-    return (lua_Number) 0;
-}
-
-static lua_Number get_pdf_ptr(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) (static_pdf->buf->p - static_pdf->buf->data);
-    return (lua_Number) 0;
-}
-
-static lua_Number get_pdf_os_cntr(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->os->ostm_ctr;
-    return (lua_Number) 0;
-}
-
-static lua_Number get_pdf_os_objidx(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->os->idx;
-    return (lua_Number) 0;
-}
-
-static lua_Number get_pdf_mem_size(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->mem_size;
-    return (lua_Number) 0;
-}
-
-static lua_Number get_pdf_mem_ptr(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->mem_ptr;
-    return (lua_Number) 0;
-}
-
-static lua_Number get_obj_ptr(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->obj_ptr;
-    return (lua_Number) 0;
-}
-
-static lua_Number get_obj_tab_size(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->obj_tab_size;
-    return (lua_Number) 0;
-}
-
-static lua_Number get_dest_names_size(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->dest_names_size;
-    return (lua_Number) 0;
-}
-
-static lua_Number get_dest_names_ptr(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) static_pdf->dest_names_ptr;
-    return (lua_Number) 0;
-}
-
 static int get_hash_size(void)
 {
     return hash_size;           /* is a #define */
@@ -268,20 +191,6 @@ static lua_Number get_development_id(void)
     return (lua_Number) luatex_svn_revision ;
 }
 
-static lua_Number get_dvi_gone(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) dvi_get_status_gone(static_pdf);
-    return (lua_Number) 0;
-}
-
-static lua_Number get_dvi_ptr(void)
-{
-    if (static_pdf != NULL)
-        return (lua_Number) dvi_get_status_ptr(static_pdf);
-    return (lua_Number) 0;
-}
-
 /* temp, for backward compat */
 
 static int init_pool_ptr = 0;
@@ -305,13 +214,7 @@ static struct statistic stats[] = {
 
     /* seldom or never accessed */
 
-    {"pdf_gone", 'N', &get_pdf_gone},
-    {"pdf_ptr", 'N', &get_pdf_ptr},
-    {"dvi_gone", 'g', &get_dvi_gone},
-    {"dvi_ptr", 'g', &get_dvi_ptr},
-
     {"total_pages", 'g', &total_pages},
-    {"output_file_name", 'S', (void *) &get_output_file_name},
     {"log_name", 'S', (void *) &getlogname},
     {"banner", 'S', (void *) &getbanner},
     {"luatex_version", 'G', &get_luatexversion},
@@ -360,14 +263,6 @@ static struct statistic stats[] = {
     {"buf_size", 'g', &buf_size},
     {"save_size", 'g', &save_size},
     {"input_ptr", 'g', &input_ptr},
-    {"obj_ptr", 'N', &get_obj_ptr},
-    {"obj_tab_size", 'N', &get_obj_tab_size},
-    {"pdf_os_cntr", 'N', &get_pdf_os_cntr},
-    {"pdf_os_objidx", 'N', &get_pdf_os_objidx},
-    {"pdf_dest_names_ptr", 'N', &get_dest_names_ptr},
-    {"dest_names_size", 'N', &get_dest_names_size},
-    {"pdf_mem_ptr", 'N', &get_pdf_mem_ptr},
-    {"pdf_mem_size", 'N', &get_pdf_mem_size},
     {"largest_used_mark", 'g', &biggest_used_mark},
     {"luabytecodes", 'g', &luabytecode_max},
     {"luabytecode_bytes", 'g', &luabytecode_bytes},

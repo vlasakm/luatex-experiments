@@ -20,6 +20,7 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 void fin_align(void);
 void init_row(void);

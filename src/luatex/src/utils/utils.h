@@ -25,8 +25,6 @@
 extern int epochseconds;
 extern int microseconds;
 
-void make_subset_tag(fd_entry *);
-
 __attribute__ ((format(printf, 1, 2)))
 void tex_printf(const char *, ...);
 

@@ -377,12 +377,10 @@ int main_initialize(void)
     setup_bound_var(10000, "param_size", param_size);
     setup_bound_var(100000, "save_size", save_size);
     setup_bound_var(5000, "stack_size", stack_size);
-    setup_bound_var(16384, "dvi_buf_size", dvi_buf_size);
     setup_bound_var(79, "error_line", error_line);
     setup_bound_var(50, "half_error_line", half_error_line);
     setup_bound_var(79, "max_print_line", max_print_line);
     setup_bound_var(600000, "hash_extra", hash_extra);
-    setup_bound_var(72, "pk_dpi", pk_dpi);
     setup_bound_var(10000, "expand_depth", expand_depth);
     setup_bound_var(0, "level_max", level_max);
     setup_bound_var('.', "level_chr", level_chr);
@@ -395,11 +393,9 @@ int main_initialize(void)
     const_chk(param_size);
     const_chk(save_size);
     const_chk(stack_size);
-    const_chk(dvi_buf_size);
     const_chk(max_strings);
     const_chk(strings_free);
     const_chk(hash_extra);
-    const_chk(pk_dpi);
     if (error_line > ssup_error_line) {
         error_line = ssup_error_line;
     }
@@ -419,7 +415,6 @@ int main_initialize(void)
     source_filename_stack = xmallocarray(str_number, (unsigned) max_in_open);
     full_source_filename_stack = xmallocarray(char *, (unsigned) max_in_open);
     param_stack = xmallocarray(halfword, (unsigned) param_size);
-    dvi_buf = xmallocarray(eight_bits, (unsigned) dvi_buf_size);
     /*tex
         Only in ini mode:
     */
@@ -447,8 +442,6 @@ int main_initialize(void)
         bad = 1;
     if (max_print_line < 60)
         bad = 2;
-    if (dvi_buf_size % 8 != 0)
-        bad = 3;
     if (hash_prime > hash_size)
         bad = 5;
     if (max_in_open >= (sup_max_in_open+1)) /* 128 */
@@ -500,7 +493,6 @@ int main_initialize(void)
 
 void main_body(void)
 {
-    static char pdftex_map[] = "pdftex.map";
     int bad = main_initialize();
     /*tex in case we quit during initialization */
     history = fatal_error_stop;
@@ -548,9 +540,6 @@ void main_body(void)
     if (draft_mode_option != 0) {
         draft_mode_par = draft_mode_value;
     }
-    /*tex can this be moved? */
-    pdf_init_map_file((char *) pdftex_map);
-    /* */
     if (end_line_char_inactive)
         decr(ilimit);
     else
@@ -569,8 +558,6 @@ void main_body(void)
     text_dir_ptr = new_dir(0);
     /*tex Ready to go! */
     history = spotless;
-    /*tex Initialize synctex primitive */
-    synctexinitcommand();
     /*tex Come to life. */
     main_control();
     flush_node(text_dir_ptr);
@@ -644,26 +631,6 @@ void close_files_and_terminate(void)
         }
     }
     wake_up_terminal();
-    /*tex
-        Rubish, these \PDF arguments, passed, needs to be fixed, e.g. with a
-        dummy in \DVI.
-    */
-    wrapup_backend();
-    /*tex
-        Close {\sl Sync\TeX} file and write status.
-    */
-    synctexterminate(log_opened_global);
-    /*tex
-        The following is needed because synctex removes files and we want to keep
-        them which means renaming a temp file .. we can't bypass the terminate
-        because it might do mem cleanup.
-    */
-    if (synctex_get_mode() > 0) {
-        callback_id = callback_defined(finish_synctex_callback);
-        if (callback_id > 0) {
-            run_callback(callback_id, "->");
-        }
-    }
     /* free_text_codes(); */
     /* free_math_codes(); */
     if (log_opened_global) {

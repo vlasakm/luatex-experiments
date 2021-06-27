@@ -366,7 +366,6 @@ the |number_regs| \.{\\dimen} registers.
 #  define page_top_offset_code 22
 #  define page_right_offset_code 23
 #  define page_bottom_offset_code 24
-#  define px_dimen_code 25
 #  define page_width_code 26                                            /* page width of the output */
 #  define page_height_code 27                                           /* page height of the output */
 
@@ -726,7 +725,6 @@ extern halfword last_cs_name;
 #define page_top_offset_par                dimen_par(page_top_offset_code)
 #define page_right_offset_par              dimen_par(page_right_offset_code)
 #define page_bottom_offset_par             dimen_par(page_bottom_offset_code)
-#define px_dimen_par                       dimen_par(px_dimen_code)
 
 #define max_dead_cycles_par                int_par(max_dead_cycles_code)
 #define output_box_par                     int_par(output_box_code)

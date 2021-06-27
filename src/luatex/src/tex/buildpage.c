@@ -1054,53 +1054,19 @@ void fire_up(halfword c)
         }
     }
     if (output_routine_par != null) {
-        if (dead_cycles >= max_dead_cycles_par) {
-            /*tex Explain that too many dead cycles have occurred in a row. */
-            print_err("Output loop---");
-            print_int(dead_cycles);
-            tprint(" consecutive dead cycles");
-            help3(
-                "I've concluded that your \\output is awry; it never does a",
-                "\\shipout, so I'm shipping \\box\\outputbox out myself. Next time",
-                "increase \\maxdeadcycles if you want me to be more patient!"
-            );
-            error();
-        } else {
-            /*tex Fire up the users output routine and |return|. */
-            output_active = true;
-            incr(dead_cycles);
-            push_nest();
-            mode = -vmode;
-            prev_depth_par = ignore_depth;
-            mode_line_par = -line;
-            begin_token_list(output_routine_par, output_text);
-            new_save_level(output_group);
-            normal_paragraph();
-            scan_left_brace();
-            return;
-        }
+        /*tex Fire up the users output routine and |return|. */
+        output_active = true;
+        incr(dead_cycles);
+        push_nest();
+        mode = -vmode;
+        prev_depth_par = ignore_depth;
+        mode_line_par = -line;
+        begin_token_list(output_routine_par, output_text);
+        new_save_level(output_group);
+        normal_paragraph();
+        scan_left_brace();
+        return;
     }
-    /*tex
-
-        Perform the default output routine. The list of heldover insertions,
-        running from |vlink(page_head)| to |page_tail|, must be moved to the
-        contribution list when the user has specified no output routine.
-
-    */
-    if (vlink(page_head) != null) {
-        if (vlink(contrib_head) == null) {
-            contrib_tail = page_tail;
-        } else {
-            vlink(page_tail) = vlink(contrib_head);
-        }
-        vlink(contrib_head) = vlink(page_head);
-        vlink(page_head) = null;
-        page_tail = page_head;
-    }
-    flush_node_list(page_disc);
-    page_disc = null;
-    ship_out(static_pdf, box(output_box_par), SHIPPING_PAGE);
-    box(output_box_par) = null;
 }
 
 /*tex

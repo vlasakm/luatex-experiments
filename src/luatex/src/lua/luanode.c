@@ -328,40 +328,6 @@ int visible_last_node_type(int n)
     }
 }
 
-void lua_pdf_literal(PDF pdf, int i, int noline)
-{
-    const char *s = NULL;
-    size_t l = 0;
-    lua_rawgeti(Luas, LUA_REGISTRYINDEX, i);
-    s = lua_tolstring(Luas, -1, &l);
-    if (noline) {
-        pdf_check_space(pdf);
-        pdf_out_block(pdf, s, l);
-        pdf_set_space(pdf);
-    } else {
-        pdf_out_block(pdf, s, l);
-        pdf_out(pdf, 10);
-    }
-    lua_pop(Luas, 1);
-}
-
-void copy_pdf_literal(pointer r, pointer p)
-{
-    int t = pdf_literal_type(p);
-    pdf_literal_type(r) = t;
-    pdf_literal_mode(r) = pdf_literal_mode(p);
-    if (t == normal) {
-        pdf_literal_data(r) = pdf_literal_data(p);
-        add_token_ref(pdf_literal_data(p));
-    } else if (t == lua_refid_literal) {
-        lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
-        pdf_literal_data(r) = luaL_ref(Luas, LUA_REGISTRYINDEX);
-    } else {
-        /* maybe something user, we don't support a call here but best keep it sane anyway. */
-        pdf_literal_data(r) = pdf_literal_data(p);
-    }
-}
-
 void copy_late_lua(pointer r, pointer p)
 {
     int t = late_lua_type(p);
@@ -385,16 +351,6 @@ void copy_user_lua(pointer r, pointer p)
     }
 }
 
-void free_pdf_literal(pointer p)
-{
-    int t = pdf_literal_type(p);
-    if (t == normal) {
-        delete_token_ref(pdf_literal_data(p));
-    } else if (t == lua_refid_literal) {
-        luaL_unref(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
-    }
-}
-
 void free_late_lua(pointer p)
 {
     int t = late_lua_type(p);
@@ -411,38 +367,6 @@ void free_user_lua(pointer p)
 {
     if (user_node_value(p) != 0) {
         luaL_unref(Luas, LUA_REGISTRYINDEX, user_node_value(p));
-    }
-}
-
-void show_pdf_literal(pointer p)
-{
-    int t = pdf_literal_type(p);
-    tprint_esc("pdfliteral");
-    switch (pdf_literal_mode(p)) {
-        case set_origin:
-            tprint(" origin");
-            break;
-        case direct_page:
-            tprint(" page");
-            break;
-        case direct_always:
-            tprint(" direct");
-            break;
-        case direct_raw:
-            tprint(" raw");
-            break;
-        default:
-            tprint(" <invalid mode>");
-            break;
-    }
-    if (t == normal) {
-        print_mark(pdf_literal_data(p));
-    } else if (t == lua_refid_literal) {
-        tprint(" <lua data reference ");
-        print_int(pdf_literal_data(p));
-        tprint(">");
-    } else {
-        tprint(" <invalid data>");
     }
 }
 
