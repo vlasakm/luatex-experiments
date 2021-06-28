@@ -72,7 +72,6 @@ const_string LUATEX_IHELP[] = {
     "   --safer                       disable easily exploitable lua commands",
     "   --[no-]shell-escape           disable/enable system commands",
     "   --shell-restricted            restrict system commands to a list of commands given in texmf.cnf",
-    "   --synctex=NUMBER              enable synctex (see man synctex)",
     "   --utc                         init time to UTC",
     "   --version                     display version and exit",
     "",
@@ -203,8 +202,6 @@ static struct option long_options[] = {
     {"translate-file", 1, 0, 0},
     {"default-translate-file", 1, 0, 0},
     {"8bit", 0, 0, 0},
-    /*tex Synchronization: just like ``interaction'' above */
-    {"synctex", 1, 0, 0},
     {0, 0, 0, 0}
 };
 
@@ -668,15 +665,6 @@ void lua_initialize(int ac, char **av)
     haltonerrorp = false;
     tracefilenames = 1;
     dump_name = NULL;
-    /*tex
-        In the next option 0 means ``disable Synchronize TeXnology''. The
-        |synctexoption| is a *.web variable. We initialize it to a weird value to
-        catch the -synctex command line flag At runtime, if synctexoption is not
-        |INT_MAX|, then it contains the command line option provided, otherwise
-        no such option was given by the user.
-    */
-#define SYNCTEX_NO_OPTION INT_MAX
-    synctexoption = SYNCTEX_NO_OPTION;
     /*tex parse commandline */
     parse_options(ac, av);
     if (lua_only) {

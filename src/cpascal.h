@@ -309,10 +309,6 @@ typedef struct option getoptstruct;
 #endif
 #define getline web2c_getline
 
-
-/* Declarations for the routines we provide ourselves in lib/.  */
-#include "lib/lib.h"
-
 extern int loadpoolstrings (integer);
 
 #endif /* not CPASCAL_H */

@@ -80,7 +80,7 @@ luatex_dependencies = [
   dependency('zlib'),
   lua_dep,
   pplib_dep,
-  w2c_dep,
+  kpathsea_dep,
 ]
 
 executable(

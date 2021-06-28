@@ -675,8 +675,6 @@ void begin_file_reading(void)
     /*tex Variable |terminal_input| is now |true|. */
     line_catcode_table = DEFAULT_CAT_TABLE;
     line_partial = false;
-    /*tex Prepare terminal input \SYNCTEX\ information. */
-    synctex_tag = 0;
 }
 
 /*tex

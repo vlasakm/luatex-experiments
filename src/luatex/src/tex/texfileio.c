@@ -269,13 +269,7 @@ boolean lua_a_open_in(alpha_file * f, char *fn, int n)
             file_ok = false;
         }
     } else {
-        /*tex no read callback */
-        if (openinnameok(fn)) {
-            ret = open_in_or_pipe(f, fnam, kpse_tex_format, FOPEN_RBIN_MODE, (n == 0 ? true : false));
-        } else {
-            /*tex open failed */
-            file_ok = false;
-        }
+        kpse_available("lua_a_open_in");
     }
     if (!file_ok) {
         ret = false;
@@ -1222,7 +1216,7 @@ boolean zopen_w_input(FILE ** f, const char *fname, int format, const_string fop
             return 0;
         }
     } else {
-        res = luatex_open_input(f, fname, format, fopen_mode, true);
+        kpse_available("zopen_w_input");
     }
     if (res) {
         gz_fmtfile = gzdopen(fileno(*f), "rb" COMPRESSION);

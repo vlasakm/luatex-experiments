@@ -1,5 +1,4 @@
 subdir('kpathsea')
 subdir('lua')
-subdir('lib')
 subdir('pplib')
 subdir('luatex')

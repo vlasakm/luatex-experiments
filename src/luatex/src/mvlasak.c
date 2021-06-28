@@ -47,3 +47,62 @@ scaled one_inch = (7227 * 65536 + 50) / 100;
 
 
 boolean doing_leaders = false;  /* are we inside a leader box? */
+
+
+/* From WEB2C */
+
+void close_file(FILE *f)
+{
+	(void)f;
+}
+void recorder_change_filename(char *filename)
+{
+	(void)filename;
+}
+void recorder_record_input(const char *input_filename)
+{
+	(void)input_filename;
+}
+void recorder_record_output(const char *output_filename)
+{
+	(void)output_filename;
+}
+
+char *fullnameoffile;
+int recorder_enabled;
+char *output_directory;
+
+void
+uexit (int unix_code)
+{
+	int final_code;
+
+	if (unix_code == 0)
+		final_code = EXIT_SUCCESS;
+	else if (unix_code == 1)
+		final_code = EXIT_FAILURE;
+	else
+		final_code = unix_code;
+
+	exit(final_code);
+}
+
+void
+usage (const char *str)
+{
+	fprintf (stderr, "Try `%s --help' for more information.\n", str);
+	uexit (1);
+}
+
+void
+usagehelp (const char **message, const char *bug_email)
+{
+	if (!bug_email)
+		bug_email = "tex-k@tug.org";
+	while (*message) {
+		printf("%s\n", *message);
+		++message;
+	}
+	printf("\nEmail bug reports to %s.\n", bug_email);
+	uexit(0);
+}

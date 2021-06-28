@@ -36,8 +36,6 @@ ptexlib.h must be included first!!!
 /* WEB2C macros and prototypes */
 #  include "luatex.h"
 
-#  include "lib/lib.h"
-
 #  ifdef _MSC_VER
 extern double rint(double x);
 #  endif
@@ -176,6 +174,19 @@ typedef int internal_font_number;                  /* |font| in a |char_node| */
 
 #  include "utils/managed-sa.h"
 #  include "font/texfont.h"
+
+extern void close_file(FILE *f);
+extern void recorder_change_filename(char *filename);
+extern void recorder_record_input(const char *input_filename);
+extern void recorder_record_output(const char *output_filename);
+extern char *fullnameoffile;
+extern int recorder_enabled;
+extern char *output_directory;
+
+extern void usage (const char *str);
+extern void usagehelp (const char **message, const char *bug_email);
+
+//#define IS_DIR_SEP(ch) ((ch) == '/')
 
 /**********************************************************************/
 #  include "tex/expand.h"
