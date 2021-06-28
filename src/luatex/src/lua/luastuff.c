@@ -165,7 +165,6 @@ static const luaL_Reg lualibs[] = {
     { "string",    luaopen_string },
     { "math",      luaopen_math },
     { "debug",     luaopen_debug },
-    { "lpeg",      luaopen_lpeg },
     { "bit32",     luaopen_bit32 },
 #ifdef LuajitTeX
     /*tex |bit| is only in \LUAJIT */
@@ -177,11 +176,6 @@ static const luaL_Reg lualibs[] = {
 #endif
     { "coroutine", luaopen_coroutine },
 #endif
-    /*tex additional (public) libraries */
-    { "unicode",   luaopen_unicode },
-    { "md5",       luaopen_md5 },
-    { "sha2",      luaopen_sha2 },
-    { "lfs",       luaopen_lfs },
     { NULL,        NULL }
 };
 
@@ -310,8 +304,6 @@ void luainterpreter(void)
     lua_setglobal(L, "loadfile");
     open_oslibext(L);
     open_strlibext(L);
-    luaopen_zlib(L);
-    luaopen_gzip(L);
     /*tex our own libraries register themselves */
     luaopen_fio(L);
     luaopen_tex(L);
@@ -327,7 +319,6 @@ void luainterpreter(void)
     luaopen_font(L);
     luaopen_lang(L);
     luaopen_mplib(L);
-    luaopen_pdfscanner(L);
     lua_createtable(L, 0, 0);
     lua_setglobal(L, "texconfig");
     Luas = L;

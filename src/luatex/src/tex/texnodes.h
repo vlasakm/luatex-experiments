@@ -721,7 +721,7 @@ typedef enum {
 #  define MAX_WHATSIT_TYPE 34
 
 #  define known_whatsit_type(i) ( \
-    (i >= first_common_whatsit      && i <= last_common_whatsit) || \
+    (i >= first_common_whatsit      && i <= last_common_whatsit) \
 )
 
 #  define get_node_size(i,j) (i!=whatsit_node ? node_data[i].size : whatsit_node_data[j].size)
@@ -780,8 +780,6 @@ typedef enum {
 #  define boundary_node_size 3
 #  define boundary_value(a) vinfo((a)+2)
 
-#  define special_node_size 3
-
 typedef enum {
     normal_dir = 0,
     cancel_dir,
@@ -810,8 +808,6 @@ typedef enum {
 #  define late_lua_reg(a)         vinfo((a)+2)
 #  define late_lua_name(a)        vlink((a)+3)
 #  define late_lua_type(a)        subtype((a)+3)
-
-#  define save_pos_node_size 3
 
 #  define local_par_size 6
 

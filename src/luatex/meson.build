@@ -1,11 +1,4 @@
 luatex_src = files(
-  'src/luafilesystem/src/lfs.c',
-  'src/luamd5/md5.c',
-  'src/luamd5/md5lib.c',
-  'src/luapeg/lpeg.c',
-  'src/luazlib/lgzip.c',
-  'src/luazlib/lzlib.c',
-  'src/slnunicode/slnunico.c',
   'src/lua/lstrlibext.c',
   'src/lua/helpers.c',
   'src/lua/texluac.c',
@@ -73,13 +66,11 @@ luatex_src = files(
   'src/utils/unistring.c',
   'src/luatex.c',
   '../mplib/src/lmplib.c',
-  '../libmd5/src/md5.c',
   'src/mvlasak.c'
 )
 
 luatex_inc = include_directories(
   'src',
-  '../libmd5/src',
   '..',
 )
 
@@ -98,18 +89,10 @@ luatex_dependencies = [
   w2c_dep,
 ]
 
-luatex_c_args = [
-  '-DLUA_FF_LIB',
-  '-D_NO_PYTHON',
-  '-DX_DISPLAY_MISSING',
-  '-DUSE_OUR_MEMORY',
-]
-
 executable(
   'mmtex',
   sources: luatex_src,
   include_directories: [luatex_inc, mmtex_inc],
   dependencies: luatex_dependencies,
-  c_args: luatex_c_args,
   install: true,
 )

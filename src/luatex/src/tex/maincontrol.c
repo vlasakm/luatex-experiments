@@ -614,9 +614,6 @@ static void run_extension (void) {
 static void run_normal (void) {
 {
     switch (cur_chr) {
-        case save_pos_code:
-            new_whatsit(save_pos_node);
-            break;
         case save_cat_code_table_code:
             scan_int();
             if ((cur_val < 0) || (cur_val > 0x7FFF)) {
@@ -4106,7 +4103,6 @@ void initialize(void)
     no_new_control_sequence = true; /* new identifiers are usually forbidden */
     init_primitives();
 
-    mag_set = 0;
     initialize_marks();
     initialize_read();
 
@@ -4223,9 +4219,6 @@ void initialize(void)
         set_eq_level(end_write, level_one);
         set_eq_type(end_write, outer_call_cmd);
         set_equiv(end_write, null);
-        /*tex Bah, this is a bad place do do this. */
-        set_pdf_major_version(1);
-        set_pdf_minor_version(0);
     }
     synctexoffset = int_base + synctex_code;
 }

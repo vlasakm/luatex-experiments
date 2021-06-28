@@ -338,12 +338,6 @@ void expand(void)
                         lua_string_start();
                 }
                 break;
-            case variable_cmd:
-                do_variable();
-                break;
-            case feedback_cmd:
-                do_feedback();
-                break;
             default:
                 /*tex Complain about an undefined macro */
                 print_err("Undefined control sequence");

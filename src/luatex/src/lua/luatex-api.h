@@ -20,28 +20,6 @@
 #ifndef LUATEX_API_H
 #  define LUATEX_API_H 1
 
-/* output modes, a bad place but this compiles at least */
-
-typedef enum { OMODE_NONE, OMODE_DVI, OMODE_PDF } output_mode ;
-
-#  define MAX_OMODE 2           /* largest index in enum output_mode */
-
-extern int output_mode_used;
-extern int output_mode_option;
-extern int output_mode_value;
-extern int draft_mode_option;
-extern int draft_mode_value;
-
-/* get_o_mode translates from output_mode to output_mode_used */
-/* fix_o_mode freezes output_mode as soon as anything goes through the backend */
-
-/*
-extern output_mode get_o_mode(void);
-extern void fix_o_mode(void);
-*/
-
-/* till here */
-
 #  include <stdlib.h>
 #  include <stdio.h>
 #  include <stdarg.h>
@@ -90,7 +68,6 @@ extern void make_table(lua_State * L, const char *tab, const char *mttab, const 
 extern int luac_main(int argc, char *argv[]);
 
 extern int luaopen_tex(lua_State * L);
-extern int luaopen_pdf(lua_State * L);
 extern int luaopen_texio(lua_State * L);
 extern int luaopen_lang(lua_State * L);
 
@@ -1002,30 +979,6 @@ make_lua_key(parfillskip);\
 make_lua_key(parshape);\
 make_lua_key(parskip);\
 make_lua_key(passive);\
-make_lua_key(pdf);\
-make_lua_key(pdfe);\
-make_lua_key(pdf_action);\
-make_lua_key(pdf_annot);\
-make_lua_key(pdf_colorstack);\
-make_lua_key(pdf_data);\
-make_lua_key(pdf_dest);\
-make_lua_key(pdf_destination);\
-make_lua_key(pdf_end_link);\
-make_lua_key(pdf_end_thread);\
-make_lua_key(pdf_link_data);\
-make_lua_key(pdf_link_state);\
-make_lua_key(pdf_literal);\
-make_lua_key(pdf_refobj);\
-make_lua_key(pdf_restore);\
-make_lua_key(pdf_save);\
-make_lua_key(pdf_setmatrix);\
-make_lua_key(pdf_setobj);\
-make_lua_key(pdf_start);\
-make_lua_key(pdf_start_link);\
-make_lua_key(pdf_start_thread);\
-make_lua_key(pdf_thread);\
-make_lua_key(pdf_thread_data);\
-make_lua_key(pdf_window);\
 make_lua_key(pen_broken);\
 make_lua_key(pen_inter);\
 make_lua_key(penalty);\
@@ -1703,28 +1656,6 @@ init_lua_key(parfillskip);\
 init_lua_key(parshape);\
 init_lua_key(parskip);\
 init_lua_key(passive);\
-init_lua_key(pdfe);\
-init_lua_key(pdf_action);\
-init_lua_key(pdf_annot);\
-init_lua_key(pdf_colorstack);\
-init_lua_key(pdf_dest);\
-init_lua_key(pdf_destination);\
-init_lua_key(pdf_end_link);\
-init_lua_key(pdf_end_thread);\
-init_lua_key(pdf_link_data);\
-init_lua_key(pdf_link_state);\
-init_lua_key(pdf_literal);\
-init_lua_key(pdf_refobj);\
-init_lua_key(pdf_restore);\
-init_lua_key(pdf_save);\
-init_lua_key(pdf_setmatrix);\
-init_lua_key(pdf_setobj);\
-init_lua_key(pdf_start);\
-init_lua_key(pdf_start_link);\
-init_lua_key(pdf_start_thread);\
-init_lua_key(pdf_thread);\
-init_lua_key(pdf_thread_data);\
-init_lua_key(pdf_window);\
 init_lua_key(pen_broken);\
 init_lua_key(pen_inter);\
 init_lua_key(penalty);\
@@ -1952,11 +1883,6 @@ init_lua_key_alias(lua_bytecodes_indirect,"lua.bytecodes.indirect");\
 init_lua_key_alias(lua_functions,"lua.functions");\
 init_lua_key_alias(luatex_node, "luatex.node");\
 init_lua_key_alias(luatex_token, "luatex.token");\
-init_lua_key_alias(luatex_pdfe, "luatex.pdfe");\
-init_lua_key_alias(luatex_pdfe_dictionary, "luatex.pdfe.dictionary");\
-init_lua_key_alias(luatex_pdfe_array, "luatex.pdfe.array");\
-init_lua_key_alias(luatex_pdfe_stream, "luatex.pdfe.stream");\
-init_lua_key_alias(luatex_pdfe_reference, "luatex.pdfe.reference");\
 init_lua_key_alias(mLTL,"-LTL");\
 init_lua_key_alias(mRTT,"-RTT");\
 init_lua_key_alias(mTLT,"-TLT");\
@@ -1967,8 +1893,6 @@ init_lua_key_alias(pLTL,"+LTL");\
 init_lua_key_alias(pRTT,"+RTT");\
 init_lua_key_alias(pTLT,"+TLT");\
 init_lua_key_alias(pTRT,"+TRT");\
-init_lua_key_alias(pdf,"pdf");\
-init_lua_key_alias(pdf_data,"pdf.data");\
 init_lua_key_alias(term_and_log,"term and log")
 
 #define assign_math_style(L,n,target) do { \

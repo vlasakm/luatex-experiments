@@ -70,7 +70,6 @@ const_string LUATEX_IHELP[] = {
     "   --cnf-line =STRING            parse STRING as a configuration file line",
     "   --credits                     display credits and exit",
     "   --debug-format                enable format debugging",
-    "   --draftmode                   switch on draft mode (generates no output PDF)",
     "   --[no-]file-line-error        disable/enable file:line:error style messages",
     "   --[no-]file-line-error-style  aliases of --[no-]file-line-error",
     "   --fmt=FORMAT                  load the format file FORMAT",
@@ -83,9 +82,6 @@ const_string LUATEX_IHELP[] = {
     "   --lua=FILE                    load and execute a lua initialization script",
     "   --[no-]mktex=FMT              disable/enable mktexFMT generation (FMT=tex/tfm)",
     "   --nosocket                    disable the lua socket library",
-    "   --output-comment=STRING       use STRING for DVI file comment instead of date (no effect for PDF)",
-    "   --output-directory=DIR        use existing DIR as the directory to write files in",
-    "   --output-format=FORMAT        use FORMAT for job output; FORMAT is 'dvi' or 'pdf'",
     "   --progname=STRING             set the program name to STRING",
     "   --recorder                    enable filename recorder",
     "   --safer                       disable easily exploitable lua commands",
@@ -250,10 +246,6 @@ static struct option long_options[] = {
     {"credits", 0, 0, 0},
     {"recorder", 0, 0, 0},
     {"etex", 0, 0, 0},
-    {"output-comment", 1, 0, 0},
-    {"output-directory", 1, 0, 0},
-    {"draftmode", 0, 0, 0},
-    {"output-format", 1, 0, 0},
     {"shell-escape", 0, &shellenabledp, 1},
     {"no-shell-escape", 0, &shellenabledp, -1},
     {"enable-write18", 0, &shellenabledp, 1},
@@ -388,34 +380,9 @@ static void parse_options(int ac, char **av)
             c_job_name = optarg;
         } else if (ARGUMENT_IS("fmt")) {
             dump_name = optarg;
-        } else if (ARGUMENT_IS("output-directory")) {
-            output_directory = optarg;
-        } else if (ARGUMENT_IS("output-comment")) {
-            size_t len = strlen(optarg);
-            if (len < 256) {
-                output_comment = optarg;
-            } else {
-                WARNING2("Comment truncated to 255 characters from %d. (%s)", (int) len, optarg);
-                output_comment = (string) xmalloc(256);
-                strncpy(output_comment, optarg, 255);
-                output_comment[255] = 0;
-            }
         } else if (ARGUMENT_IS("shell-restricted")) {
             shellenabledp = 1;
             restrictedshell = 1;
-        } else if (ARGUMENT_IS("output-format")) {
-            output_mode_option = 1;
-            if (strcmp(optarg, "dvi") == 0) {
-                output_mode_value = 0;
-            } else if (strcmp(optarg, "pdf") == 0) {
-                output_mode_value = 1;
-            } else {
-                WARNING1("Ignoring unknown value `%s' for --output-format",optarg);
-                output_mode_option = 0;
-            }
-        } else if (ARGUMENT_IS("draftmode")) {
-            draft_mode_option = 1;
-            draft_mode_value = 1;
         } else if (ARGUMENT_IS("mktex")) {
             kpse_maketex_option(optarg, true);
         } else if (ARGUMENT_IS("no-mktex")) {
@@ -433,9 +400,6 @@ static void parse_options(int ac, char **av)
             } else {
                 WARNING1("Ignoring unknown argument `%s' to --interaction", optarg);
             }
-        } else if (ARGUMENT_IS("synctex")) {
-            /*tex Synchronize TeXnology: catching the command line option as a long  */
-            synctexoption = (int) strtol(optarg, NULL, 0);
         } else if (ARGUMENT_IS("recorder")) {
             recorderoption = 1 ;
         } else if (ARGUMENT_IS("help")) {

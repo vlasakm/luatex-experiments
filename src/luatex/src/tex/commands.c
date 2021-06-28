@@ -141,7 +141,6 @@ void initialize_commands(void)
     primitive_luatex("adjustspacing", assign_int_cmd, int_base + adjust_spacing_code, int_base);
     primitive_luatex("protrudechars", assign_int_cmd, int_base + protrude_chars_code, int_base);
     primitive_luatex("tracingfonts", assign_int_cmd, int_base + tracing_fonts_code, int_base);
-    primitive_luatex("draftmode", assign_int_cmd, int_base + draft_mode_code, int_base);
     primitive_tex("parindent", assign_dimen_cmd, dimen_base + par_indent_code, dimen_base);
     primitive_tex("mathsurround", assign_dimen_cmd, dimen_base + math_surround_code, dimen_base);
     primitive_tex("lineskiplimit", assign_dimen_cmd, dimen_base + line_skip_limit_code, dimen_base);
@@ -710,11 +709,6 @@ void initialize_commands(void)
     primitive_luatex("pagetopoffset", assign_dimen_cmd, dimen_base + page_top_offset_code, dimen_base);
     primitive_luatex("pagerightoffset", assign_dimen_cmd, dimen_base + page_right_offset_code, dimen_base);
     primitive_luatex("pagebottomoffset", assign_dimen_cmd, dimen_base + page_bottom_offset_code, dimen_base);
-    primitive_luatex("saveboxresource", extension_cmd, save_box_resource_code, 0);
-    primitive_luatex("useboxresource", extension_cmd, use_box_resource_code, 0);
-    primitive_luatex("saveimageresource", extension_cmd, save_image_resource_code, 0);
-    primitive_luatex("useimageresource", extension_cmd, use_image_resource_code, 0);
-    primitive_luatex("savepos", normal_cmd, save_pos_code, 0);
     primitive_luatex("savecatcodetable", normal_cmd, save_cat_code_table_code, 0);
     primitive_luatex("initcatcodetable", normal_cmd, init_cat_code_table_code, 0);
     primitive_luatex("setrandomseed", normal_cmd, set_random_seed_code, 0);

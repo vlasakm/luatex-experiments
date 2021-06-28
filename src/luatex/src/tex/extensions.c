@@ -218,18 +218,6 @@ void do_extension(int immediate)
                     vlink(p) = null;
                 }
                 break;
-            case special_code:
-                /*tex
-
-                    When `\.{\\special\{...\}}' appears, we expand the macros in
-                    the token list as in \.{\\xdef} and \.{\\mark}.
-
-                */
-                new_whatsit(special_node);
-                write_stream(tail) = null;
-                p = scan_toks(false, true);
-                write_tokens(tail) = def_ref;
-                break;
             case immediate_code:
                 get_x_token();
                 do_extension(1);

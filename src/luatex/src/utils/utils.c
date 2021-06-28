@@ -39,7 +39,6 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 #include <float.h>
 
 #include "zlib.h"
-#include "md5.h"
 
 #include "lua/luatex-api.h"
 #include "luatex_svnversion.h"

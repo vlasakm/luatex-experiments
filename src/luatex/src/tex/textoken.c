@@ -3039,13 +3039,6 @@ str_number the_convert_string(halfword c, int i)
         case font_identifier_code:
             print_font_identifier(i);
             break;
-        /*tex Backend: this might become obsolete! */
-        case dvi_feedback_code:
-            done = the_convert_string_dvi(c,i);
-            break;
-        case pdf_feedback_code:
-            done = the_convert_string_pdf(c,i);
-            break;
         /*tex done */
         default:
             done = false;

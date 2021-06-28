@@ -44,6 +44,7 @@ static char *font_error_message(pointer u, char *nom, scaled s)
     return str;
 }
 
+// TODO(mvlasak): delete \font completely
 static int do_define_font(int f, const char *cnom, scaled s, int natural_dir)
 {
     boolean res = 0;
@@ -74,17 +75,12 @@ static int do_define_font(int f, const char *cnom, scaled s, int natural_dir)
                 return 0;
             }
         }
-    } else if (callback_id == 0) {
-        res = read_tfm_info(f, cnom, s);
-        if (res) {
-            set_hyphen_char(f, default_hyphen_char_par);
-            set_skew_char(f, default_skew_char_par);
-        }
     }
     if (res) {
         if (font_type(f) != virtual_font_type) {
             /*tex This implies \LUA. */
-            do_vf(f);
+            // TODO(mvlasak): what is do_vf?
+	    //do_vf(f);
             set_font_natural_dir(f, natural_dir);
         }
         return f;

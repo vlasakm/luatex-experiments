@@ -136,6 +136,15 @@ subtype_info node_values_dir[] = {
     { -1, NULL, 0 },
 };
 
+subtype_info node_values_fill[] = {
+    { normal, NULL, 0 },
+    { sfi,    NULL, 0 },
+    { fil,    NULL, 0 },
+    { fill,   NULL, 0 },
+    { filll,  NULL, 0 },
+    { -1,     NULL, 0 },
+};
+
 subtype_info other_values_page_states[] = {
     { 0,  NULL, 0 },
     { 1,  NULL, 0 },
@@ -892,7 +901,7 @@ node_info whatsit_node_data[] = {
     { close_node,            close_node_size,          NULL, node_fields_whatsit_close,            NULL, -1, 0 },
     { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
     { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
-    { save_pos_node,         save_pos_node_size,       NULL, node_fields_whatsit_save_pos,         NULL, -1, 0 },
+    { fake_node,             fake_node_size,           NULL, NULL,                                 NULL, -1, 0 },
     { late_lua_node,         late_lua_node_size,       NULL, node_fields_whatsit_late_lua,         NULL, -1, 0 },
     { user_defined_node,     user_defined_node_size,   NULL, node_fields_whatsit_user_defined,     NULL, -1, 0 },
 
@@ -906,7 +915,6 @@ void l_set_whatsit_data(void) {
     init_node_key(whatsit_node_data, open_node,         open)
     init_node_key(whatsit_node_data, write_node,        write)
     init_node_key(whatsit_node_data, close_node,        close)
-    init_node_key(whatsit_node_data, save_pos_node,     save_pos)
     init_node_key(whatsit_node_data, late_lua_node,     late_lua)
     init_node_key(whatsit_node_data, user_defined_node, user_defined)
 
@@ -1576,34 +1584,6 @@ halfword new_node(int i, int j)
                 }
                 break;
         }
-    } else if (synctex_par) {
-        /*tex Handle the \SYNTEX\ extension. */
-        switch (i) {
-            case glue_node:
-                synctex_tag_glue(n) = cur_input.synctex_tag_field;
-                synctex_line_glue(n) = line;
-                break;
-            case kern_node:
-                if (j != 0) {
-                    synctex_tag_kern(n) = cur_input.synctex_tag_field;
-                    synctex_line_kern(n) = line;
-                }
-                break;
-            case hlist_node:
-            case vlist_node:
-            case unset_node:
-                synctex_tag_box(n) = cur_input.synctex_tag_field;
-                synctex_line_box(n) = line;
-                break;
-            case rule_node:
-                synctex_tag_rule(n) = cur_input.synctex_tag_field;
-                synctex_line_rule(n) = line;
-                break;
-            case math_node:
-                synctex_tag_math(n) = cur_input.synctex_tag_field;
-                synctex_line_math(n) = line;
-                break;
-        }
     }
     /*tex Take care of attributes. */
     if (nodetype_has_attributes(i)) {
@@ -1760,31 +1740,6 @@ halfword copy_node(const halfword p)
     \stoptyping
 
     */
-    if (synctex_anyway_mode) {
-        /*tex Not:
-
-        \starttyping
-        if (t == glyph_node) {
-            if (synctex_anyway_mode > 1) {
-                synctex_tag_glyph(r) = forced_tag ? forced_tag : cur_input.synctex_tag_field;
-                synctex_line_glyph(r) = forced_line ? forced_line : synctex_line_field ? synctex_line_field : line;
-            }
-        }
-        \stoptyping
-        */
-    } else if (synctex_par) {
-        /*tex Handle synctex extension. */
-        switch (t) {
-            case math_node:
-                synctex_tag_math(r) = cur_input.synctex_tag_field;
-                synctex_line_math(r) = line;
-                break;
-            case kern_node:
-                synctex_tag_kern(r) = cur_input.synctex_tag_field;
-                synctex_line_kern(r) = line;
-                break;
-        }
-    }
     if (nodetype_has_attributes(t)) {
         add_node_attr_ref(node_attr(p));
         alink(r) = null;
@@ -1910,7 +1865,6 @@ static void flush_node_wrapup_core(halfword p)
         case open_node:
         case write_node:
         case close_node:
-        case save_pos_node:
             break;
         case late_lua_node:
             free_late_lua(p);
@@ -2117,9 +2071,6 @@ static void check_node_wrapup_core(halfword p)
 {
     switch (subtype(p)) {
         /*tex Frontend code. */
-        case special_node:
-            check_token_ref(p);
-            break;
         case user_defined_node:
             switch (user_node_type(p)) {
                 case 'a':

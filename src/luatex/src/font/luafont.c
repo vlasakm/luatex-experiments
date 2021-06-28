@@ -1452,7 +1452,6 @@ int characters_from_lua(lua_State * L, int f)
                             charinfo *co = char_info(f, i);
                             set_charinfo_name(co, NULL);
                             set_charinfo_tounicode(co, NULL);
-                            set_charinfo_packets(co, NULL);
                             set_charinfo_ligatures(co, NULL);
                             set_charinfo_kerns(co, NULL);
                             set_charinfo_vert_variants(co, NULL);

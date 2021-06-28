@@ -259,7 +259,6 @@ the |number_regs| \.{\\dimen} registers.
 #  define adjust_spacing_code 68                                        /* level of spacing adjusting */
 #  define protrude_chars_code 69                                        /* protrude chars at left/right edge of paragraphs */
 #  define output_mode_code 70                                           /* switch on PDF output if positive */
-#  define draft_mode_code 71
 #  define tracing_fonts_code 72
 #  define tracing_assigns_code 73                                       /* show assignments */
 #  define tracing_groups_code 74                                        /* show save/restore groups */
@@ -467,11 +466,6 @@ typedef enum {
 } math_option_codes ;
 
 #  define mathoption_int_par(A) eqtb[mathoption_int_base+(A)].cint
-
-/* if nonzero, this magnification should be used henceforth */
-
-extern int mag_set;
-extern void prepare_mag(void);
 
 /*
 
@@ -782,8 +776,6 @@ extern halfword last_cs_name;
 #define year_par                           int_par(year_code)
 
 #define output_mode_par                    int_par(output_mode_code)
-#define draft_mode_par                     int_par(draft_mode_code)
-#define synctex_par                        int_par(synctex_code)
 
 #define language_par                       int_par(language_code)
 #define uc_hyph_par                        int_par(uc_hyph_code)

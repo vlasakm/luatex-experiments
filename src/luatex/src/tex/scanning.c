@@ -451,21 +451,6 @@ static boolean short_scan_something_internal(int cmd, int chr, int level, boolea
                         case luatex_version_code:
                             cur_val = get_luatexversion();
                             break;
-                        case last_saved_box_resource_index_code:
-                            cur_val = last_saved_box_index;
-                            break;
-                        case last_saved_image_resource_index_code:
-                            cur_val = last_saved_image_index;
-                            break;
-                        case last_saved_image_resource_pages_code:
-                            cur_val = last_saved_image_pages;
-                            break;
-                        case last_x_pos_code:
-                            cur_val = last_position.h;
-                            break;
-                        case last_y_pos_code:
-                            cur_val = last_position.v;
-                            break;
                         case random_seed_code:
                             cur_val = random_seed;
                             break;

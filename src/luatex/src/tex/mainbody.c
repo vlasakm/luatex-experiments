@@ -535,11 +535,6 @@ void main_body(void)
         while ((iloc < ilimit) && (buffer[iloc] == ' '))
             incr(iloc);
     }
-    if (output_mode_option != 0)
-        output_mode_par = output_mode_value;
-    if (draft_mode_option != 0) {
-        draft_mode_par = draft_mode_value;
-    }
     if (end_line_char_inactive)
         decr(ilimit);
     else

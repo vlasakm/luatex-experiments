@@ -125,6 +125,7 @@ typedef enum {
     close_code,
     reserved_extension_code, // 3: we moved special below immediate //
     reserved_immediate_code, // 4: same number as main codes, expected value //
+    end_local_code,
 } extension_codes ;
 
 extern void wrapup_leader(halfword p);
