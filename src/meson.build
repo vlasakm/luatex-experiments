@@ -1,5 +1,4 @@
 subdir('kpathsea')
-subdir('mplib')
 subdir('lua')
 subdir('lib')
 subdir('pplib')

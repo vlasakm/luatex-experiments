@@ -317,7 +317,6 @@ void luainterpreter(void)
     luaopen_stats(L);
     luaopen_font(L);
     luaopen_lang(L);
-    luaopen_mplib(L);
     lua_createtable(L, 0, 0);
     lua_setglobal(L, "texconfig");
     Luas = L;

@@ -27,7 +27,6 @@ luatex_src = files(
   'src/lua/helpers.c',
   'src/lua/luanode.c',
   'src/lua/luatoken.c',
-  'src/lua/mplibstuff.c',
   'src/tex/align.c',
   'src/tex/arithmetic.c',
   'src/tex/buildpage.c',
@@ -64,7 +63,6 @@ luatex_src = files(
   'src/utils/managed-sa.c',
   'src/utils/unistring.c',
   'src/luatex.c',
-  '../mplib/src/lmplib.c',
   'src/mvlasak.c'
 )
 
@@ -79,10 +77,8 @@ cc = meson.get_compiler('c')
 luatex_dependencies = [
   cc.find_library('m', required: false),
   cc.find_library('dl', required: false),
-  dependency('libpng'),
   dependency('zlib'),
   lua_dep,
-  mplib_dep,
   pplib_dep,
   w2c_dep,
 ]
