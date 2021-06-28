@@ -27,6 +27,9 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include <locale.h>
 
+// TODO(mvlasak): added by me, move to ptexlib?
+#include <sys/stat.h>
+
 extern int load_luatex_core_lua (lua_State * L);
 
 /*tex internalized strings: see luatex-api.h */
@@ -442,6 +445,25 @@ static char *find_filename(char *name, const char *envkey)
         }
     }
     return NULL;
+}
+
+static void fix_dumpname(void)
+{
+    int dist;
+    if (dump_name) {
+        /*tex Adjust array for Pascal and provide extension, if needed. */
+        dist = (int) (strlen(dump_name) - strlen(DUMP_EXT));
+        if (strstr(dump_name, DUMP_EXT) == dump_name + dist)
+            TEX_format_default = dump_name;
+        else
+            TEX_format_default = concat(dump_name, DUMP_EXT);
+    } else {
+        /*tex For |dump_name| to be NULL is a bug. */
+        if (!ini_version) {
+          fprintf(stdout, "no format given, quitting\n");
+          exit(1);
+        }
+    }
 }
 
 /*tex

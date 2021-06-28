@@ -14,7 +14,6 @@ luatex_src = files(
   'src/lang/texlang.c',
   'src/lua/lcallbacklib.c',
   'src/lua/lfontlib.c',
-  'src/lua/lkpselib.c',
   'src/lua/llanglib.c',
   'src/lua/llualib.c',
   'src/lua/lnodelib.c',
@@ -85,7 +84,6 @@ luatex_dependencies = [
   lua_dep,
   mplib_dep,
   pplib_dep,
-  kpathsea_dep,
   w2c_dep,
 ]
 
