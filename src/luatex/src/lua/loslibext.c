@@ -20,8 +20,6 @@
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
-#include <kpathsea/c-stat.h>
-#include <kpathsea/c-dir.h>
 #include <time.h>
 
 
