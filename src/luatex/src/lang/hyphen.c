@@ -48,8 +48,6 @@ language governing rights and limitations under the MPL.
 #  include <unistd.h> /* for exit */
 #endif
 
-#include <kpathsea/c-ctype.h>
-
 #define noVERBOSE
 
 #include "lang/hnjalloc.h"
