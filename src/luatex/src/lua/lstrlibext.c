@@ -26,13 +26,7 @@
 #define LUA_CORE
 #include "lua.h"
 #include "lauxlib.h"
-#ifdef LuajitTeX
-#include "lualib.h"
-#else
 #include "luaconf.h"
-#include "lapi.h"
-#include "lundump.h"
-#endif
 
 static int bytepairs_aux (lua_State *L) {
   size_t ls;

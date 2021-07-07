@@ -165,17 +165,8 @@ static const luaL_Reg lualibs[] = {
     { "string",    luaopen_string },
     { "math",      luaopen_math },
     { "debug",     luaopen_debug },
-    { "bit32",     luaopen_bit32 },
-#ifdef LuajitTeX
-    /*tex |bit| is only in \LUAJIT */
-    /*tex |coroutine| is loaded in a special way */
-    { "bit",       luaopen_bit },
-#else
-#if LUA_VERSION_NUM == 503
     { "utf8",      luaopen_utf8 },
-#endif
     { "coroutine", luaopen_coroutine },
-#endif
     { NULL,        NULL }
 };
 

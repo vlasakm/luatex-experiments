@@ -1,7 +1,6 @@
 luatex_src = files(
   'src/lua/lstrlibext.c',
   'src/lua/helpers.c',
-  'src/lua/texluac.c',
   'src/utils/utils.c',
   'src/lua/luastuff.c',
   'src/lua/luainit.c',
