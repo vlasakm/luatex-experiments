@@ -27,10 +27,7 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#include <kpathsea/config.h>
 #include "sys/types.h"
-#include <kpathsea/c-stat.h>
-#include <kpathsea/c-fopen.h>
 #include <string.h>
 #include <time.h>
 
