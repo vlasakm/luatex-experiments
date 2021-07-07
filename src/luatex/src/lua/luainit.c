@@ -465,80 +465,6 @@ static void fix_dumpname(void)
 
 /*tex
 
-    Here comes the \LUA\ search function. When kpathsea is not initialized, then it
-    runs the normal \LUA\ function that is saved in the registry, otherwise it uses
-    kpathsea.
-
-    Two registry ref variables are needed: one for the actual \LUA\ function, the
-    other for its environment .
-
-*/
-
-static int lua_loader_function = 0;
-
-static int luatex_lua_find(lua_State * L)
-{
-    const char *filename;
-    const char *name;
-    name = luaL_checkstring(L, 1);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, lua_loader_function);
-    lua_pushvalue(L, -2);
-    lua_call(L, 1, 1);
-    return 1;
-}
-
-static int clua_loader_function = 0;
-extern int searcher_C_luatex (lua_State *L, const char *name, const char *filename);
-
-static int luatex_clua_find(lua_State * L)
-{
-    const char *filename;
-    const char *name;
-    if (safer_option) {
-        /*tex library not found in this path */
-        lua_pushliteral(L, "\n\t[C searcher disabled in safer mode]");
-        return 1;
-    }
-    name = luaL_checkstring(L, 1);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loader_function);
-    lua_pushvalue(L, -2);
-    lua_call(L, 1, 1);
-    return 1;
-}
-
-/*tex
-
-    Setting up the new search functions. This replaces package.searchers[2] and
-    package.searchers[3] with the functions defined above.
-
-*/
-
-static void setup_lua_path(lua_State * L)
-{
-    lua_getglobal(L, "package");
-#ifdef LuajitTeX
-    lua_getfield(L, -1, "loaders");
-#else
-    lua_getfield(L, -1, "searchers");
-#endif
-    /*tex package.searchers[2] */
-    lua_rawgeti(L, -1, 2);
-    lua_loader_function = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pushcfunction(L, luatex_lua_find);
-    /*tex replace the normal lua loader */
-    lua_rawseti(L, -2, 2);
-    /*tex package.searchers[3] */
-    lua_rawgeti(L, -1, 3);
-    clua_loader_function = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pushcfunction(L, luatex_clua_find);
-    /*tex replace the normal lua lib loader */
-    lua_rawseti(L, -2, 3);
-    /*tex pop the array and table */
-    lua_pop(L, 2);
-}
-
-/*tex
-
     Helper variables for the safe keeping of table ids.
 
 */
@@ -742,7 +668,6 @@ void lua_initialize(int ac, char **av)
     set_l_img_pageboxes_index;
     /*tex collect arguments */
     prepare_cmdline(Luas, argv, argc, lua_offset);
-    setup_lua_path(Luas);
     if (startup_filename != NULL) {
         given_file = xstrdup(startup_filename);
         if (lua_only) {
