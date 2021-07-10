@@ -3071,7 +3071,7 @@ static int tex_run_boot(lua_State * L)
         return 1;
     }
     if (format) {
-        if (!zopen_w_input(&fmt_file, format, FOPEN_RBIN_MODE)) {
+        if (!zopen_w_input(&fmt_file, format, "rb")) {
             lua_pushboolean(L, 0);      /* false */
             return 1;
         }

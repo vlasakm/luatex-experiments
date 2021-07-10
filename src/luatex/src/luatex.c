@@ -369,7 +369,7 @@ static BOOL WINAPI catch_interrupt(DWORD arg)
     }
 }
 #else /* not WIN32 */
-static RETSIGTYPE catch_interrupt(int arg)
+static void catch_interrupt(int arg)
 {
     (void) arg;
     interrupt = 1;
@@ -427,7 +427,7 @@ void get_date_and_time(int *minutes, int *day, int *month, int *year)
 #  ifdef WIN32
         SetConsoleCtrlHandler(catch_interrupt, TRUE);
 #  else /* not WIN32 */
-        RETSIGTYPE(*old_handler) (int);
+        void(*old_handler) (int);
 
         old_handler = signal(SIGINT, catch_interrupt);
         if (old_handler != SIG_DFL)

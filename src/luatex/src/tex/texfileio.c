@@ -179,7 +179,8 @@ boolean lua_a_open_out(alpha_file * f, char *fn, int n)
                 messaging is left to \LUA\ then.
 
             */
-            ret = open_outfile(f, fnam, FOPEN_W_MODE);
+	    // TODO(mvlasak): "wb" is used by kpathsea's FOPEN_W_MODE
+            ret = open_outfile(f, fnam, "w");
             free(fnam);
         }
     } else {
@@ -198,7 +199,7 @@ boolean lua_b_open_out(alpha_file * f, char *fn)
     if (callback_id > 0) {
         test = run_callback(callback_id, "S->R", fn, &fnam);
         if ((test) && (fnam != NULL) && (strlen(fnam) > 0)) {
-            ret = open_outfile(f, fnam, FOPEN_WBIN_MODE);
+            ret = open_outfile(f, fnam, "wb");
             free(fnam);
         }
     } else {
@@ -629,7 +630,7 @@ char *open_fmt_file(void)
         dist = (int) (strlen(fmt) - strlen(DUMP_EXT));
         if (!(strstr(fmt, DUMP_EXT) == fmt + dist))
             fmt = concat(fmt, DUMP_EXT);
-        if (zopen_w_input(&fmt_file, fmt, FOPEN_RBIN_MODE))
+        if (zopen_w_input(&fmt_file, fmt, "rb"))
             goto FOUND;
         wake_up_terminal();
         fprintf(stdout, "Sorry, I can't find the format `%s'; will try `%s'.\n",
@@ -638,7 +639,7 @@ char *open_fmt_file(void)
     }
     /*tex Now pull out all the stops: try for the system \.{plain} file. */
     fmt = TEX_format_default;
-    if (!zopen_w_input(&fmt_file, fmt, FOPEN_RBIN_MODE)) {
+    if (!zopen_w_input(&fmt_file, fmt, "rb")) {
         wake_up_terminal();
         fprintf(stdout, "I can't find the format file `%s'!\n",
                 TEX_format_default);

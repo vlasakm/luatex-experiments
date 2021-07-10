@@ -116,7 +116,7 @@ void store_fmt_file(void)
         selector = term_and_log;
     }
     fmtname = pack_job_name(format_extension);
-    while (!zopen_w_output(&fmt_file, fmtname, FOPEN_WBIN_MODE)) {
+    while (!zopen_w_output(&fmt_file, fmtname, "wb")) {
         fmtname = prompt_file_name("format file name", format_extension);
     }
     tprint_nl("Beginning to dump on file ");
