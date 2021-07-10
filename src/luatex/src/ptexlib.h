@@ -187,6 +187,13 @@ extern void usagehelp (const char **message, const char *bug_email);
 
 #define IS_DIR_SEP(ch) ((ch) == '/')
 
+
+void * xmalloc(size_t size);
+void * xcalloc(size_t n, size_t size);
+char * xstrdup(const char *s);
+void * xrealloc(void *old, size_t size);
+
+
 /**********************************************************************/
 #  include "tex/expand.h"
 #  include "tex/conditional.h"

@@ -1,4 +1,5 @@
 #include "ptexlib.h"
+#include <stdlib.h>
 
 /*tex
 
@@ -101,4 +102,48 @@ usagehelp (const char **message, const char *bug_email)
 	}
 	printf("\nEmail bug reports to %s.\n", bug_email);
 	uexit(0);
+}
+
+void *
+xmalloc(size_t size)
+{
+	void *alloc = malloc(size ? size : 1);
+	if (!alloc) {
+		fprintf(stderr, "xmalloc failed for %zu\n", size);
+		exit(EXIT_FAILURE);
+	}
+	return alloc;
+}
+
+void *
+xrealloc(void *old, size_t size)
+{
+	if (!old) {
+		return xmalloc(size);
+	}
+
+	void *alloc = realloc(old, size ? size : 1);
+	if (!alloc) {
+		fprintf(stderr, "xrealloc failed for %zu\n", size);
+		exit(EXIT_FAILURE);
+	}
+	return alloc;
+}
+
+void *
+xcalloc(size_t n, size_t size)
+{
+	void *alloc = calloc(n ? n : 1, size ? size : 1);
+	if (!alloc) {
+		fprintf(stderr, "xcalloc failed for %zu\n", size);
+		exit(EXIT_FAILURE);
+	}
+	return alloc;
+}
+
+char *
+xstrdup(const char *s)
+{
+	char *new = xmalloc(strlen(s) + 1);
+	return strcpy(new, s);
 }
