@@ -119,8 +119,7 @@ extern void start_input(void);
 
 extern int open_outfile(FILE ** f, const char *name, const char *mode);
 
-extern boolean zopen_w_input(FILE **, const char *, int,
-                             const_string fopen_mode);
+extern boolean zopen_w_input(FILE **, const char *, const_string fopen_mode);
 extern boolean zopen_w_output(FILE **, const char *, const_string fopen_mode);
 extern void zwclose(FILE *);
 

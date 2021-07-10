@@ -58,7 +58,6 @@
 #  define TEXMFENGINENAME "luatex"
 
 #  define DUMP_FILE fmt_file
-#  define DUMP_FORMAT kpse_fmt_format
 
 /* Restore underscores.  */
 #  define kpsetexformat kpse_tex_format

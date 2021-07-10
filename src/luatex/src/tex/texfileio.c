@@ -629,7 +629,7 @@ char *open_fmt_file(void)
         dist = (int) (strlen(fmt) - strlen(DUMP_EXT));
         if (!(strstr(fmt, DUMP_EXT) == fmt + dist))
             fmt = concat(fmt, DUMP_EXT);
-        if (zopen_w_input(&fmt_file, fmt, DUMP_FORMAT, FOPEN_RBIN_MODE))
+        if (zopen_w_input(&fmt_file, fmt, FOPEN_RBIN_MODE))
             goto FOUND;
         wake_up_terminal();
         fprintf(stdout, "Sorry, I can't find the format `%s'; will try `%s'.\n",
@@ -638,7 +638,7 @@ char *open_fmt_file(void)
     }
     /*tex Now pull out all the stops: try for the system \.{plain} file. */
     fmt = TEX_format_default;
-    if (!zopen_w_input(&fmt_file, fmt, DUMP_FORMAT, FOPEN_RBIN_MODE)) {
+    if (!zopen_w_input(&fmt_file, fmt, FOPEN_RBIN_MODE)) {
         wake_up_terminal();
         fprintf(stdout, "I can't find the format file `%s'!\n",
                 TEX_format_default);
@@ -1055,7 +1055,7 @@ void do_zundump(char *p, int item_size, int nitems, FILE * in_file)
 
 #define COMPRESSION "R3"
 
-boolean zopen_w_input(FILE ** f, const char *fname, int format, const_string fopen_mode)
+boolean zopen_w_input(FILE ** f, const char *fname, const_string fopen_mode)
 {
     int callbackid;
     int res;
