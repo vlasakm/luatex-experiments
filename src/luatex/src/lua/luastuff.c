@@ -293,7 +293,6 @@ void luainterpreter(void)
     lua_setglobal(L, "dofile");
     lua_pushcfunction(L,luatex_loadfile);
     lua_setglobal(L, "loadfile");
-    open_oslibext(L);
     open_strlibext(L);
     /*tex our own libraries register themselves */
     luaopen_fio(L);

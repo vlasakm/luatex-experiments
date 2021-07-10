@@ -17,7 +17,6 @@ luatex_src = files(
   'src/lua/llualib.c',
   'src/lua/lnodelib.c',
   'src/lua/liolibext.c',
-  'src/lua/loslibext.c',
   'src/lua/lstatslib.c',
   'src/lua/ltexiolib.c',
   'src/lua/ltexlib.c',
