@@ -3750,10 +3750,6 @@ void new_interaction(void)
 {
     print_ln();
     interaction = cur_chr;
-    if (interaction == batch_mode)
-        kpse_make_tex_discard_errors = 1;
-    else
-        kpse_make_tex_discard_errors = 0;
     fixup_selector(log_opened_global);
 }
 
