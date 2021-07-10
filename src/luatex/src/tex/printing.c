@@ -549,9 +549,6 @@ void print_banner(const char *v)
         }
         if (shellenabledp) {
             wterm(' ');
-            if (restrictedshell) {
-                fprintf(term_out, "restricted ");
-            }
             fprintf(term_out, "system commands enabled.\n");
         }
     } else if (callback_id > 0) {
@@ -584,8 +581,6 @@ void log_banner(const char *v)
     if (shellenabledp) {
         wlog_cr();
         wlog(' ');
-        if (restrictedshell)
-            fprintf(log_file, "restricted ");
         fprintf(log_file, "system commands enabled.");
     }
     if (filelineerrorstylep) {

@@ -71,7 +71,6 @@ const_string LUATEX_IHELP[] = {
     "   --recorder                    enable filename recorder",
     "   --safer                       disable easily exploitable lua commands",
     "   --[no-]shell-escape           disable/enable system commands",
-    "   --shell-restricted            restrict system commands to a list of commands given in texmf.cnf",
     "   --utc                         init time to UTC",
     "   --version                     display version and exit",
     "",
@@ -189,7 +188,6 @@ static struct option long_options[] = {
     {"no-shell-escape", 0, &shellenabledp, -1},
     {"enable-write18", 0, &shellenabledp, 1},
     {"disable-write18", 0, &shellenabledp, -1},
-    {"shell-restricted", 0, 0, 0},
     {"debug-format", 0, &debug_format_file, 1},
     {"file-line-error-style", 0, &filelineerrorstylep, 1},
     {"no-file-line-error-style", 0, &filelineerrorstylep, -1},
@@ -303,9 +301,6 @@ static void parse_options(int ac, char **av)
             c_job_name = optarg;
         } else if (ARGUMENT_IS("fmt")) {
             dump_name = optarg;
-        } else if (ARGUMENT_IS("shell-restricted")) {
-            shellenabledp = 1;
-            restrictedshell = 1;
         } else if (ARGUMENT_IS("interaction")) {
             /* These numbers match CPP defines */
             if (STREQ(optarg, "batchmode")) {
@@ -346,7 +341,6 @@ static void parse_options(int ac, char **av)
                  "omega     : John Plaice and Yannis Haralambous\n"
                  "aleph     : Giuseppe Bilotta\n"
                  "pdftex    : Han The Thanh and friends\n"
-                 "kpathsea  : Karl Berry, Olaf Weber and others\n"
                  "lua       : Roberto Ierusalimschy, Waldemar Celes and Luiz Henrique de Figueiredo\n"
                  "metapost  : John Hobby, Taco Hoekwater, Luigi Scarso, Hans Hagen and friends\n"
                  "pplib     : Paweł Jackowski\n"
@@ -596,7 +590,6 @@ void lua_initialize(int ac, char **av)
     if (lua_only) {
         /*tex Shell has no restrictions. */
         shellenabledp = true;
-        restrictedshell = false;
         safer_option = 0;
     }
     /*tex
@@ -736,26 +729,14 @@ void lua_initialize(int ac, char **av)
         if ((interactionoption < 0) || (interactionoption > 4)) {
             interactionoption = 4;
         }
-        /*tex |restrictedshell| */
+        /*tex |shell_escape| */
         v1 = NULL;
         get_lua_string("texconfig", "shell_escape", &v1);
         if (v1) {
             if (*v1 == 't' || *v1 == 'y' || *v1 == '1') {
                 shellenabledp = 1;
-            } else if (*v1 == 'p') {
-                shellenabledp = 1;
-                restrictedshell = 1;
             }
             free(v1);
-        }
-        /*tex If shell escapes are restricted, get allowed cmds from cnf.  */
-        if (shellenabledp && restrictedshell == 1) {
-            v1 = NULL;
-            get_lua_string("texconfig", "shell_escape_commands", &v1);
-            if (v1) {
-                mk_shellcmdlist(v1);
-            free(v1);
-            }
         }
         starttime = -1 ;
         get_lua_number("texconfig", "start_time", &starttime);

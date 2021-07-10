@@ -28,8 +28,7 @@
 
 #  include "cpascal.h"
 
-#  include <kpathsea/c-pathch.h>        /* for IS_DIR_SEP, used in the change files */
-#  include <kpathsea/tex-make.h>        /* for kpse_make_tex_discard_errors */
+#  include <ctype.h>
 
 /* If we have these macros, use them, as they provide a better guide to
    the endianess when cross-compiling. */
@@ -60,11 +59,9 @@
 #  define DUMP_FILE fmt_file
 
 /* Restore underscores.  */
-#  define kpsetexformat kpse_tex_format
 #  define t_open_in topenin
 
 /* Executing shell commands.  */
-extern void mk_shellcmdlist(char *);
 extern void init_shell_escape(void);
 extern void init_start_time(void);
 extern int get_start_time(void);
@@ -108,7 +105,6 @@ extern boolean input_line(FILE *);
 #  define BUG_ADDRESS "dev-luatex@ntg.nl"
 #  define DUMP_OPTION "fmt"
 #  define DUMP_EXT ".fmt"
-#  define INPUT_FORMAT kpse_tex_format
 #  define INI_PROGRAM "luainitex"
 #  define VIR_PROGRAM "luavirtex"
 #  define TEXMFENGINENAME "luatex"

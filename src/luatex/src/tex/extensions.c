@@ -1063,7 +1063,6 @@ boolean stop_at_space;
 */
 
 int shellenabledp;
-int restrictedshell;
 char *output_comment;
 
 /*tex

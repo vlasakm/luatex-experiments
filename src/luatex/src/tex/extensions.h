@@ -114,7 +114,6 @@ extern pool_pointer edit_name_start;
 extern int edit_name_length, edit_line;
 extern boolean stop_at_space;
 extern int shellenabledp;
-extern int restrictedshell;
 extern char *output_comment;
 extern boolean debug_format_file;
 

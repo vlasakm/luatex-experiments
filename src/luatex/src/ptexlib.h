@@ -185,7 +185,7 @@ extern char *output_directory;
 extern void usage (const char *str);
 extern void usagehelp (const char **message, const char *bug_email);
 
-//#define IS_DIR_SEP(ch) ((ch) == '/')
+#define IS_DIR_SEP(ch) ((ch) == '/')
 
 /**********************************************************************/
 #  include "tex/expand.h"
