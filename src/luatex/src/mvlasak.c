@@ -51,10 +51,6 @@ boolean doing_leaders = false;  /* are we inside a leader box? */
 
 /* From WEB2C */
 
-void close_file(FILE *f)
-{
-	(void)f;
-}
 void recorder_change_filename(char *filename)
 {
 	(void)filename;

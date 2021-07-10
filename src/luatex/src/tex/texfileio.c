@@ -22,7 +22,6 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 #include "ptexlib.h"
 
 #include <string.h>
-#include <kpathsea/absolute.h>
 
 /*tex
 
@@ -82,33 +81,6 @@ int read_file_callback_id[17];
 
 /*tex
 
-    Here we handle |-output-directory|. We assume that it is OK to look here
-    first. Possibly it would be better to replace lookups in "." with lookups in
-    the |output_directory| followed by "." but to do this requires much more
-    invasive surgery in libkpathsea.
-
-*/
-
-static char *find_in_output_directory(const char *s)
-{
-    if (output_directory && !kpse_absolute_p(s, false)) {
-        FILE *f_ptr;
-        char *ftemp = concat3(output_directory, DIR_SEP_STRING, s);
-        /*tex This code is used for input files only. */
-        f_ptr = fopen(ftemp, "rb");
-        if (f_ptr) {
-            fclose(f_ptr);
-            return ftemp;
-        } else {
-            free(ftemp);
-
-        }
-    }
-    return NULL;
-}
-
-/*tex
-
     Find an \.{\\input} or \.{\\read} file. |n| differentiates between those
     case.
 
@@ -148,93 +120,6 @@ char *luatex_find_file(const char *s, int callback_index)
         kpse_available("find_read_file");
     }
     return ftemp;
-}
-
-/*tex
-
-    \LUATEX\ used to have private functions for these that did not use kpathsea,
-    but since the file paranoia tests have to come from kpathsea anyway, that is
-    no longer useful. The only downside to using luatex is that if one wants to
-    disable kpathsea via the Lua startup script, it is now an absolute
-    requirement that all file discovery callbacks are specified. Just using the
-    find_read_file, but not setting open_read_file, for example, does not work
-    any more if kpathsea is not to be used at all.
-
-*/
-
-#define openoutnameok(A) kpse_out_name_ok (A)
-#define openinnameok(A)  kpse_in_name_ok (A)
-
-/*tex
-
-    Open an input file F, using the kpathsea format FILEFMT and passing
-    |FOPEN_MODE| to fopen. The filename is in `fn'. We return whether or not the
-    open succeeded.
-
-*/
-
-boolean luatex_open_input(FILE ** f_ptr, const char *fn, int filefmt, const_string fopen_mode, boolean must_exist)
-{
-    /*tex We haven't found anything yet. */
-    string fname = NULL;
-    *f_ptr = NULL;
-    if (fullnameoffile)
-        free(fullnameoffile);
-    fullnameoffile = NULL;
-    fname = kpse_find_file(fn, (kpse_file_format_type) filefmt, must_exist);
-    if (fname) {
-        fullnameoffile = xstrdup(fname);
-        /*tex
-
-            If we found the file in the current directory, don't leave the `./'
-            at the beginning of `fn', since it looks dumb when `tex foo' says
-            `(./foo.tex ... )'. On the other hand, if the user said `tex ./foo',
-            and that's what we opened, then keep it -- the user specified it, so
-            we shouldn't remove it.
-
-        */
-        if (fname[0] == '.' && IS_DIR_SEP(fname[1]) && (fn[0] != '.' || !IS_DIR_SEP(fn[1]))) {
-            unsigned i = 0;
-            while (fname[i + 2] != 0) {
-                fname[i] = fname[i + 2];
-                i++;
-            }
-            fname[i] = 0;
-        }
-        /*tex This fopen is not allowed to fail. */
-        *f_ptr = xfopen(fname, fopen_mode);
-    }
-    if (*f_ptr) {
-        recorder_record_input(fname);
-    }
-    return *f_ptr != NULL;
-}
-
-boolean luatex_open_output(FILE ** f_ptr, const char *fn, const_string fopen_mode)
-{
-    char *fname;
-    boolean absolute = kpse_absolute_p(fn, false);
-    /*tex If we have an explicit output directory, use it. */
-    if (output_directory && !absolute) {
-        fname = concat3(output_directory, DIR_SEP_STRING, fn);
-    } else {
-        fname = xstrdup(fn);
-    }
-    /*tex Is the filename openable as given?  */
-    *f_ptr = fopen(fname, fopen_mode);
-    if (!*f_ptr) {
-        /*tex Can't open as given. Try the envvar.  */
-        string texmfoutput = kpse_var_value("TEXMFOUTPUT");
-        if (texmfoutput && *texmfoutput && !absolute) {
-            fname = concat3(texmfoutput, DIR_SEP_STRING, fn);
-            *f_ptr = fopen(fname, fopen_mode);
-        }
-    }
-    if (*f_ptr) {
-        recorder_record_output(fname);
-    }
-    free(fname);
-    return *f_ptr != NULL;
 }
 
 boolean lua_a_open_in(alpha_file * f, char *fn, int n)
@@ -298,20 +183,7 @@ boolean lua_a_open_out(alpha_file * f, char *fn, int n)
             free(fnam);
         }
     } else {
-        if (openoutnameok(fn)) {
-            if (n > 0 && selector != term_only) {
-                /*tex
-
-                    This message to the log is for downward compatibility with
-                    other tex's as there are scripts out there that act on this
-                    message. An alternative is to let a macro package write an
-                    explicit message.
-
-                */
-                fprintf(log_file,"\n\\openout%i = %s\n",n-1,fn);
-             }
-             ret = open_out_or_pipe(f, fn, FOPEN_W_MODE);
-        }
+        kpse_available("lua_a_open_out");
     }
     return ret;
 }
@@ -330,9 +202,7 @@ boolean lua_b_open_out(alpha_file * f, char *fn)
             free(fnam);
         }
     } else {
-        if (openoutnameok(fn)) {
-            ret = luatex_open_output(f, fn, FOPEN_WBIN_MODE);
-        }
+        kpse_available("lua_b_open_out");
     }
     return ret;
 }
@@ -352,13 +222,13 @@ void lua_a_close_in(alpha_file f, int n)
         else
             read_file_callback_id[n] = 0;
     } else {
-        close_file_or_pipe(f);
+        kpse_available("lua_a_close_in");
     }
 }
 
 void lua_a_close_out(alpha_file f)
 {
-    close_file_or_pipe(f);
+    fclose(f);
 }
 
 /*tex
@@ -908,20 +778,6 @@ char *get_full_log_name (void)
    }
 }
 
-/*tex Synctex uses this to get the anchored path of an input file. */
-
-char *luatex_synctex_get_current_name (void)
-{
-  char *pwdbuf = NULL, *ret;
-  if (kpse_absolute_p(fullnameoffile, false)) {
-     return xstrdup(fullnameoffile);
-  }
-  pwdbuf = xgetcwd();
-  ret = concat3(pwdbuf, DIR_SEP_STRING, fullnameoffile);
-  free(pwdbuf) ;
-  return ret;
-}
-
 /*tex
 
     Let's turn now to the procedure that is used to initiate file reading when an
@@ -1233,7 +1089,9 @@ boolean zopen_w_output(FILE ** f, const char *s, const_string fopen_mode)
             return 0;
         }
     } else {
-        res = luatex_open_output(f, s, fopen_mode);
+        // TODO(mvlasak): was `luatex_open_output` (handled absolute paths and
+        // TEXMFOUTPUT)
+        res = open_outfile(f, s, fopen_mode);
     }
     if (res) {
         gz_fmtfile = gzdopen(fileno(*f), "wb" COMPRESSION);
@@ -1285,168 +1143,4 @@ int readbinfile(FILE * f, unsigned char **tfm_buffer, int *tfm_size)
     }
     /*tex Either seek failed or we have a zero-sized file. */
     return 0;
-}
-
-/*tex
-
-    Like |os.execute()|, the |runpopen()| function is called only when
-    |shellenabledp == 1|. Unlike |os.execute()| we write errors to stderr, since
-    we have nowhere better to use; and of course we return a file handle (or
-    NULL) instead of a status indicator.
-
-*/
-
-static FILE *runpopen(char *cmd, const char *mode)
-{
-    FILE *f = NULL;
-    char *safecmd = NULL;
-    char *cmdname = NULL;
-    int allow;
-#ifdef WIN32
-    char *pp;
-
-    for (pp = cmd; *pp; pp++) {
-      if (*pp == '\'') *pp = '"';
-    }
-#endif
-    /*tex If |restrictedshell| is zero, any command is allowed. */
-    if (restrictedshell == 0) {
-        allow = 1;
-    } else {
-        const char *thecmd = cmd;
-        allow = shell_cmd_is_allowed(thecmd, &safecmd, &cmdname);
-    }
-    if (allow == 1)
-        f = popen(cmd, mode);
-    else if (allow == 2)
-        f = popen(safecmd, mode);
-    else if (allow == -1)
-        fprintf(stderr, "\nrunpopen quotation error in command line: %s\n", cmd);
-    else
-        fprintf(stderr, "\nrunpopen command not allowed: %s\n", cmdname);
-    if (safecmd)
-        free(safecmd);
-    if (cmdname)
-        free(cmdname);
-    return f;
-}
-
-/*tex
-
-    The code that implements |popen()| needs an array for tracking possible pipe
-    file pointers, because these need to be closed using |pclose()|.
-
-*/
-
-#define NUM_PIPES 16
-static FILE *pipes[NUM_PIPES];
-
-#ifdef WIN32
-FILE *Poptr;
-#endif
-
-boolean open_in_or_pipe(FILE ** f_ptr, char *fn, int filefmt, const_string fopen_mode, boolean must_exist)
-{
-    string fname = NULL;
-    int i;
-    /*tex
-
-        Opening a read pipe is straightforward, only have to skip past the pipe
-        symbol in the file name. filename quoting is assumed to happen elsewhere
-        (it does :-))
-
-    */
-    if (shellenabledp && *fn == '|') {
-        /*tex The user requested a pipe. */
-        *f_ptr = NULL;
-        fname = (string) xmalloc((unsigned) (strlen(fn) + 1));
-        strcpy(fname, fn);
-        if (fullnameoffile)
-            free(fullnameoffile);
-        fullnameoffile = xstrdup(fname);
-        recorder_record_input(fname + 1);
-        *f_ptr = runpopen(fname + 1, "r");
-        free(fname);
-        for (i = 0; i < NUM_PIPES; i++) {
-            if (pipes[i] == NULL) {
-                pipes[i] = *f_ptr;
-                break;
-            }
-        }
-        if (*f_ptr)
-            setvbuf(*f_ptr, (char *) NULL, _IONBF, 0);
-#ifdef WIN32
-        Poptr = *f_ptr;
-#endif
-        return *f_ptr != NULL;
-    }
-    return luatex_open_input(f_ptr, fn, filefmt, fopen_mode, must_exist);
-}
-
-
-boolean open_out_or_pipe(FILE ** f_ptr, char *fn, const_string fopen_mode)
-{
-    string fname;
-    int i;
-    /*tex
-
-        Opening a write pipe takes a little bit more work, because TeX will
-        perhaps have appended ".tex". To avoid user confusion as much as
-        possible, this extension is stripped only when the command is a bare
-        word. Some small string trickery is needed to make sure the correct
-        number of bytes is free()-d afterwards.
-    */
-    if (shellenabledp && *fn == '|') {
-        /*tex The user requested a pipe. */
-        fname = (string) xmalloc((unsigned) (strlen(fn) + 1));
-        strcpy(fname, fn);
-        if (strchr(fname, ' ') == NULL && strchr(fname, '>') == NULL) {
-            /*tex
-
-                \METAPOST\ and \METAFIONT\ currently do not use this code, but it
-                is better to be prepared. Hm, what has this todo with \LUATEX ?
-
-            */
-            if (STREQ((fname + strlen(fname) - 3), "tex"))
-                *(fname + strlen(fname) - 4) = 0;
-            *f_ptr = runpopen(fname + 1, "w");
-            *(fname + strlen(fname)) = '.';
-        } else {
-            *f_ptr = runpopen(fname + 1, "w");
-        }
-        recorder_record_output(fname + 1);
-        free(fname);
-        for (i = 0; i < NUM_PIPES; i++) {
-            if (pipes[i] == NULL) {
-                pipes[i] = *f_ptr;
-                break;
-            }
-        }
-        if (*f_ptr)
-            setvbuf(*f_ptr, (char *) NULL, _IONBF, 0);
-        return *f_ptr != NULL;
-    }
-    return luatex_open_output(f_ptr, fn, fopen_mode);
-}
-
-
-void close_file_or_pipe(FILE * f)
-{
-    int i;
-    if (shellenabledp) {
-        for (i = 0; i <= 15; i++) {
-            /*tex If this file was a pipe, |pclose()| it and return. */
-            if (pipes[i] == f) {
-                if (f) {
-                    pclose(f);
-#ifdef WIN32
-                    Poptr = NULL;
-#endif
-                }
-                pipes[i] = NULL;
-                return;
-            }
-        }
-    }
-    close_file(f);
 }

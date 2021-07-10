@@ -175,7 +175,6 @@ typedef int internal_font_number;                  /* |font| in a |char_node| */
 #  include "utils/managed-sa.h"
 #  include "font/texfont.h"
 
-extern void close_file(FILE *f);
 extern void recorder_change_filename(char *filename);
 extern void recorder_record_input(const char *input_filename);
 extern void recorder_record_output(const char *output_filename);
