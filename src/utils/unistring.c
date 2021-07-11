@@ -185,19 +185,3 @@ void utf2uni_strcpy(unsigned int *ubuf, const char *utf8buf)
     }
     *upt = '\0';
 }
-
-char *utf16be_str(long code)
-{
-    static char buf[SMALL_BUF_SIZE];
-    long v;
-    unsigned vh, vl;
-    if (code <= 0xFFFF)
-        sprintf(buf, "%04lX", code);
-    else {
-        v = code - 0x10000;
-        vh = (unsigned) (v / 0x400 + 0xD800);
-        vl = (unsigned) (v % 0x400 + 0xDC00);
-        sprintf(buf, "%04X%04X", vh, vl);
-    }
-    return buf;
-}

@@ -33,7 +33,5 @@ extern void utf2uni_strcpy(unsigned int *ubuf, const char *utf8buf);
 
 #define utf8_size(a) (a>0xFFFF ? 4 : (a>0x7FF ? 3 : (a>0x7F? 2 : 1)))
 
-extern char *utf16be_str(long code);
-
 #endif
 
