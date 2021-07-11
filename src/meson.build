@@ -57,8 +57,8 @@ luatex_src = files(
   'utils/managed-sa.c',
   'utils/unistring.c',
   'utils/utils.c',
+  'utils/web2c_utils.c',
   'luatex.c',
-  'mvlasak.c',
 )
 
 lua_c_args = [

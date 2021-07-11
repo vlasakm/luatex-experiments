@@ -7,8 +7,8 @@
     precision.
 
 */
-
-scaled round_xn_over_d(scaled x, int n, unsigned int d)
+scaled
+round_xn_over_d(scaled x, int n, unsigned int d)
 {
     boolean positive = true;
     unsigned t, u, v;
