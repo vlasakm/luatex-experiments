@@ -20,6 +20,8 @@
 
 #include <stdarg.h>
 
+#include <assert.h>
+
 #ifndef __NODES_H__
 #  define __NODES_H__
 

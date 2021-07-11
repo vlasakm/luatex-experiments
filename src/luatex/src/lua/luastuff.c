@@ -27,6 +27,8 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 #include "lua/lauxlib_bridge.h"
 #endif
 
+#include <string.h>
+
 lua_State *Luas = NULL;
 
 int luastate_bytes = 0;

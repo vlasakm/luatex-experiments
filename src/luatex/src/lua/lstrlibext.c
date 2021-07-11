@@ -23,6 +23,8 @@
  */
 #include "ptexlib.h"
 
+#include <string.h>
+
 #define LUA_CORE
 #include "lua.h"
 #include "lauxlib.h"

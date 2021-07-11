@@ -29,9 +29,100 @@
 ptexlib.h must be included first!!!
 #endif
 
-#ifdef HAVE_CONFIG_H
-#include <w2c/config.h>
+/***************************************************************************/
+/* w2c/c-auto.h replacement */
+/* TODO(mvlasak): better integrate this */
+
+#define WEB2CVERSION " (mmtex " MMTEX_VERSION ")"
+
+#define EDITOR "vi +%d '%s'"
+
+#define HAVE_FTIME        0
+#define HAVE_GETTIMEOFDAY 1
+#define HAVE_SYS_TIMEB_H  1
+#define HAVE_SYS_TIME_H   1
+#define NO_DUMP_SHARE     1
+
+#define ZLIB_CONST        1
+/***************************************************************************/
+/* w2c/c-auto.h replacement */
+/* TODO(mvlasak): where is integer used? maybe int?*/
+
+typedef long integer;
+
+/* We need a type that's at least off_t wide */
+#include <sys/types.h>
+typedef off_t longinteger;
+/***************************************************************************/
+/* cpascal.h replacement */
+/* TODO(mvlasak): better integrate this */
+
+//#define abs(x)   ((((integer)(x)))) >= 0) ? ((integer)(x)) : ((integer)-(x)))
+//#define abs(x) ((((integer)(x)))) >= 0) ? ((integer)(x)) : ((integer)-(x)))
+//#define abs(x) ((integer)(x))
+//#undef abs
+//#define abs(x) ((x) >= 0 ? (x) : -(x))
+#include <stdlib.h> // abs
+#include <math.h> // floor
+#define odd(x)	 ((x) & 1)
+#undef floor /* MacOSX */
+#define floor(x)	((integer)floor((double)(x)))
+
+#define halfp(i) ((i) >> 1)
+
+#define decr(x) --(x)
+#define incr(x) ++(x)
+
+typedef double real;
+#define addressof(x) (&(x))
+/* Allocate an array of a given type. Add 1 to size to account for the
+   fact that Pascal arrays are used from [1..size], unlike C arrays which
+   use [0..size). */
+#define xmallocarray(type,size) ((type*)xmalloc((size+1)*sizeof(type)))
+#define xreallocarray(ptr,type,size) ((type*)xrealloc(ptr,(size+1)*sizeof(type)))
+#define xcallocarray(type,nmemb,size) ((type*)xcalloc(nmemb+1,(size+1)*sizeof(type)))
+
+#ifdef WIN32
+#define promptfilenamehelpmsg "(Press Enter to retry, or Control-Z to exit"
+#else
+#define promptfilenamehelpmsg "(Press Enter to retry, or Control-D to exit"
 #endif
+/***************************************************************************/
+/* kpathsea/simpletypes.h replacement */
+/* TODO(mvlasak): better integrate this */
+
+typedef int boolean;
+#define true 1
+#define false 0
+typedef char *string;
+typedef const char *const_string;
+/***************************************************************************/
+/* kpathsea/lib.h replacement */
+/* TODO(mvlasak): better integrate this */
+
+#define STREQ(s1, s2) (((s1) != NULL) && ((s2) != NULL) && (strcmp (s1, s2) == 0))
+
+#define START_WARNING() do { fputs ("warning: ", stderr)
+#define END_WARNING() fputs (".\n", stderr); fflush (stderr); } while (0)
+
+#define WARNING(str)                                                    \
+  START_WARNING (); fputs (str, stderr); END_WARNING ()
+#define WARNING1(str, e1)                                               \
+  START_WARNING (); fprintf (stderr, str, e1); END_WARNING ()
+#define WARNING2(str, e1, e2)                                           \
+  START_WARNING (); fprintf (stderr, str, e1, e2); END_WARNING ()
+#define WARNING3(str, e1, e2, e3)                                       \
+  START_WARNING (); fprintf (stderr, str, e1, e2, e3); END_WARNING ()
+#define WARNING4(str, e1, e2, e3, e4)                                   \
+  START_WARNING (); fprintf (stderr, str, e1, e2, e3, e4); END_WARNING ()
+/***************************************************************************/
+/* w2c/config.h replacement */
+
+void uexit(int code);
+
+/***************************************************************************/
+
+
 
 /* WEB2C macros and prototypes */
 #  include "luatex.h"
@@ -192,6 +283,7 @@ void * xmalloc(size_t size);
 void * xcalloc(size_t n, size_t size);
 char * xstrdup(const char *s);
 void * xrealloc(void *old, size_t size);
+char * concat3(const char *s1, const char *s2, const char *s3);
 
 
 /**********************************************************************/

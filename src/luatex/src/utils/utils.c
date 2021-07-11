@@ -20,6 +20,8 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include "ptexlib.h"
 
+#include <errno.h>
+
 /*tex
 
     This is a trick to load mingw32's io.h early, using a macro redefinition of

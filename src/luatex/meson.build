@@ -84,7 +84,7 @@ luatex_dependencies = [
 executable(
   'mmtex',
   sources: luatex_src,
-  include_directories: [luatex_inc, mmtex_inc],
+  include_directories: [luatex_inc],
   dependencies: luatex_dependencies,
   install: true,
 )

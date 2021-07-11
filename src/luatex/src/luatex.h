@@ -29,6 +29,7 @@
 #  include "cpascal.h"
 
 #  include <ctype.h>
+#  include <stdio.h>
 
 /* If we have these macros, use them, as they provide a better guide to
    the endianess when cross-compiling. */

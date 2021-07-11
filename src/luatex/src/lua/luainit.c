@@ -30,6 +30,8 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 // TODO(mvlasak): added by me, move to ptexlib?
 #include <sys/stat.h>
 
+#include <getopt.h>
+
 extern int load_luatex_core_lua (lua_State * L);
 
 /*tex internalized strings: see luatex-api.h */

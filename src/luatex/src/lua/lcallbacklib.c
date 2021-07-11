@@ -20,6 +20,9 @@
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
+
+#include <string.h>
+
 int callback_count = 0;
 int saved_callback_count = 0;
 int direct_callback_count = 0;

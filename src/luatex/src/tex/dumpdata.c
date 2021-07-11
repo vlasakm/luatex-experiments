@@ -379,10 +379,10 @@ boolean load_fmt_file(const char *fmtname)
     char *format_engine;
     /*tex Undump constants for consistency check .*/
     if (ini_version) {
-        libcfree(hash);
-        libcfree(eqtb);
-        libcfree(fixmem);
-        libcfree(varmem);
+        free(hash);
+        free(eqtb);
+        free(fixmem);
+        free(varmem);
     }
     undump_int(x);
     format_debug("format magic number", x);

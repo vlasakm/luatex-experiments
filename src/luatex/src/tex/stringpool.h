@@ -21,6 +21,8 @@
 #ifndef STRINGPOOL_H
 #  define STRINGPOOL_H
 
+#include <string.h>
+
 /* Both lua and tex strings can contains null, but C strings cannot, so: */
 
 typedef struct {

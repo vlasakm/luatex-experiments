@@ -328,7 +328,7 @@ int undump_string_pool(void)
         max_strings = str_ptr + strings_free;
     str_ptr += STRING_OFFSET;
     if (ini_version)
-        libcfree(string_pool);
+        free(string_pool);
     init_string_pool_array((unsigned) max_strings);
     for (j = STRING_OFFSET + 1; j < str_ptr; j++) {
         undump_int(x);

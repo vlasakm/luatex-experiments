@@ -147,3 +147,24 @@ xstrdup(const char *s)
 	char *new = xmalloc(strlen(s) + 1);
 	return strcpy(new, s);
 }
+
+char *
+concat3(const char *s1, const char *s2, const char *s3)
+{
+	int len1 = s1 ? strlen(s1) : 0;
+	int len2 = s2 ? strlen(s2) : 0;
+	int len3 = s3 ? strlen(s3) : 0;
+
+	char *result = xmalloc(len1 + len2 + len3 + 1);
+
+	if (s1) {
+		strcat(result, s1);
+	}
+	if (s2) {
+		strcat(result, s2);
+	}
+	if (s3) {
+		strcat(result, s3);
+	}
+	return result;
+}

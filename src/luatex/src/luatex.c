@@ -53,6 +53,7 @@ const char *engine_name = my_name;
 #endif
 
 #include <signal.h>             /* Catch interrupts.  */
+#include <errno.h>
 
 /*
     Shell escape.
