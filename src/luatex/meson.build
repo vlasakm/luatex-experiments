@@ -65,6 +65,11 @@ luatex_inc = include_directories(
   'src',
 )
 
+lua_c_args = [
+  '-DLUA_COMPAT_5_2',
+  '-DLUA_USE_POSIX',
+  '-DLUA_USE_DLOPEN',
+]
 
 cc = meson.get_compiler('c')
 
@@ -72,7 +77,7 @@ luatex_dependencies = [
   cc.find_library('m', required: false),
   cc.find_library('dl', required: false),
   dependency('zlib'),
-  lua_dep,
+  dependency('lua5.3'),
   pplib_dep,
 ]
 
@@ -80,6 +85,7 @@ executable(
   'mmtex',
   sources: luatex_src,
   include_directories: [luatex_inc],
+  c_args: [lua_c_args],
   dependencies: luatex_dependencies,
   install: true,
 )
