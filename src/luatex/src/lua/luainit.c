@@ -32,8 +32,6 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include <getopt.h>
 
-extern int load_luatex_core_lua (lua_State * L);
-
 /*tex internalized strings: see luatex-api.h */
 
 set_make_keys;
@@ -679,9 +677,6 @@ void lua_initialize(int ac, char **av)
         int pdf_table_id = hide_lua_table(Luas, "pdf");
         if (lua_only) {
             /*tex hide the 'tex' and 'pdf' table */
-            if (load_luatex_core_lua(Luas)) {
-                fprintf(stderr, "Error in execution of luatex-core.lua .\n");
-            }
             if (luaL_loadfile(Luas, startup_filename)) {
                 fprintf(stdout, "%s\n", lua_tostring(Luas, -1));
                 exit(1);
@@ -766,10 +761,6 @@ void lua_initialize(int ac, char **av)
             fprintf(stdout, "No %s file given\n", (lua_only ? "script" : "configuration"));
         }
         exit(1);
-    }
-    /*tex Here we load luatex-core.lua which takes care of some protection on demand. */
-    if (load_luatex_core_lua(Luas)) {
-        fprintf(stderr, "Error in execution of luatex-core.lua .\n");
     }
 }
 

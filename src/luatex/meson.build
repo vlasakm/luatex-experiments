@@ -21,7 +21,6 @@ luatex_src = files(
   'src/lua/ltexiolib.c',
   'src/lua/ltexlib.c',
   'src/lua/lnewtokenlib.c',
-  'src/lua/luatex-core.c',
   'src/lua/helpers.c',
   'src/lua/luanode.c',
   'src/lua/luatoken.c',
