@@ -69,6 +69,7 @@ char *fullnameoffile;
 int recorder_enabled;
 char *output_directory;
 
+__attribute__ ((noreturn))
 void
 uexit (int unix_code)
 {
@@ -158,7 +159,9 @@ concat3(const char *s1, const char *s2, const char *s3)
 	char *result = xmalloc(len1 + len2 + len3 + 1);
 
 	if (s1) {
-		strcat(result, s1);
+		strcpy(result, s1);
+	} else {
+		result[0] = 0;
 	}
 	if (s2) {
 		strcat(result, s2);
@@ -168,3 +171,10 @@ concat3(const char *s1, const char *s2, const char *s3)
 	}
 	return result;
 }
+
+char *
+concat(const char *s1, const char *s2)
+{
+	return concat3(s1, s2, NULL);
+}
+

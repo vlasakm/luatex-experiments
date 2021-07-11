@@ -26,8 +26,6 @@
    included by {tex,mf}d.h, which is the first include in the C files
    output by web2c.  */
 
-#  include "cpascal.h"
-
 #  include <ctype.h>
 #  include <stdio.h>
 

@@ -268,8 +268,6 @@ void jump_out(void)
     do_final_end();
 }
 
-static const_string edit_value = EDITOR;
-
 /*tex
 
   This completes the job of error reporting.

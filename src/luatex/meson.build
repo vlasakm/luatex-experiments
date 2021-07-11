@@ -66,7 +66,6 @@ luatex_src = files(
 
 luatex_inc = include_directories(
   'src',
-  '..',
 )
 
 
@@ -78,7 +77,6 @@ luatex_dependencies = [
   dependency('zlib'),
   lua_dep,
   pplib_dep,
-  kpathsea_dep,
 ]
 
 executable(

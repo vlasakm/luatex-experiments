@@ -5,7 +5,5 @@ project('mmtex', 'c')
 mmtex_version = '20210515'#git_tag.stdout().strip()
 add_project_arguments('-DMMTEX_VERSION="@0@"'.format(mmtex_version), language: 'c')
 
-mmtex_inc = include_directories('include')
-
 subdir('src')
 #install_subdir('texmf', install_dir: 'share', strip_directory: true)

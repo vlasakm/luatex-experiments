@@ -118,7 +118,7 @@ typedef const char *const_string;
 /***************************************************************************/
 /* w2c/config.h replacement */
 
-void uexit(int code);
+__attribute__ ((noreturn)) void uexit(int code);
 
 /***************************************************************************/
 
@@ -284,6 +284,7 @@ void * xcalloc(size_t n, size_t size);
 char * xstrdup(const char *s);
 void * xrealloc(void *old, size_t size);
 char * concat3(const char *s1, const char *s2, const char *s3);
+char * concat(const char *s1, const char *s2);
 
 
 /**********************************************************************/
