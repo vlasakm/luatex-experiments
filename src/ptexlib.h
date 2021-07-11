@@ -291,7 +291,6 @@ char * concat(const char *s1, const char *s2);
 #  include "tex/expand.h"
 #  include "tex/conditional.h"
 
-#  include "utils/avlstuff.h"
 #  include "utils/managed-sa.h"
 
 #  include "utils/utils.h"

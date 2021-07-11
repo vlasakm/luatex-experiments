@@ -52,8 +52,6 @@ luatex_src = files(
   'tex/texnodes.c',
   'tex/textcodes.c',
   'tex/textoken.c',
-  'utils/avl.c',
-  'utils/avlstuff.c',
   'utils/managed-sa.c',
   'utils/unistring.c',
   'utils/utils.c',
