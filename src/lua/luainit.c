@@ -189,32 +189,6 @@ static struct option long_options[] = {
     {0, 0, 0, 0}
 };
 
-int lua_numeric_field_by_index(lua_State * L, int name_index, int dflt)
-{
-    register int i = dflt;
-    /*tex fetch the stringptr */
-    lua_rawgeti(L, LUA_REGISTRYINDEX, name_index);
-    lua_rawget(L, -2);
-    if (lua_type(L, -1) == LUA_TNUMBER) {
-        i = lua_roundnumber(L, -1);
-    }
-    lua_pop(L, 1);
-    return i;
-}
-
-unsigned int lua_unsigned_numeric_field_by_index(lua_State * L, int name_index, int dflt)
-{
-    register unsigned int i = dflt;
-    /*tex fetch the stringptr */
-    lua_rawgeti(L, LUA_REGISTRYINDEX, name_index);
-    lua_rawget(L, -2);
-    if (lua_type(L, -1) == LUA_TNUMBER) {
-        i = lua_uroundnumber(L, -1);
-    }
-    lua_pop(L, 1);
-    return i;
-}
-
 static int recorderoption = 0;
 
 static void parse_options(int ac, char **av)
