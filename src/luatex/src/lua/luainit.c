@@ -306,7 +306,6 @@ static void parse_options(int ac, char **av)
                  "aleph     : Giuseppe Bilotta\n"
                  "pdftex    : Han The Thanh and friends\n"
                  "lua       : Roberto Ierusalimschy, Waldemar Celes and Luiz Henrique de Figueiredo\n"
-                 "pplib     : Paweł Jackowski\n"
             );
             /* *INDENT-ON* */
             puts(versions);

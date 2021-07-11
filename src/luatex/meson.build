@@ -78,7 +78,6 @@ luatex_dependencies = [
   cc.find_library('dl', required: false),
   dependency('zlib'),
   dependency('lua5.3'),
-  pplib_dep,
 ]
 
 executable(

@@ -1,2 +1,1 @@
-subdir('pplib')
 subdir('luatex')
