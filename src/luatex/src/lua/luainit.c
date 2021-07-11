@@ -108,7 +108,6 @@ const char *lc_numeric;
 static void prepare_cmdline(lua_State * L, char **av, int ac, int zero_offset)
 {
     int i;
-    char *s;
     luaL_checkstack(L, ac + 3, "too many arguments to script");
     lua_createtable(L, 0, 0);
     for (i = 0; i < ac; i++) {
