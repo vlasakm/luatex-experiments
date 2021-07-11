@@ -131,10 +131,6 @@ __attribute__ ((noreturn)) void uexit(int code);
 extern double rint(double x);
 #  endif
 
-#  if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
-extern char **suffixlist;       /* in luainit.w */
-#  endif
-
 /* Replicate these here. They are hardcoded anyway */
 
 #  define eTeX_version_string "2.2"     /* current \eTeX\ version */

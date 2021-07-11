@@ -459,62 +459,6 @@ int lua_show_valid_keys(lua_State *L, int *list, int max)
     return 1;
 }
 
-#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
-char **suffixlist;
-
-/* Why do we add script stuff to this weird incomplete. Let's go more minimal. */
-
-/*
-    #define EXE_SUFFIXES ".com;.exe;.bat;.cmd;.vbs;.vbe;.js;.jse;.wsf;.wsh;.ws;.tcl;.py;.pyw"
-*/
-
-#define EXE_SUFFIXES ".com;.exe;.bat;.cmd"
-
-static void mk_suffixlist(void)
-{
-    char **p;
-    char *q, *r, *v;
-    int n;
-#  if defined(__CYGWIN__)
-    v = xstrdup(EXE_SUFFIXES);
-#  else
-    v = (char *) getenv("PATHEXT");
-    /*tex strlwr() exists also in MingW */
-    if (v)
-        v = (char *) strlwr(xstrdup(v));
-    else
-        v = xstrdup(EXE_SUFFIXES);
-#  endif
-    q = v;
-    n = 0;
-    while ((r = strchr(q, ';')) != NULL) {
-        n++;
-        r++;
-        q = r;
-    }
-    if (*q)
-        n++;
-    suffixlist = (char **) xmalloc((n + 2) * sizeof(char *));
-    p = suffixlist;
-    *p = xstrdup(".dll");
-    p++;
-    q = v;
-    while ((r = strchr(q, ';')) != NULL) {
-        *r = '\0';
-        *p = xstrdup(q);
-        p++;
-        r++;
-        q = r;
-    }
-    if (*q) {
-        *p = xstrdup(q);
-        p++;
-    }
-    *p = NULL;
-    free(v);
-}
-#endif
-
 void lua_initialize(int ac, char **av)
 {
     char *given_file = NULL;
@@ -537,9 +481,6 @@ void lua_initialize(int ac, char **av)
     banner = xmalloc(len);
     sprintf(banner, fmt, luatex_version_string);
     luatex_banner = banner;
-#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
-    mk_suffixlist();
-#endif
     /*tex Must be initialized before options are parsed and might get adapted by config table.  */
     interactionoption = 4;
     filelineerrorstylep = false;
