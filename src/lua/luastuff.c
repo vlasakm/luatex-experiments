@@ -405,32 +405,3 @@ lua_State *luatex_error(lua_State * L, int is_fatal)
         return L;
     }
 }
-
-void preset_environment(lua_State * L, const parm_struct * p, const char *s)
-{
-    int i;
-    assert(L != NULL);
-    /*tex double call with same s gives assert(0) */
-    lua_pushstring(L, s);
-    /*tex state: s */
-    lua_gettable(L, LUA_REGISTRYINDEX);
-    /*tex state: t */
-    assert(lua_isnil(L, -1));
-    lua_pop(L, 1);
-    /*tex state: - */
-    lua_pushstring(L, s);
-    /*tex state: s */
-    lua_newtable(L);
-    /*tex state: t s */
-    for (i = 1, ++p; p->name != NULL; i++, p++) {
-        assert(i == p->idx);
-        lua_pushstring(L, p->name);
-        /*tex state: k t s */
-        lua_pushinteger(L, p->idx);
-        /*tex state: v k t s */
-        lua_settable(L, -3);
-        /*tex state: t s */
-    }
-    lua_settable(L, LUA_REGISTRYINDEX);
-    /* tex state: - */
-}

@@ -170,13 +170,6 @@ extern const char *engine_name;
 
 /* luastuff.h */
 
-typedef struct {
-    const char *name;           /* parameter name */
-    int idx;                    /* index within img_parms array */
-} parm_struct;
-
-extern void preset_environment(lua_State * L, const parm_struct * p, const char *s);
-
 extern char *startup_filename;
 extern int safer_option;
 extern int utc_option;
