@@ -388,7 +388,7 @@ static const struct luaL_Reg lualib[] = {
     {NULL, NULL}                /* sentinel */
 };
 
-int luaopen_lua(lua_State * L, char *fname)
+int luaopen_lua(lua_State * L)
 {
     luaL_newlib(L, lualib);
     make_table(L, "bytecode", "tex.bytecode", "getbytecode", "setbytecode");
@@ -397,10 +397,10 @@ int luaopen_lua(lua_State * L, char *fname)
     lua_setfield(L, LUA_REGISTRYINDEX, "lua.bytecodes.indirect");
     lua_pushstring(L, LUA_VERSION);
     lua_setfield(L, -2, "version");
-    if (fname == NULL) {
+    if (startup_filename == NULL) {
         lua_pushnil(L);
     } else {
-        lua_pushstring(L, fname);
+        lua_pushstring(L, startup_filename);
     }
     lua_setfield(L, -2, "startupfile");
     return 1;

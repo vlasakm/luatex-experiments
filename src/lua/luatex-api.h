@@ -82,7 +82,7 @@ extern int luaopen_pdfscanner(lua_State * L);
 extern int luaopen_mplib(lua_State * L);
 extern int luaopen_fio(lua_State * L);
 
-extern void open_strlibext(lua_State * L);
+extern int luaopen_strlibext(lua_State * L);
 
 extern void initfilecallbackids(int max);
 extern void setinputfilecallbackid(int n, int i);
@@ -96,7 +96,7 @@ extern int luaopen_kpse(lua_State * L);
 
 extern int luaopen_callback(lua_State * L);
 
-extern int luaopen_lua(lua_State * L, char *fname);
+extern int luaopen_lua(lua_State * L);
 
 extern int luaopen_stats(lua_State * L);
 

@@ -33,9 +33,6 @@ int lua_active = 0;
 
 #define Luas_load(Luas,getS,ls,lua_id) \
     lua_load(Luas,getS,ls,lua_id,NULL);
-#define Luas_open(name,luaopen_lib) \
-    luaL_requiref(L, name, luaopen_lib, 1); \
-    lua_pop(L, 1);
 
 void make_table(lua_State * L, const char *tab, const char *mttab, const char *getfunc, const char *setfunc)
 {
@@ -136,26 +133,45 @@ void luafunctioncall(int slot)
     lua_active--;
 }
 
-static const luaL_Reg lualibs[] = {
+static const luaL_Reg luatexlibs[] = {
     /*tex standard \LUA\ libraries */
     { "_G",        luaopen_base },
     { "package",   luaopen_package },
     { "table",     luaopen_table },
     { "io",        luaopen_io },
     { "os",        luaopen_os },
-    { "string",    luaopen_string },
+    /* string replaced by our own extension
+    { "string",    luaopen_string },*/
     { "math",      luaopen_math },
     { "debug",     luaopen_debug },
     { "utf8",      luaopen_utf8 },
     { "coroutine", luaopen_coroutine },
+
+    /* Custom libraries */
+    { "string",    luaopen_strlibext },
+    { "fio",       luaopen_fio },
+    { "tex",       luaopen_tex },
+    { "token",     luaopen_token },
+    { "node",      luaopen_node },
+    { "texio",     luaopen_texio },
+    { "callback",  luaopen_callback },
+    { "lua",       luaopen_lua },
+    { "stats",     luaopen_stats },
+    { "font",      luaopen_font },
+    { "lang",      luaopen_lang },
     { NULL,        NULL }
 };
 
-static void do_openlibs(lua_State * L)
+#define Luas_open(name,luaopen_lib) \
+
+/* Load all LuaTeX libararies (Lua standard + our own) */
+static void openlibs(lua_State * L)
 {
-    const luaL_Reg *lib = lualibs;
-    for (; lib->func; lib++) {
-        Luas_open(lib->name,lib->func);
+    const luaL_Reg *lib;
+
+    for (lib = luatexlibs; lib->func; lib++) {
+        luaL_requiref(L, lib->name, lib->func, 1);
+        lua_pop(L, 1);
     }
 }
 
@@ -226,26 +242,16 @@ void luainterpreter(void)
         return;
     }
     lua_atpanic(L, &my_luapanic);
-    /*tex This initializes all the `simple' libraries: */
-    do_openlibs(L);
+
+    /* open standard and our own Lua libraries */
+    openlibs(L);
+
+    /* patch standard functions */
     lua_pushcfunction(L,luatex_dofile);
     lua_setglobal(L, "dofile");
     lua_pushcfunction(L,luatex_loadfile);
     lua_setglobal(L, "loadfile");
-    open_strlibext(L);
-    /*tex our own libraries register themselves */
-    luaopen_fio(L);
-    luaopen_tex(L);
-    luaopen_token(L);
-    luaopen_node(L);
-    luaopen_texio(L);
-    luaopen_callback(L);
-    /*tex now we plug in extra \LUA\ startup code */
-    luaopen_lua(L, startup_filename);
-    /*tex and open some \TEX\ ones */
-    luaopen_stats(L);
-    luaopen_font(L);
-    luaopen_lang(L);
+
     lua_createtable(L, 0, 0);
     lua_setglobal(L, "texconfig");
     Luas = L;

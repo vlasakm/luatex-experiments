@@ -458,14 +458,9 @@ static const luaL_Reg strlibext[] = {
   {NULL, NULL}
 };
 
-void open_strlibext(lua_State * L)
+int luaopen_strlibext(lua_State * L)
 {
-    // TODO(mvlasak): luaopen_string(L); luaL_setfuncs(L, strlibext, 0);
-    const luaL_Reg *lib;
-    lua_getglobal(L, "string");
-    for (lib=strlibext;lib->name;lib++) {
-        lua_pushcfunction(L, lib->func);
-        lua_setfield(L, -2, lib->name);
-    }
-    lua_pop(L,1);
+    luaopen_string(L);
+    luaL_setfuncs(L, strlibext, 0);
+    return 1;
 }
