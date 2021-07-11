@@ -10,14 +10,9 @@
    #defines TeX or MF, which avoids the need for a special
    Makefile rule.  */
 
-/* We |#define DLLPROC| in order to build LuaTeX and LuajitTeX as DLL
-   for W32TeX.  */
+/* We |#define DLLPROC| in order to build LuaTeX as DLL for W32TeX.  */
 
-#if defined LuajitTeX
-#define DLLPROC dllluajittexmain
-#else
 #define DLLPROC dllluatexmain
-#endif
 
 #include "ptexlib.h"
 #include "luatex.h"

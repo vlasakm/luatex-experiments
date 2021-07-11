@@ -31,20 +31,11 @@ lua_State *Luas = NULL;
 int luastate_bytes = 0;
 int lua_active = 0;
 
-#ifdef LuajitTeX
-#define Luas_load(Luas,getS,ls,lua_id) \
-    lua_load(Luas,getS,ls,lua_id);
-#define Luas_open(name,luaopen_lib) \
-    lua_pushcfunction(L, luaopen_lib); \
-    lua_pushstring(L, name); \
-    lua_call(L, 1, 0);
-#else
 #define Luas_load(Luas,getS,ls,lua_id) \
     lua_load(Luas,getS,ls,lua_id,NULL);
 #define Luas_open(name,luaopen_lib) \
     luaL_requiref(L, name, luaopen_lib, 1); \
     lua_pop(L, 1);
-#endif
 
 void make_table(lua_State * L, const char *tab, const char *mttab, const char *getfunc, const char *setfunc)
 {
@@ -95,14 +86,6 @@ static const char *getS(lua_State * L, void *ud, size_t * size)
     return ls->s;
 }
 
-#ifdef LuajitTeX
-    /*
-        \LUATEX\ has its own memory allocator, \LUAJIITEX\ uses the standard one
-        from the stock. We left this space as reference, but be careful: memory
-        allocator is a key component in \LUAJIT, it's easy to get sub-optimal
-        performances.
-    */
-#else
 static void *my_luaalloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
     void *ret = NULL;
@@ -115,7 +98,6 @@ static void *my_luaalloc(void *ud, void *ptr, size_t osize, size_t nsize)
     luastate_bytes += (int) (nsize - osize);
     return ret;
 }
-#endif
 
 static int my_luapanic(lua_State * L)
 {
@@ -177,9 +159,6 @@ static void do_openlibs(lua_State * L)
     }
 }
 
-#ifdef LuajitTeX
-    /*tex in \LUAJIT\ |load_aux| is not used.*/
-#else
 static int load_aux (lua_State *L, int status) {
     if (status == 0)
         /*tex okay */
@@ -192,18 +171,13 @@ static int load_aux (lua_State *L, int status) {
         return 2;
     }
 }
-#endif
 
 static int luatex_loadfile (lua_State *L) {
     int status = 0;
     const char *fname = luaL_optstring(L, 1, NULL);
     const char *mode = luaL_optstring(L, 2, NULL);
-#ifdef LuajitTeX
-    /* 5.1 */
-#else
     /*tex the |env| parameter */
     int env = !lua_isnone(L, 3);
-#endif
     if (!lua_only && !fname && interaction == batch_mode) {
         /*tex return |nil| plus error message */
         lua_pushnil(L);
@@ -213,22 +187,14 @@ static int luatex_loadfile (lua_State *L) {
     status = luaL_loadfilex(L, fname, mode);
     if (status == LUA_OK) {
         recorder_record_input(fname);
-#ifdef LuajitTeX
-    /* 5.1 */
-#else
         if (env) {
             /*tex the |env| parameter */
             lua_pushvalue(L, 3);
             /*tex set it as first upvalue of loaded chunk */
             lua_setupvalue(L, -2, 1);
         }
-#endif
     }
-#ifdef LuajitTeX
-    return RESERVED_load_aux_JIT(L, status,3);
-#else
     return load_aux(L, status);
-#endif
 }
 
 static int luatex_dofile (lua_State *L) {
@@ -254,25 +220,7 @@ static int luatex_dofile (lua_State *L) {
 void luainterpreter(void)
 {
     lua_State *L;
-#ifdef LuajitTeX
-    if (jithash_hashname == NULL) {
-        /*tex default lua51 */
-        luajittex_choose_hash_function = 0;
-        jithash_hashname = (char *) xmalloc(strlen("lua51") + 1);
-        jithash_hashname = strcpy ( jithash_hashname, "lua51");
-    } else if (strcmp((const char*)jithash_hashname,"lua51") == 0) {
-        luajittex_choose_hash_function = 0;
-    } else if (strcmp((const char*)jithash_hashname,"luajit20") == 0) {
-        luajittex_choose_hash_function = 1;
-    } else {
-        /*tex default lua51 */
-        luajittex_choose_hash_function = 0;
-        jithash_hashname = strcpy ( jithash_hashname, "lua51");
-    }
-    L = luaL_newstate() ;
-#else
     L = lua_newstate(my_luaalloc, NULL);
-#endif
     if (L == NULL) {
         fprintf(stderr, "Can't create the Lua state.\n");
         return;
@@ -280,14 +228,6 @@ void luainterpreter(void)
     lua_atpanic(L, &my_luapanic);
     /*tex This initializes all the `simple' libraries: */
     do_openlibs(L);
-#ifdef LuajitTeX
-    if (luajiton){
-       luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_ON);
-    }
-    else {
-       luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_OFF);
-    }
-#endif
     lua_pushcfunction(L,luatex_dofile);
     lua_setglobal(L, "dofile");
     lua_pushcfunction(L,luatex_loadfile);

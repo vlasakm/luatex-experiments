@@ -26,30 +26,10 @@
 #  include "lua.h"
 #  include "lauxlib.h"
 #  include "lualib.h"
-#ifdef LuajitTeX
-#  include "luajit.h"
-#endif
 
 /* Names */
-#ifndef LUATEX_HARFBUZZ_ENABLED
-#ifdef LuajitTeX
-#  define MyName "LuajitTeX"
-#  define my_name "luajittex"
-#else
 #  define MyName "LuaTeX"
 #  define my_name "luatex"
-#endif
-#endif
-
-#ifdef LUATEX_HARFBUZZ_ENABLED
-#ifdef LuajitTeX
-#  define MyName "LuajitHBTeX"
-#  define my_name "luajithbtex"
-#else
-#  define MyName "LuaHBTeX"
-#  define my_name "luahbtex"
-#endif
-#endif
 
 
 #ifdef __cplusplus
@@ -83,14 +63,6 @@ extern int luaopen_lfs(lua_State * L);
 extern int luaopen_lpeg(lua_State * L);
 extern int luaopen_md5(lua_State * L);
 extern int luaopen_sha2(lua_State * L);
-
-#ifndef LuajitTeX
- extern int luaopen_ffi(lua_State * L);
-#endif
-
-#ifdef LUATEX_HARFBUZZ_ENABLED
-extern int luaopen_luaharfbuzz(lua_State * L);
-#endif
 
 // TODO(mvlasak):
 #include <zlib.h>
@@ -162,11 +134,6 @@ extern int lua_only;
 extern const char *lc_ctype;
 extern const char *lc_collate;
 extern const char *lc_numeric;
-
-#ifdef LuajitTeX
-extern int luajiton;
-extern char *jithash_hashname ;
-#endif
 
 #if !defined(LUAI_HASHLIMIT)
 #define LUAI_HASHLIMIT		5

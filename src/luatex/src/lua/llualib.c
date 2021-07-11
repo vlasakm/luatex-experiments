@@ -194,11 +194,7 @@ static int get_bytecode(lua_State * L)
         if (k <= luabytecode_max && lua_bytecode_registers[k].buf != NULL) {
             if (lua_load
                 (L, reader, (void *) (lua_bytecode_registers + k),
-#ifdef LuajitTeX
-                 "bytecode")) {
-#else
                  "bytecode", NULL)) {
-#endif
                 return luaL_error(L, "bad bytecode register");
             } else {
                 lua_pushvalue(L, -1);
@@ -221,11 +217,7 @@ void luabytecodecall(int slot)
     } else if (bytecode_register_shadow_get(Luas, slot) || lua_bytecode_registers[slot].buf == NULL) {
         luaL_error(Luas, "undefined bytecode register");
     } else if (lua_load(Luas, reader, (void *) (lua_bytecode_registers + slot),
-#ifdef LuajitTeX
-             "bytecode"))
-#else
              "bytecode", NULL))
-#endif
     {
         luaL_error(Luas, "bytecode register doesn't load well");
     } else {
@@ -298,17 +290,7 @@ static int set_bytecode(lua_State * L)
         lua_bytecode_registers[k].buf = xmalloc(LOAD_BUF_SIZE);
         lua_bytecode_registers[k].alloc = LOAD_BUF_SIZE;
         memset(lua_bytecode_registers[k].buf, 0, LOAD_BUF_SIZE);
-#ifdef LuajitTeX
-        RESERVED_lua_dump(L, writer, (void *) (lua_bytecode_registers + k),strip);
-        /*lua_dump(L, writer, (void *) (lua_bytecode_registers + k));*/
-#else
-#if LUA_VERSION_NUM == 503
         lua_dump(L, writer, (void *) (lua_bytecode_registers + k),strip);
-#endif
-#if LUA_VERSION_NUM == 502
-        lua_dump(L, writer, (void *) (lua_bytecode_registers + k));
-#endif
-#endif
     }
     lua_pop(L, 1);
     return 0;

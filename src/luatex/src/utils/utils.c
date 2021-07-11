@@ -185,16 +185,12 @@ char *stripzeros(char *a)
 void initversionstring(char **versions)
 {
 
-#ifdef LuajitTeX
-#define LUA_VER_STRING  LUAJIT_VERSION
-#else
 #define LUA_VER_STRING  "lua version " LUA_VERSION_MAJOR "." LUA_VERSION_MINOR "." LUA_VERSION_RELEASE
-#endif
 #define STR(tok) STR2(tok)
 #define STR2(tok) #tok
 
     const_string fmt =
-        "Compiled with %s\n" /* Lua or LuaJIT */
+        "Compiled with %s\n" /* Lua */
         "Compiled with zlib %s; using %s\n"
         "\nDevelopment id: %s\n";
     size_t len = strlen(fmt)
@@ -210,7 +206,7 @@ void initversionstring(char **versions)
     *versions = xmalloc(len);
     sprintf(*versions, fmt,
                     LUA_VER_STRING,
-                    ZLIB_VERSION, zlib_version,STR(luatex_svn_revision));
+                    ZLIB_VERSION, zlib_version, STR(luatex_svn_revision));
 
 #undef STR2
 #undef STR

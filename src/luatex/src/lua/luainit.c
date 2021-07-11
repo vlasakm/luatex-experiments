@@ -79,10 +79,6 @@ const_string LUATEX_IHELP[] = {
     "  --luaonly                      run a lua file, then exit",
     "  --luaconly                     byte-compile a lua file, then exit",
     "  --luahashchars                 the bits used by current Lua interpreter for strings hashing",
-#ifdef LuajitTeX
-    "  --jiton                        turns the JIT compiler on (default off)",
-    "  --jithash=STRING               choose the hash function for the lua strings (lua51|luajit20: default lua51)",
-#endif
     "",
     "See the reference manual for more information about the startup process.",
     NULL
@@ -140,11 +136,6 @@ int lua_only = 0;
 int lua_offset = 0;
 unsigned char show_luahashchars = 0;
 
-#ifdef LuajitTeX
-int luajiton   = 0;
-char *jithash_hashname = NULL;
-#endif
-
 int safer_option = 0;
 int utc_option = 0;
 
@@ -169,10 +160,6 @@ static struct option long_options[] = {
     {"lua", 1, 0, 0},
     {"luaonly", 0, 0, 0},
     {"luahashchars", 0, 0, 0},
-#ifdef LuajitTeX
-    {"jiton", 0, 0, 0},
-    {"jithash", 1, 0, 0},
-#endif
     {"safer", 0, &safer_option, 1},
     {"utc", 0, &utc_option, 1},
     {"help", 0, 0, 0},
@@ -244,15 +231,7 @@ static void parse_options(int ac, char **av)
     char *firstfile = NULL;
     /*tex Dont whine. */
     opterr = 0;
-#ifdef LuajitTeX
-    if ((strstr(argv[0], "luajittexlua") != NULL) ||
-        (strstr(argv[0], "texluajit") != NULL) ||
-        (strstr(argv[0], "texluahbjit") != NULL) ) {
-#else
-    if ((strstr(argv[0], "luatexlua") != NULL) ||
-        (strstr(argv[0], "texlua") != NULL) ||
-        (strstr(argv[0], "texluahb") != NULL)) {
-#endif
+    if (strstr(argv[0], "texlua") != NULL) {
         lua_only = 1;
         luainit = 1;
     }
@@ -279,20 +258,6 @@ static void parse_options(int ac, char **av)
             startup_filename = optarg;
             lua_offset = (optind - 1);
             luainit = 1;
-#ifdef LuajitTeX
-        } else if (ARGUMENT_IS("jiton")) {
-            luajiton = 1;
-        } else if (ARGUMENT_IS("jithash")) {
-            size_t len = strlen(optarg);
-            if (len<16) {
-                jithash_hashname = optarg;
-            } else {
-                WARNING2("hash name truncated to 15 characters from %d. (%s)", (int) len, optarg);
-                jithash_hashname = (string) xmalloc(16);
-                strncpy(jithash_hashname, optarg, 15);
-                jithash_hashname[15] = 0;
-            }
-#endif
         } else if (ARGUMENT_IS("luahashchars")) {
             show_luahashchars = 1;
         } else if (ARGUMENT_IS("progname")) {
@@ -342,10 +307,8 @@ static void parse_options(int ac, char **av)
                  "aleph     : Giuseppe Bilotta\n"
                  "pdftex    : Han The Thanh and friends\n"
                  "lua       : Roberto Ierusalimschy, Waldemar Celes and Luiz Henrique de Figueiredo\n"
-                 "metapost  : John Hobby, Taco Hoekwater, Luigi Scarso, Hans Hagen and friends\n"
                  "pplib     : Paweł Jackowski\n"
-                 "fontforge : George Williams (partial)\n"
-                 "luajit    : Mike Pall (used in LuajitTeX)\n");
+            );
             /* *INDENT-ON* */
             puts(versions);
             uexit(0);

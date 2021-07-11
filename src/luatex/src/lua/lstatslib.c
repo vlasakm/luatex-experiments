@@ -139,14 +139,7 @@ static lua_Number get_luatexhashchars(void)
 
 static const char *get_luatexhashtype(void)
 {
-#ifdef LuajitTeX
-     if (jithash_hashname)
-        return (const char *)jithash_hashname;
-     else
-        return "???";
-#else
   return "lua";
-#endif
 }
 
 static int get_hash_size(void)
