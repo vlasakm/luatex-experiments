@@ -1407,7 +1407,7 @@ int luaopen_token(lua_State * L)
 {
     /* the main metatable of token userdata */
     luaL_newmetatable(L, TOKEN_METATABLE);
-    luaL_openlib(L, NULL, tokenlib_m, 0);
-    luaL_openlib(L, "token", tokenlib, 0);
+    luaL_setfuncs(L, tokenlib_m, 0);
+    luaL_newlib(L, tokenlib);
     return 1;
 }

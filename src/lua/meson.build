@@ -37,7 +37,6 @@ lua_src = files(
 )
 
 lua_c_args = [
-  '-DLUA_COMPAT_MODULE',
   '-DLUA_COMPAT_5_2',
   '-DLUAI_HASHLIMIT=6',
   '-DLUA_USE_POSIX',

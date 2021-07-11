@@ -304,48 +304,6 @@ static int str_split (lua_State *L) {
   return 1;
 }
 
-#ifdef LuajitTeX
-    /* dump is built in */
-#else
-#if (LUA_VERSION_NUM == 502) 
-static int writer (lua_State *L, const void* b, size_t size, void* B) {
-  (void)L;
-  luaL_addlstring((luaL_Buffer*) B, (const char *)b, size);
-  return 0;
-}
-
-static int lua_sdump (lua_State *L, lua_Writer writer, void *data, int stripping) {
-  int status;
-  TValue *o;
-  lua_lock(L);
-  api_checknelems(L, 1);
-  o = L->top - 1;
-  if (isLfunction(o))
-    status = luaU_dump(L, getproto(o), writer, data, stripping);
-  else
-    status = 1;
-  lua_unlock(L);
-  return status;
-}
-
-
-static int str_dump (lua_State *L) {
-  luaL_Buffer b;
-  int stripping = 0;
-  luaL_checktype(L, 1, LUA_TFUNCTION);
-  if (lua_gettop(L)==2) {
-      stripping = lua_toboolean(L,2);
-  }
-  lua_settop(L, 1);
-  luaL_buffinit(L,&b);
-  if (lua_sdump(L, writer, &b, stripping) != 0)
-    return luaL_error(L, "unable to dump given function");
-  luaL_pushresult(&b);
-  return 1;
-}
-#endif
-#endif /*ifdef LuajitTeX*/
-
 static int str_bytetable (lua_State *L) {
     size_t l;
     int i;
@@ -497,20 +455,12 @@ static const luaL_Reg strlibext[] = {
   {"utfcharacter", str_character},
   {"utfvalue", str_utfvalue},
   {"utflength", str_utflength},
-#ifdef LuajitTeX
-  /* luajit has dump built in */
-#else
-/* lua 5.3.4 doesn't need this patch */
-#if (LUA_VERSION_NUM == 502) 
-  {"dump", str_dump},
-#endif
-  
-#endif /* #ifdef LuajitTeX */
   {NULL, NULL}
 };
 
 void open_strlibext(lua_State * L)
 {
+    // TODO(mvlasak): luaopen_string(L); luaL_setfuncs(L, strlibext, 0);
     const luaL_Reg *lib;
     lua_getglobal(L, "string");
     for (lib=strlibext;lib->name;lib++) {

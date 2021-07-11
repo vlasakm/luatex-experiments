@@ -305,7 +305,7 @@ int luaopen_lang(lua_State * L)
     /*tex metatable.__index = metatable */
     lua_setfield(L, -2, "__index");
     /*tex set dict methods */
-    luaL_openlib(L, NULL, langlib_d, 0);
-    luaL_openlib(L, "lang", langlib, 0);
+    luaL_setfuncs(L, langlib_d, 0);
+    luaL_newlib(L, langlib);
     return 1;
 }

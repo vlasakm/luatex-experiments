@@ -23,9 +23,6 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
-#ifdef LuajitTeX
-#include "lua/lauxlib_bridge.h"
-#endif
 
 #include <string.h>
 
@@ -661,36 +658,3 @@ void preset_environment(lua_State * L, const parm_struct * p, const char *s)
     lua_settable(L, LUA_REGISTRYINDEX);
     /* tex state: - */
 }
-
-/*tex
-    Here comes a \LUAJIT\ compatibility layer for \LUATEX\ \LUA5.2:
-*/
-
-#ifdef LuajitTeX
-
-LUALIB_API char *luaL_prepbuffsize (luaL_Buffer *B, size_t sz) {
-    lua_State *L = B->L;
-    if (sz > LUAL_BUFFERSIZE )
-        luaL_error(L, "buffer too large");
-    return luaL_prepbuffer(B) ;
-}
-
-LUA_API int lua_compare (lua_State *L, int o1, int o2, int op) {
-    /*StkId o1, o2;*/
-    int i = 0;
-    lua_lock(L);  /* may call tag method */
-    /* o1 = index2addr(L, index1); */
-    /* o2 = index2addr(L, index2); */
-    /* if (isvalid(o1) && isvalid(o2)) {*/
-    switch (op) {
-        case LUA_OPEQ: i = lua_equal(L, o1, o2); break;
-        case LUA_OPLT: i = lua_lessthan(L, o1, o2); break;
-        case LUA_OPLE: i = (lua_lessthan(L, o1, o2) || lua_equal(L, o1, o2)) ; break;
-        default: luaL_error(L, "invalid option");
-    }
-    /* } */
-    lua_unlock(L);
-    return i;
-}
-
-#endif

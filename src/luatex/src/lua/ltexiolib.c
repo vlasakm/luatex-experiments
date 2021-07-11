@@ -180,6 +180,6 @@ static const struct luaL_Reg texiolib[] = {
 
 int luaopen_texio(lua_State * L)
 {
-    luaL_openlib(L, "texio", texiolib, 0);
+    luaL_newlib(L, texiolib);
     return 1;
 }

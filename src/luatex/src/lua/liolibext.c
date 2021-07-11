@@ -22,11 +22,7 @@
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
-#ifdef LuajitTeX
-#include "lua/lauxlib_bridge.h"
-#else
 #include "lauxlib.h"
-#endif
 #include "lualib.h"
 
 #ifdef LuajitTeX
@@ -1102,7 +1098,7 @@ static const luaL_Reg siolib[] = {
 */
 
 int luaopen_fio(lua_State *L) {
-    luaL_openlib(L, "fio", fiolib, 0);
-    luaL_openlib(L, "sio", siolib, 0);
+    luaL_newlib(L, fiolib);
+    luaL_newlib(L, siolib);
     return 1;
 }

@@ -2405,7 +2405,7 @@ static const struct luaL_Reg nest_m[] = {
 static void init_nest_lib(lua_State * L)
 {
     luaL_newmetatable(L, NEST_METATABLE);
-    luaL_openlib(L, NULL, nest_m, 0);
+    luaL_setfuncs(L, nest_m, 0);
     lua_pop(L, 1);
 }
 
@@ -3526,7 +3526,7 @@ static const struct luaL_Reg texlib[] = {
 
 int luaopen_tex(lua_State * L)
 {
-    luaL_openlib(L, "tex", texlib, 0);
+    luaL_newlib(L, texlib);
     /* *INDENT-OFF* */
     make_table(L, "attribute", "tex.attribute", "getattribute", "setattribute");
     make_table(L, "skip",      "tex.skip",      "getskip",      "setskip");
