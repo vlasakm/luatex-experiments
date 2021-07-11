@@ -29,10 +29,6 @@ __attribute__ ((format(printf, 1, 2)))
 void tex_printf(const char *, ...);
 
 void garbage_warning(void);
-size_t xfwrite(void *, size_t size, size_t nmemb, FILE *);
-int xfflush(FILE *);
-int xgetc(FILE *);
-int xputc(int, FILE *);
 scaled ext_xn_over_d(scaled, scaled, scaled);
 void initversionstring(char **versions);
 extern void check_buffer_overflow(int wsize);

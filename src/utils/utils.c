@@ -60,38 +60,9 @@ void tex_printf(const char *fmt, ...)
     va_start(args, fmt);
     vsnprintf(print_buf, PRINTF_BUF_SIZE, fmt, args);
     tprint(print_buf);
-    xfflush(stdout);
-    va_end(args);
-}
-
-size_t xfwrite(void *ptr, size_t size, size_t nmemb, FILE * stream)
-{
-    if (fwrite(ptr, size, nmemb, stream) != nmemb)
-        formatted_error("file io","fwrite() failed");
-    return nmemb;
-}
-
-int xfflush(FILE * stream)
-{
-    if (fflush(stream) != 0)
+    if (fflush(stdout) != 0)
         formatted_error("file io","fflush() failed (%s)", strerror(errno));
-    return 0;
-}
-
-int xgetc(FILE * stream)
-{
-    int c = getc(stream);
-    if (c < 0 && c != EOF)
-        formatted_error("file io","getc() failed (%s)", strerror(errno));
-    return c;
-}
-
-int xputc(int c, FILE * stream)
-{
-    int i = putc(c, stream);
-    if (i < 0)
-        formatted_error("file io","putc() failed (%s)", strerror(errno));
-    return i;
+    va_end(args);
 }
 
 scaled ext_xn_over_d(scaled x, scaled n, scaled d)
