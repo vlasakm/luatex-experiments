@@ -151,7 +151,7 @@ void set_start_time(int s) {
 char **argv;
 int argc;
 
-/* The C version of what might wind up in |TEX_format_default|.  */
+/* Format file name/path. */
 
 string dump_name;
 
@@ -311,39 +311,6 @@ void topenin(void)
         representation.
     */
 }
-
-/*
-    Normalize quoting of filename -- that is, only quote if there is a space, and
-    always use the quote-name-quote style.
-*/
-
-string normalize_quotes(const_string name, const_string mesg)
-{
-    boolean quoted = false;
-    boolean must_quote = (strchr(name, ' ') != NULL);
-    /* Leave room for quotes and NUL. */
-    string ret = (string) xmalloc((unsigned) strlen(name) + 3);
-    string p;
-    const_string q;
-    p = ret;
-    if (must_quote)
-        *p++ = '"';
-    for (q = name; *q; q++) {
-        if (*q == '"')
-            quoted = !quoted;
-        else
-            *p++ = *q;
-    }
-    if (must_quote)
-        *p++ = '"';
-    *p = '\0';
-    if (quoted) {
-        fprintf(stderr, "! Unbalanced quotes in %s %s\n", mesg, name);
-        uexit(1);
-    }
-    return ret;
-}
-
 
 /*
     All our interrupt handler has to do is set TeX's or Metafont's global

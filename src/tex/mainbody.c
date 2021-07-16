@@ -197,10 +197,6 @@ boolean ini_version;
 
 boolean dump_option;
 
-/*tex was a \.{\%\AM format} line seen? */
-
-boolean dump_line;
-
 /*tex temporary for setup */
 
 int bound_default;
@@ -517,23 +513,17 @@ void main_body(void)
         This copies the command line,
     */
     initialize_inputstack();
-    if (buffer[iloc] == '*')
-        incr(iloc);
-    if ((format_ident == 0) || (buffer[iloc] == '&') || dump_line) {
-        char *fname = NULL;
-        if (format_ident != 0 && !ini_version) {
-            /*tex Erase preloaded format. */
-            initialize();
-        }
-        if ((fname = open_fmt_file()) == NULL)
+    if (!ini_version) { /* dump_name is not NULL */
+        if (!zopen_w_input(&fmt_file, dump_name, "rb")) {
+            wake_up_terminal();
+            fprintf(stdout, "I can't find the format file `%s'!\n", dump_name);
             goto FINAL_END;
-        if (!load_fmt_file(fname)) {
+        }
+        if (!load_fmt_file(dump_name)) {
             zwclose(fmt_file);
             goto FINAL_END;
         }
         zwclose(fmt_file);
-        while ((iloc < ilimit) && (buffer[iloc] == ' '))
-            incr(iloc);
     }
     if (end_line_char_inactive)
         decr(ilimit);

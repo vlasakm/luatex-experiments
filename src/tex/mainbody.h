@@ -120,7 +120,6 @@ extern boolean tracefilenames;  /* print file open-close  info? */
 
 extern boolean ini_version;     /* are we \.{INITEX}? */
 extern boolean dump_option;
-extern boolean dump_line;
 extern int bound_default;
 extern char *bound_name;
 extern int error_line;

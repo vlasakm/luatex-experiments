@@ -126,8 +126,6 @@ static void prepare_cmdline(lua_State * L, char **av, int ac, int zero_offset)
 }
 
 
-string input_name = NULL;
-
 static string user_progname = NULL;
 
 char *startup_filename = NULL;
@@ -193,15 +191,9 @@ static int recorderoption = 0;
 
 static void parse_options(int ac, char **av)
 {
-#ifdef WIN32
-    /*tex We save |argc| and |argv|. */
-    int sargc = argc;
-    char **sargv = argv;
-#endif
-     /*tex The `getopt' return code. */
+    /*tex The `getopt' return code. */
     int g;
     int option_index;
-    char *firstfile = NULL;
     /*tex Dont whine. */
     opterr = 0;
     if (strstr(argv[0], "texlua") != NULL) {
@@ -286,55 +278,11 @@ static void parse_options(int ac, char **av)
             uexit(0);
         }
     }
-    /*tex attempt to find |input_name| and |dump_name| */
     if (lua_only) {
         if (argv[optind]) {
             startup_filename = xstrdup(argv[optind]);
             lua_offset = optind;
         }
-    } else if (argv[optind] && argv[optind][0] == '&') {
-        dump_name = xstrdup(argv[optind] + 1);
-    } else if (argv[optind] && argv[optind][0] != '\\') {
-        if (argv[optind][0] == '*') {
-            input_name = xstrdup(argv[optind] + 1);
-        } else {
-            firstfile = xstrdup(argv[optind]);
-            if ((strstr(firstfile, ".lua") ==
-                 firstfile + strlen(firstfile) - 4)
-                || (strstr(firstfile, ".luc") ==
-                    firstfile + strlen(firstfile) - 4)
-                || (strstr(firstfile, ".LUA") ==
-                    firstfile + strlen(firstfile) - 4)
-                || (strstr(firstfile, ".LUC") ==
-                    firstfile + strlen(firstfile) - 4)) {
-                if (startup_filename == NULL) {
-                    startup_filename = firstfile;
-                    lua_offset = optind;
-                    lua_only = 1;
-                    luainit = 1;
-                }
-            } else {
-                input_name = firstfile;
-            }
-        }
-#ifdef WIN32
-    } else if (sargc > 1 && sargv[sargc-1] && sargv[sargc-1][0] != '-' &&
-               sargv[sargc-1][0] != '\\') {
-        if (sargv[sargc-1][0] == '&')
-            dump_name = xstrdup(sargv[sargc-1] + 1);
-        else  {
-            if (sargv[sargc-1][0] == '*')
-                input_name = xstrdup(sargv[sargc-1] + 1);
-            else
-                input_name = xstrdup(sargv[sargc-1]);
-            sargv[sargc-1] = normalize_quotes(input_name, "argument");
-        }
-        return;
-#endif
-    }
-    /*tex Finalize the input filename. */
-    if (input_name != NULL) {
-        argv[optind] = normalize_quotes(input_name, "argument");
     }
 }
 
@@ -375,20 +323,10 @@ static char *find_filename(char *name, const char *envkey)
 
 static void fix_dumpname(void)
 {
-    int dist;
-    if (dump_name) {
-        /*tex Adjust array for Pascal and provide extension, if needed. */
-        dist = (int) (strlen(dump_name) - strlen(DUMP_EXT));
-        if (strstr(dump_name, DUMP_EXT) == dump_name + dist)
-            TEX_format_default = dump_name;
-        else
-            TEX_format_default = concat(dump_name, DUMP_EXT);
-    } else {
+    if (!dump_name && !ini_version) {
         /*tex For |dump_name| to be NULL is a bug. */
-        if (!ini_version) {
-          fprintf(stdout, "no format given, quitting\n");
-          exit(1);
-        }
+        fprintf(stdout, "no format given, quitting\n");
+        exit(1);
     }
 }
 
@@ -585,9 +523,6 @@ void lua_initialize(int ac, char **av)
             lua_traceback(Luas);
             exit(1);
         }
-        if (!input_name) {
-            get_lua_string("texconfig", "jobname", &input_name);
-        }
         if (!dump_name) {
             get_lua_string("texconfig", "formatname", &dump_name);
         }
@@ -637,6 +572,8 @@ void lua_initialize(int ac, char **av)
             fprintf(stdout, "No %s file given\n", (lua_only ? "script" : "configuration"));
         }
         exit(1);
+    } else {
+        fix_dumpname();
     }
 }
 

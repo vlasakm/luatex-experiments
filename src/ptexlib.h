@@ -435,7 +435,6 @@ extern void topenin(void);
 extern str_number getjobname(str_number);
 extern str_number makefullnamestring(void);
 
-extern string normalize_quotes(const_string name, const_string mesg);
 extern string dump_name;
 extern const_string c_job_name;
 
