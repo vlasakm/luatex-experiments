@@ -93,11 +93,6 @@ extern void ipcpage(int);
 
 #  define flush_out() fflush (OUT_FILE)
 
-/* Read a line of input as quickly as possible.  */
-#  define	input_ln(stream, flag) input_line (stream)
-
-extern boolean input_line(FILE *);
-
 #  define COPYRIGHT_HOLDER "Taco Hoekwater"
 #  define AUTHOR NULL
 #  define PROGRAM_HELP LUATEXHELP

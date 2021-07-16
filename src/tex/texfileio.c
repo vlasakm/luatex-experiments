@@ -22,6 +22,7 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 #include "ptexlib.h"
 
 #include <string.h>
+#include <errno.h>
 
 /*tex
 
@@ -232,6 +233,71 @@ int last;
 /*tex largest index used in |buffer| */
 
 int max_buf_stack;
+
+/*
+    Read a line of input as efficiently as possible while still looking like
+    Pascal. We set `last' to `first' and return `false' if we get to eof.
+    Otherwise, we return `true' and set last = first + length(line except
+    trailing whitespace).
+*/
+
+/* Read a line of input as quickly as possible.  */
+#  define	input_ln(stream, flag) input_line (stream)
+
+static boolean input_line(FILE * f)
+{
+    int i = EOF;
+
+    /*
+        Recognize either LF or CR as a line terminator.
+    */
+    last = first;
+    while (last < buf_size && (i = getc(f)) != EOF && i != '\n' && i != '\r')
+        buffer[last++] = (packed_ASCII_code) i;
+
+    if (i == EOF && errno != EINTR && last == first)
+        return false;
+
+    /*
+        We didn't get the whole line because our buffer was too small.
+    */
+    if (i != EOF && i != '\n' && i != '\r') {
+        fprintf(stderr, "! Unable to read an entire line---bufsize=%u.\n",
+                (unsigned) buf_size);
+        fputs("Please increase buf_size in texmf.cnf.\n", stderr);
+        uexit(1);
+    }
+
+    buffer[last] = ' ';
+    if (last >= max_buf_stack)
+        max_buf_stack = last;
+
+    /*
+        If next char is LF of a CRLF, read it.
+    */
+    if (i == '\r') {
+        while ((i = getc(f)) == EOF && errno == EINTR);
+        if (i != '\n')
+            ungetc(i, f);
+    }
+
+    /*
+        Trim trailing space character (but not, e.g., tabs). We can't have line
+        terminators because we stopped reading at the first \r or \n. TeX's rule
+        is to strip only trailing spaces (and eols). David Fuchs mentions that
+        this stripping was done to ensure portability of TeX documents given the
+        padding with spaces on fixed-record "lines" on some systems of the time,
+        e.g., IBM VM/CMS and OS/360.
+    */
+    while (last > first && buffer[last - 1] == ' ')
+        --last;
+
+    /*
+        Don't bother using xord if we don't need to.
+    */
+
+    return true;
+}
 
 /*tex
 

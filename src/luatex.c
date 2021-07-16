@@ -46,7 +46,6 @@ const char *engine_name = my_name;
 #endif
 
 #include <signal.h>             /* Catch interrupts.  */
-#include <errno.h>
 
 /*
     Called from maininit. Not static because also called from
@@ -408,95 +407,4 @@ int getrandomseed(void)
     }
     return (tmptr->tm_sec + 60 * (tmptr->tm_min + 60 * tmptr->tm_hour));
 #endif
-}
-
-/*
-    Read a line of input as efficiently as possible while still looking like
-    Pascal. We set `last' to `first' and return `false' if we get to eof.
-    Otherwise, we return `true' and set last = first + length(line except
-    trailing whitespace).
-*/
-
-boolean input_line(FILE * f)
-{
-    int i = EOF;
-
-#ifdef WIN32
-    if (f != Poptr && fileno (f) != fileno (stdin)) {
-        long position = ftell (f);
-        if (position == 0L) {
-            /* Detect and skip Byte order marks.  */
-            int k1 = getc (f);
-
-            if (k1 != 0xff && k1 != 0xfe && k1 != 0xef)
-                rewind (f);
-            else {
-                int k2 = getc (f);
-                if (k2 != 0xff && k2 != 0xfe && k2 != 0xbb)
-                    rewind (f);
-                else if ((k1 == 0xff && k2 == 0xfe) || /* UTF-16(LE) */
-                         (k1 == 0xfe && k2 == 0xff))   /* UTF-16(BE) */
-                    ;
-                else {
-                    int k3 = getc (f);
-                    int k4 = getc (f);
-                    if (k1 == 0xef && k2 == 0xbb && k3 == 0xbf &&
-                        k4 >= 0 && k4 <= 0x7e) /* UTF-8 */
-                        ungetc (k4, f);
-                    else
-                        rewind (f);
-                }
-            }
-        }
-    }
-#endif
-    /*
-        Recognize either LF or CR as a line terminator.
-    */
-    last = first;
-    while (last < buf_size && (i = getc(f)) != EOF && i != '\n' && i != '\r')
-        buffer[last++] = (packed_ASCII_code) i;
-
-    if (i == EOF && errno != EINTR && last == first)
-        return false;
-
-    /*
-        We didn't get the whole line because our buffer was too small.
-    */
-    if (i != EOF && i != '\n' && i != '\r') {
-        fprintf(stderr, "! Unable to read an entire line---bufsize=%u.\n",
-                (unsigned) buf_size);
-        fputs("Please increase buf_size in texmf.cnf.\n", stderr);
-        uexit(1);
-    }
-
-    buffer[last] = ' ';
-    if (last >= max_buf_stack)
-        max_buf_stack = last;
-
-    /*
-        If next char is LF of a CRLF, read it.
-    */
-    if (i == '\r') {
-        while ((i = getc(f)) == EOF && errno == EINTR);
-        if (i != '\n')
-            ungetc(i, f);
-    }
-
-    /*
-        Trim trailing space character (but not, e.g., tabs). We can't have line
-        terminators because we stopped reading at the first \r or \n. TeX's rule
-        is to strip only trailing spaces (and eols). David Fuchs mentions that
-        this stripping was done to ensure portability of TeX documents given the
-        padding with spaces on fixed-record "lines" on some systems of the time,
-        e.g., IBM VM/CMS and OS/360.
-    */
-    while (last > first && buffer[last - 1] == ' ')
-        --last;
-
-    /*
-        Don't bother using xord if we don't need to.
-    */
-
-    return true;
 }
