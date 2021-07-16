@@ -55,7 +55,6 @@ const_string LUATEX_IHELP[] = {
     "  The following regular options are understood: ",
     "",
     "   --credits                     display credits and exit",
-    "   --debug-format                enable format debugging",
     "   --[no-]file-line-error        disable/enable file:line:error style messages",
     "   --[no-]file-line-error-style  aliases of --[no-]file-line-error",
     "   --fmt=FORMAT                  load the format file FORMAT",
@@ -65,11 +64,6 @@ const_string LUATEX_IHELP[] = {
     "   --interaction=STRING          set interaction mode (STRING=batchmode/nonstopmode/scrollmode/errorstopmode)",
     "   --jobname=STRING              set the job name to STRING",
     "   --lua=FILE                    load and execute a lua initialization script",
-    "   --[no-]mktex=FMT              disable/enable mktexFMT generation (FMT=tex/tfm)",
-    "   --nosocket                    disable the lua socket library",
-    "   --progname=STRING             set the program name to STRING",
-    "   --recorder                    enable filename recorder",
-    "   --safer                       disable easily exploitable lua commands",
     "   --[no-]shell-escape           disable/enable system commands",
     "   --utc                         init time to UTC",
     "   --version                     display version and exit",
@@ -95,16 +89,6 @@ const char *lc_ctype;
 const char *lc_collate;
 const char *lc_numeric;
 
-/*
-    "   --8bit                        ignored, input is assumed to be in UTF-8 encoding",
-    "   --default-translate-file=FILE ignored, input is assumed to be in UTF-8 encoding",
-    "   --etex                        ignored, the etex extensions are always active",
-    "   --disable-write18             disable \\write18{SHELL COMMAND}",
-    "   --enable-write18              enable \\write18{SHELL COMMAND}",
-    "   --[no-]parse-first-line       ignored",
-    "   --translate-file=FILE         ignored, input is assumed to be in UTF-8 encoding",
-*/
-
 static void prepare_cmdline(lua_State * L, char **av, int ac, int zero_offset)
 {
     int i;
@@ -126,14 +110,11 @@ static void prepare_cmdline(lua_State * L, char **av, int ac, int zero_offset)
 }
 
 
-static string user_progname = NULL;
-
 char *startup_filename = NULL;
 int lua_only = 0;
 int lua_offset = 0;
 unsigned char show_luahashchars = 0;
 
-int safer_option = 0;
 int utc_option = 0;
 
 /*tex
@@ -145,34 +126,18 @@ variable |option_index|, and the option table in a variable |long_options|.
 
 #define ARGUMENT_IS(a) STREQ (long_options[option_index].name, a)
 
-/*tex
-    Nota Bene: we still intercept some options that other engines handle
-    so that existing scripted usage will not fail.
-
-    SunOS cc can't initialize automatic structs, so make this static.
-*/
-
 static struct option long_options[] = {
     {"fmt", 1, 0, 0},
     {"lua", 1, 0, 0},
     {"luaonly", 0, 0, 0},
     {"luahashchars", 0, 0, 0},
-    {"safer", 0, &safer_option, 1},
     {"utc", 0, &utc_option, 1},
     {"help", 0, 0, 0},
     {"ini", 0, &ini_version, 1},
     {"interaction", 1, 0, 0},
     {"halt-on-error", 0, &haltonerrorp, 1},
-    {"progname", 1, 0, 0},
     {"version", 0, 0, 0},
     {"credits", 0, 0, 0},
-    {"recorder", 0, 0, 0},
-    {"etex", 0, 0, 0},
-    {"shell-escape", 0, &shellenabledp, 1},
-    {"no-shell-escape", 0, &shellenabledp, -1},
-    {"enable-write18", 0, &shellenabledp, 1},
-    {"disable-write18", 0, &shellenabledp, -1},
-    {"debug-format", 0, &debug_format_file, 1},
     {"file-line-error-style", 0, &filelineerrorstylep, 1},
     {"no-file-line-error-style", 0, &filelineerrorstylep, -1},
     /*tex Shorter option names for the above. */
@@ -186,8 +151,6 @@ static struct option long_options[] = {
     {"8bit", 0, 0, 0},
     {0, 0, 0, 0}
 };
-
-static int recorderoption = 0;
 
 static void parse_options(int ac, char **av)
 {
@@ -225,8 +188,6 @@ static void parse_options(int ac, char **av)
             luainit = 1;
         } else if (ARGUMENT_IS("luahashchars")) {
             show_luahashchars = 1;
-        } else if (ARGUMENT_IS("progname")) {
-            user_progname = optarg;
         } else if (ARGUMENT_IS("jobname")) {
             c_job_name = optarg;
         } else if (ARGUMENT_IS("fmt")) {
@@ -244,8 +205,6 @@ static void parse_options(int ac, char **av)
             } else {
                 WARNING1("Ignoring unknown argument `%s' to --interaction", optarg);
             }
-        } else if (ARGUMENT_IS("recorder")) {
-            recorderoption = 1 ;
         } else if (ARGUMENT_IS("help")) {
             usagehelp(LUATEX_IHELP, BUG_ADDRESS);
         } else if (ARGUMENT_IS("version")) {
@@ -401,11 +360,6 @@ void lua_initialize(int ac, char **av)
     dump_name = NULL;
     /*tex parse commandline */
     parse_options(ac, av);
-    if (lua_only) {
-        /*tex Shell has no restrictions. */
-        shellenabledp = true;
-        safer_option = 0;
-    }
     /*tex
         Get the current locale (it should be |C|) and save |LC_CTYPE|, |LC_COLLATE|
         and |LC_NUMERIC|. Later |luainterpreter()| will consciously use them.
@@ -484,7 +438,6 @@ void lua_initialize(int ac, char **av)
     }
     /*tex now run the file */
     if (startup_filename != NULL) {
-        char *v1;
         int tex_table_id = hide_lua_table(Luas, "tex");
         int token_table_id = hide_lua_table(Luas, "token");
         int node_table_id = hide_lua_table(Luas, "node");
@@ -538,14 +491,6 @@ void lua_initialize(int ac, char **av)
             interactionoption = 4;
         }
         /*tex |shell_escape| */
-        v1 = NULL;
-        get_lua_string("texconfig", "shell_escape", &v1);
-        if (v1) {
-            if (*v1 == 't' || *v1 == 'y' || *v1 == '1') {
-                shellenabledp = 1;
-            }
-            free(v1);
-        }
         starttime = -1 ;
         get_lua_number("texconfig", "start_time", &starttime);
         if (starttime < 0) {

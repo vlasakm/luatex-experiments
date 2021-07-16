@@ -1062,7 +1062,6 @@ boolean stop_at_space;
 
 */
 
-int shellenabledp;
 char *output_comment;
 
 /*tex

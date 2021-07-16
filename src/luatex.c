@@ -18,8 +18,6 @@
 #include "luatex.h"
 #include "lua/luatex-api.h"
 
-#define TeX
-
 /*
     The version number can be queried with \.{\\luatexversion} and the revision with
     with \.{\\luatexrevision}. Traditionally the revision can be any character and
@@ -49,44 +47,6 @@ const char *engine_name = my_name;
 
 #include <signal.h>             /* Catch interrupts.  */
 #include <errno.h>
-
-/*
-    Shell escape.
-
-    If shellenabledp == 0, all shell escapes are forbidden.
-
-    If (shellenabledp == 1 && restrictedshell == 0), any command is allowed for a
-    shell escape.
-
-    If (shellenabledp == 1 && restrictedshell == 1), only commands given in the
-    configuration file as shell_escape_commands =
-    kpsewhich,ebb,extractbb,mpost,metafun,... (no spaces between commands) in
-    texmf.cnf are allowed for a shell escape in a restricted form: command name
-    and arguments should be separated by a white space. The first word should be
-    a command name. The quotation character for an argument with spaces,
-    including a pathname, should be ". ' should not be used. Internally, all
-    arguments are quoted by ' (Unix) or " (Windows) before calling the system()
-    function in order to forbid execution of any embedded command.
-
-    If the --shell-escape option is given, we set shellenabledp = 1 and
-    restrictedshell = 0, i.e., any command is allowed.
-
-    If the --no-shell-escape option is given, we set shellenabledp = -1 (and
-    restrictedshell is irrelevant).
-
-    If none of these option are given, there are three cases:
-
-    (1) In the case where shell_escape = y or shell_escape = t or shell_escape =
-        1 it becomes shellenabledp = 1 and restrictedshell = 0, that is, any
-        command is allowed.
-    (2) In the case where shell_escape = p it becomes shellenabledp = 1 and
-        restrictedshell = 1, that is, restricted shell escape is allowed.
-    (3) In all other cases, shellenabledp = 0, that is, shell escape is
-        forbidden. The value of restrictedshell is irrelevant if shellenabledp ==
-        0.
-*/
-
-#ifdef TeX
 
 /*
     Called from maininit. Not static because also called from
@@ -143,8 +103,6 @@ void set_start_time(int s) {
         start_time = s ;
     }
 }
-
-#endif
 
 /* What we were invoked as and with. */
 

@@ -171,7 +171,6 @@ extern const char *engine_name;
 /* luastuff.h */
 
 extern char *startup_filename;
-extern int safer_option;
 extern int utc_option;
 
 extern char *last_source_name;

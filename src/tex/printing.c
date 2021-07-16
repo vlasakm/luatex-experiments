@@ -547,10 +547,6 @@ void print_banner(const char *v)
             fprintf(term_out,"Number of bits used by the hash function (" my_name "): %d",LUAI_HASHLIMIT);
             print_ln();
         }
-        if (shellenabledp) {
-            wterm(' ');
-            fprintf(term_out, "system commands enabled.\n");
-        }
     } else if (callback_id > 0) {
         run_callback(callback_id, "->");
     }
@@ -578,11 +574,6 @@ void log_banner(const char *v)
     print_two(time_par / 60);
     print_char(':');
     print_two(time_par % 60);
-    if (shellenabledp) {
-        wlog_cr();
-        wlog(' ');
-        fprintf(log_file, "system commands enabled.");
-    }
     if (filelineerrorstylep) {
         wlog_cr();
         fprintf(log_file, " file:line:error style messages enabled.");

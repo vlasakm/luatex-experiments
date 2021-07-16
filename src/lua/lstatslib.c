@@ -147,26 +147,6 @@ static int get_hash_size(void)
     return hash_size;           /* is a #define */
 }
 
-static lua_Number shell_escape_state(void)
-{
-    if (shellenabledp <= 0) {
-        /* No shell at all. */
-        return (lua_Number) 0;
-    } else {
-        /* Shell has no restriction. */
-        return (lua_Number) 1;
-    }
-}
-
-static lua_Number safer_option_state(void)
-{
-    if (safer_option == 0) {
-        return (lua_Number) 0;
-    } else {
-        return (lua_Number) 1;
-    }
-}
-
 static lua_Number get_development_id(void)
 {
     return (lua_Number) luatex_svn_revision ;
@@ -207,8 +187,6 @@ static struct statistic stats[] = {
 
     {"ini_version", 'b', &ini_version},
 
-    {"shell_escape", 'N', &shell_escape_state},
-    {"safer_option", 'N', &safer_option_state},
     /*
      * mem stat
      */
