@@ -280,33 +280,6 @@ int l_dir_par_index         [DIR_PAR_SIZE];
 int l_dir_text_index_normal [DIR_TEXT_SIZE];
 int l_dir_text_index_cancel [DIR_TEXT_SIZE];
 
-int img_parms               [img_parms_max];
-int img_pageboxes           [img_pageboxes_max];
-
-int lua_show_valid_list(lua_State *L, const char **list, int offset, int max)
-{
-    int i;
-    lua_newtable(L);
-    for (i = 0; i < max; i++) {
-        lua_pushinteger(L,i+offset);
-        lua_pushstring(L, list[i]);
-        lua_settable(L, -3);
-    }
-    return 1;
-}
-
-int lua_show_valid_keys(lua_State *L, int *list, int max)
-{
-    int i;
-    lua_newtable(L);
-    for (i = 0; i < max; i++) {
-        lua_pushinteger(L,i+1);
-        lua_rawgeti(L, LUA_REGISTRYINDEX, list[i]);
-        lua_settable(L, -3);
-    }
-    return 1;
-}
-
 void lua_initialize(int ac, char **av)
 {
     char *banner;
@@ -401,8 +374,6 @@ void lua_initialize(int ac, char **av)
     l_set_node_data();
     l_set_whatsit_data();
     l_set_token_data();
-    set_l_img_keys_index;
-    set_l_img_pageboxes_index;
     /*tex collect arguments */
     prepare_cmdline(Luas, argv, argc, lua_offset);
     /*tex now run the file */

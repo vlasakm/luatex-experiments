@@ -182,9 +182,6 @@ extern int program_name_set;    /* in lkpselib.c */
 extern char **argv;
 extern int argc;
 
-extern int loader_C_luatex(lua_State * L, const char *name, const char *filename);
-extern int loader_Call_luatex(lua_State * L, const char *name, const char *filename);
-
 extern void init_tex_table(lua_State * L);
 
 /*
@@ -202,13 +199,6 @@ extern int lua_traceback(lua_State * L);
 extern int luainit;
 
 extern char *luanames[];
-
-extern int ff_get_ttc_index(char *ffname, char *psname);        /* luafontloader/src/luafflib.c */
-extern int ff_createcff(char *, unsigned char **, int *);       /* luafontloader/src/luafflib.c */
-
-extern char *FindResourceTtfFont(char *filename, char *fontname);       /* luafontloader/fontforge/fontforge/macbinary.c */
-
-extern char charsetstr[];       /* from mpdir/psout.w */
 
 #ifndef WIN32
 extern char **environ;
@@ -429,54 +419,6 @@ l_dir_text_index_cancel[dir_TLT] = lua_key_index(mTLT);\
 l_dir_text_index_cancel[dir_TRT] = lua_key_index(mTRT);\
 l_dir_text_index_cancel[dir_LTL] = lua_key_index(mLTL);\
 l_dir_text_index_cancel[dir_RTT] = lua_key_index(mRTT);
-
-#define img_parms_max     25
-#define img_pageboxes_max  6
-
-extern int img_parms     [img_parms_max];
-extern int img_pageboxes [img_pageboxes_max];
-
-# define set_l_img_keys_index \
-img_parms[ 0] = lua_key_index(attr); \
-img_parms[ 0] = lua_key_index(attribute_list); \
-img_parms[ 1] = lua_key_index(bbox); \
-img_parms[ 2] = lua_key_index(colordepth); \
-img_parms[ 3] = lua_key_index(colorspace); \
-img_parms[ 4] = lua_key_index(depth); \
-img_parms[ 5] = lua_key_index(filename); \
-img_parms[ 6] = lua_key_index(filepath); \
-img_parms[ 7] = lua_key_index(height); \
-img_parms[ 8] = lua_key_index(imagetype); \
-img_parms[ 9] = lua_key_index(index); \
-img_parms[10] = lua_key_index(keepopen); \
-img_parms[11] = lua_key_index(objnum); \
-img_parms[12] = lua_key_index(pagebox); \
-img_parms[13] = lua_key_index(page); \
-img_parms[14] = lua_key_index(pages); \
-img_parms[15] = lua_key_index(ref_count); \
-img_parms[16] = lua_key_index(rotation); \
-img_parms[17] = lua_key_index(stream); \
-img_parms[18] = lua_key_index(transform); \
-img_parms[19] = lua_key_index(visiblefilename); \
-img_parms[20] = lua_key_index(width); \
-img_parms[21] = lua_key_index(xres); \
-img_parms[22] = lua_key_index(xsize); \
-img_parms[23] = lua_key_index(yres); \
-img_parms[24] = lua_key_index(ysize); \
-
-# define set_l_img_pageboxes_index \
-img_pageboxes[0] = lua_key_index(none); \
-img_pageboxes[1] = lua_key_index(media); \
-img_pageboxes[2] = lua_key_index(crop); \
-img_pageboxes[3] = lua_key_index(bleed); \
-img_pageboxes[4] = lua_key_index(trim); \
-img_pageboxes[5] = lua_key_index(art); \
-
-#define lua_push_img_key(L,key)     lua_rawgeti(L, LUA_REGISTRYINDEX, img_parms[key] );
-#define lua_push_img_pagebox(L,box) lua_rawgeti(L, LUA_REGISTRYINDEX, img_pageboxes[box]);
-
-extern int lua_show_valid_list(lua_State *L, const char **list, int offset, int max);
-extern int lua_show_valid_keys(lua_State *L, int *list, int max);
 
 #define set_make_keys \
 make_lua_key(__index);\
