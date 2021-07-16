@@ -2,7 +2,6 @@ luatex_src = files(
   'font/dofont.c',
   'font/luafont.c',
   'font/texfont.c',
-  'lang/hnjalloc.c',
   'lang/hyphen.c',
   'lang/texlang.c',
   'lua/lcallbacklib.c',

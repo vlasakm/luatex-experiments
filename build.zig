@@ -21,7 +21,6 @@ pub fn build(b: *std.build.Builder) void {
         "src/font/dofont.c",
         "src/font/luafont.c",
         "src/font/texfont.c",
-        "src/lang/hnjalloc.c",
         "src/lang/hyphen.c",
         "src/lang/texlang.c",
         "src/lua/lcallbacklib.c",

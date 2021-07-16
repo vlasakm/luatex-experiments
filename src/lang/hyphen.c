@@ -50,9 +50,34 @@ language governing rights and limitations under the MPL.
 
 #define noVERBOSE
 
-#include "lang/hnjalloc.h"
-
 /*tex This could be moved to separate library. */
+
+static void *hnj_malloc(int size)
+{
+    void *p;
+
+    p = malloc((size_t) size);
+    if (p == NULL) {
+        fprintf(stderr, "can't allocate %d bytes\n", size);
+        exit(1);
+    }
+    return p;
+}
+
+static void *hnj_realloc(void *p, int size)
+{
+    p = realloc(p, (size_t) size);
+    if (p == NULL) {
+        fprintf(stderr, "can't allocate %d bytes\n", size);
+        exit(1);
+    }
+    return p;
+}
+
+static void hnj_free(void *p)
+{
+    free(p);
+}
 
 static unsigned char *hnj_strdup(const unsigned char *s)
 {
