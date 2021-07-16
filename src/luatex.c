@@ -500,15 +500,3 @@ boolean input_line(FILE * f)
 
     return true;
 }
-
-/*
-    Get the job name to be used, which may have been set from the command line.
-*/
-
-str_number getjobname(str_number name)
-{
-    str_number ret = name;
-    if (c_job_name != NULL)
-        ret = maketexstring(c_job_name);
-    return ret;
-}
