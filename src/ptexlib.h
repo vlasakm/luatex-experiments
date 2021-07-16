@@ -41,7 +41,6 @@ ptexlib.h must be included first!!!
 #define HAVE_GETTIMEOFDAY 1
 #define HAVE_SYS_TIMEB_H  1
 #define HAVE_SYS_TIME_H   1
-#define NO_DUMP_SHARE     1
 
 #define ZLIB_CONST        1
 /***************************************************************************/
