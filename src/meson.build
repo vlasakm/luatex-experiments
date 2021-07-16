@@ -36,7 +36,6 @@ luatex_src = files(
   'tex/mainbody.c',
   'tex/maincontrol.c',
   'tex/mathcodes.c',
-  'tex/memoryword.c',
   'tex/mlist.c',
   'tex/nesting.c',
   'tex/packaging.c',

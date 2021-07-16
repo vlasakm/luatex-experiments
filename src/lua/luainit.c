@@ -27,7 +27,6 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include <locale.h>
 
-// TODO(mvlasak): added by me, move to ptexlib?
 #include <sys/stat.h>
 
 #include <getopt.h>

@@ -55,7 +55,6 @@ pub fn build(b: *std.build.Builder) void {
         "src/tex/mainbody.c",
         "src/tex/maincontrol.c",
         "src/tex/mathcodes.c",
-        "src/tex/memoryword.c",
         "src/tex/mlist.c",
         "src/tex/nesting.c",
         "src/tex/packaging.c",
