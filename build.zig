@@ -83,7 +83,7 @@ pub fn build(b: *std.build.Builder) void {
     exe.addIncludeDir("src");
     exe.linkLibC();
     exe.linkSystemLibrary("lua5.3");
-    exe.linkSystemLibrary("zlib");
+    //exe.linkSystemLibrary("zlib");
     exe.linkLibrary(zig_part);
     exe.setTarget(target);
     exe.setBuildMode(mode);

@@ -863,7 +863,8 @@ void start_input(void)
 
 */
 
-static gzFile gz_fmtfile = NULL;
+//static gzFile gz_fmtfile = NULL;
+static int gz_fmtfile = NULL;
 
 /*tex
 
@@ -884,11 +885,15 @@ void do_zdump(char *p, int item_size, int nitems, FILE * out_file)
     (void) out_file;
     if (nitems == 0)
         return;
-    if (gzwrite(gz_fmtfile, (void *) p, (unsigned) (item_size * nitems)) !=
+    if (write(gz_fmtfile, (void *) p, (unsigned) (item_size * nitems)) !=
         item_size * nitems) {
-        fprintf(stderr, "! Could not write %d %d-byte item(s): %s.\n", nitems, item_size, gzerror(gz_fmtfile, &err));
-        uexit(1);
+        fprintf(stderr, "failed zundump");
     }
+    //if (gzwrite(gz_fmtfile, (void *) p, (unsigned) (item_size * nitems)) !=
+    //    item_size * nitems) {
+    //    fprintf(stderr, "! Could not write %d %d-byte item(s): %s.\n", nitems, item_size, gzerror(gz_fmtfile, &err));
+    //    uexit(1);
+    //}
 }
 
 void do_zundump(char *p, int item_size, int nitems, FILE * in_file)
@@ -897,10 +902,13 @@ void do_zundump(char *p, int item_size, int nitems, FILE * in_file)
     (void) in_file;
     if (nitems == 0)
         return;
-    if (gzread(gz_fmtfile, (void *) p, (unsigned) (item_size * nitems)) <= 0) {
-        fprintf(stderr, "Could not undump %d %d-byte item(s): %s.\n", nitems, item_size, gzerror(gz_fmtfile, &err));
-        uexit(1);
+    if (read(gz_fmtfile, (void *) p, (unsigned) (item_size * nitems)) <= 0) {
+        fprintf(stderr, "failed zundump");
     }
+    //if (gzread(gz_fmtfile, (void *) p, (unsigned) (item_size * nitems)) <= 0) {
+    //    fprintf(stderr, "Could not undump %d %d-byte item(s): %s.\n", nitems, item_size, gzerror(gz_fmtfile, &err));
+    //    uexit(1);
+    //}
 }
 
 /*tex
@@ -934,7 +942,8 @@ boolean zopen_w_input(FILE ** f, const char *fname, const_string fopen_mode)
     } else {
         return 0;
     }
-    gz_fmtfile = gzdopen(fileno(*f), "rb" COMPRESSION);
+    gz_fmtfile = fileno(*f);
+    //gz_fmtfile = gzdopen(fileno(*f), "rb" COMPRESSION);
     return 1;
 }
 
@@ -952,7 +961,8 @@ boolean zopen_w_output(FILE ** f, const char *s, const_string fopen_mode)
         res = open_outfile(f, s, fopen_mode);
     }
     if (res) {
-        gz_fmtfile = gzdopen(fileno(*f), "wb" COMPRESSION);
+        gz_fmtfile = fileno(*f);
+        //gz_fmtfile = gzdopen(fileno(*f), "wb" COMPRESSION);
     }
     return res;
 }
@@ -960,5 +970,6 @@ boolean zopen_w_output(FILE ** f, const char *s, const_string fopen_mode)
 void zwclose(FILE * f)
 {
     (void) f;
-    gzclose(gz_fmtfile);
+    close(gz_fmtfile);
+    //gzclose(gz_fmtfile);
 }

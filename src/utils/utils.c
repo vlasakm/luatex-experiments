@@ -37,8 +37,6 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include <float.h>
 
-#include "zlib.h"
-
 #include "lua/luatex-api.h"
 #include "luatex_svnversion.h"
 
@@ -209,7 +207,6 @@ void initversionstring(char **versions)
         "\nDevelopment id: %s\n";
     size_t len = strlen(fmt)
                + strlen(LUA_VER_STRING)
-               + strlen(ZLIB_VERSION) + strlen(zlib_version)
                + strlen(STR(luatex_svn_revision))
                + 1;
 
@@ -220,7 +217,7 @@ void initversionstring(char **versions)
     *versions = xmalloc(len);
     sprintf(*versions, fmt,
                     LUA_VER_STRING,
-                    ZLIB_VERSION, zlib_version, STR(luatex_svn_revision));
+                    STR(luatex_svn_revision));
 
 #undef STR2
 #undef STR

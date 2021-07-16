@@ -65,7 +65,7 @@ extern int luaopen_md5(lua_State * L);
 extern int luaopen_sha2(lua_State * L);
 
 // TODO(mvlasak):
-#include <zlib.h>
+//#include <zlib.h>
 
 extern int luaopen_zlib(lua_State * L);
 extern int luaopen_gzip(lua_State * L);
