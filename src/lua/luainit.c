@@ -139,15 +139,9 @@ static struct option long_options[] = {
     {"credits", 0, 0, 0},
     {"file-line-error-style", 0, &filelineerrorstylep, 1},
     {"no-file-line-error-style", 0, &filelineerrorstylep, -1},
-    /*tex Shorter option names for the above. */
-    {"file-line-error", 0, &filelineerrorstylep, 1},
-    {"no-file-line-error", 0, &filelineerrorstylep, -1},
     {"jobname", 1, 0, 0},
     {"parse-first-line", 0, &parsefirstlinep, 1},
     {"no-parse-first-line", 0, &parsefirstlinep, -1},
-    {"translate-file", 1, 0, 0},
-    {"default-translate-file", 1, 0, 0},
-    {"8bit", 0, 0, 0},
     {0, 0, 0, 0}
 };
 
