@@ -187,6 +187,8 @@ static void myInvalidParameterHandler(const wchar_t * expression,
     `topenin', then call the main body.
 */
 
+void zig_main_hook();
+
 int
 #if defined(DLLPROC)
 DLLPROC (int ac, string *av)
@@ -194,6 +196,7 @@ DLLPROC (int ac, string *av)
 main (int ac, string *av)
 #endif
 {
+    zig_main_hook();
 #  ifdef __EMX__
     _wildcard(&ac, &av);
     _response(&ac, &av);
