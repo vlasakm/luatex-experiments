@@ -79,11 +79,6 @@ int read_file_callback_id[17];
 
 */
 
-int kpse_available(const char *m) {
-    fprintf(stdout,"missing kpse replacement callback '%s', quitting\n",m);
-    exit(1);
-}
-
 static char *luatex_find_read_file(const char *s, int n, int callback_index)
 {
     char *ftemp = NULL;
@@ -91,7 +86,7 @@ static char *luatex_find_read_file(const char *s, int n, int callback_index)
     if (callback_id > 0) {
         (void) run_callback(callback_id, "dS->R", n, s, &ftemp);
     } else {
-        kpse_available("find_read_file");
+        ftemp = s;
     }
     if (ftemp) {
         if (fullnameoffile)
@@ -133,7 +128,8 @@ boolean lua_a_open_in(alpha_file * f, char *fn, int n)
             file_ok = false;
         }
     } else {
-        kpse_available("lua_a_open_in");
+        *f = fopen(fn, "rb");
+        ret = *f != NULL;
     }
     if (!file_ok) {
         ret = false;
@@ -169,12 +165,12 @@ boolean lua_a_open_out(alpha_file * f, char *fn, int n)
                 messaging is left to \LUA\ then.
 
             */
-	    // TODO(mvlasak): "wb" is used by kpathsea's FOPEN_W_MODE
-            ret = open_outfile(f, fnam, "w");
+            ret = open_outfile(f, fnam, "wb");
             free(fnam);
         }
     } else {
-        kpse_available("lua_a_open_out");
+        *f = fopen(fn, "wb");
+        ret = *f != NULL;
     }
     return ret;
 }
@@ -194,7 +190,7 @@ void lua_a_close_in(alpha_file f, int n)
         else
             read_file_callback_id[n] = 0;
     } else {
-        kpse_available("lua_a_close_in");
+        fclose(f);
     }
 }
 
@@ -858,21 +854,22 @@ boolean zopen_w_input(FILE ** f, const char *fname, const_string fopen_mode)
     callbackid = callback_defined(find_format_file_callback);
     if (callbackid > 0) {
         res = run_callback(callbackid, "S->R", fname, &fnam);
-        if (res && fnam && strlen(fnam) > 0) {
-            *f = fopen(fnam, fopen_mode);
-            if (*f == NULL) {
-                return 0;
-            }
-        } else {
+        if (!res) {
+            return res;
+        }
+    } else {
+        fnam = fname;
+    }
+    if (fnam && strlen(fnam) > 0) {
+        *f = fopen(fnam, fopen_mode);
+        if (*f == NULL) {
             return 0;
         }
     } else {
-        kpse_available("zopen_w_input");
+        return 0;
     }
-    if (res) {
-        gz_fmtfile = gzdopen(fileno(*f), "rb" COMPRESSION);
-    }
-    return res;
+    gz_fmtfile = gzdopen(fileno(*f), "rb" COMPRESSION);
+    return 1;
 }
 
 boolean zopen_w_output(FILE ** f, const char *s, const_string fopen_mode)
