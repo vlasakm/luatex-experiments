@@ -257,41 +257,6 @@ str_number getjobname(str_number name)
     return ret;
 }
 
-/*tex
-    Test for readability.
-*/
-
-#define is_readable(a) (stat(a,&finfo)==0) \
-    && S_ISREG(finfo.st_mode) \
-    && (f=fopen(a,"r")) != NULL && !fclose(f)
-
-static char *find_filename(char *name, const char *envkey)
-{
-    struct stat finfo;
-    char *dirname = NULL;
-    char *filename = NULL;
-    FILE *f;
-    if (is_readable(name)) {
-        return name;
-    } else {
-        dirname = getenv(envkey);
-        if ((dirname != NULL) && strlen(dirname)) {
-            dirname = xstrdup(getenv(envkey));
-            if (*(dirname + strlen(dirname) - 1) == '/') {
-                *(dirname + strlen(dirname) - 1) = 0;
-            }
-            filename = xmalloc((unsigned) (strlen(dirname) + strlen(name) + 2));
-            filename = concat3(dirname, "/", name);
-            xfree(dirname);
-            if (is_readable(filename)) {
-                return filename;
-            }
-            xfree(filename);
-        }
-    }
-    return NULL;
-}
-
 static void fix_dumpname(void)
 {
     if (!dump_name && !ini_version) {
@@ -344,7 +309,6 @@ int lua_show_valid_keys(lua_State *L, int *list, int max)
 
 void lua_initialize(int ac, char **av)
 {
-    char *given_file = NULL;
     char *banner;
     size_t len;
     int starttime;
@@ -441,13 +405,6 @@ void lua_initialize(int ac, char **av)
     set_l_img_pageboxes_index;
     /*tex collect arguments */
     prepare_cmdline(Luas, argv, argc, lua_offset);
-    if (startup_filename != NULL) {
-        given_file = xstrdup(startup_filename);
-        if (lua_only) {
-            xfree(startup_filename);
-        }
-        startup_filename = find_filename(given_file, "LUATEXDIR");
-    }
     /*tex now run the file */
     if (startup_filename != NULL) {
         int tex_table_id = hide_lua_table(Luas, "tex");
@@ -467,8 +424,6 @@ void lua_initialize(int ac, char **av)
              /*tex lua_close(Luas); */
                 exit(1);
             } else {
-                if (given_file)
-                    free(given_file);
                 /*tex lua_close(Luas); */
                 exit(0);
             }
@@ -522,12 +477,7 @@ void lua_initialize(int ac, char **av)
         }
         fix_dumpname();
     } else if (luainit) {
-        if (given_file) {
-            fprintf(stdout, "%s file %s not found\n", (lua_only ? "Script" : "Configuration"), given_file);
-            free(given_file);
-        } else {
-            fprintf(stdout, "No %s file given\n", (lua_only ? "script" : "configuration"));
-        }
+        fprintf(stdout, "No %s file given\n", (lua_only ? "script" : "configuration"));
         exit(1);
     } else {
         fix_dumpname();
