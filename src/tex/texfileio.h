@@ -123,20 +123,8 @@ extern boolean zopen_w_input(FILE **, const char *, const_string fopen_mode);
 extern boolean zopen_w_output(FILE **, const char *, const_string fopen_mode);
 extern void zwclose(FILE *);
 
-#  define read_tfm_file  readbinfile
-#  define read_vf_file   readbinfile
-#  define read_data_file readbinfile
-
-extern boolean openinnameok(const_string);
-extern boolean openoutnameok(const_string);
-
 #  ifdef WIN32
 extern FILE *Poptr;
 #  endif
-
-extern boolean open_in_or_pipe(FILE **, char *, int, const_string fopen_mode,
-                               boolean must_exist);
-extern boolean open_out_or_pipe(FILE **, char *, const_string fopen_mode);
-extern void close_file_or_pipe(FILE *);
 
 #endif

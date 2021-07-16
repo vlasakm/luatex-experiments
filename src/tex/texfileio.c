@@ -1006,30 +1006,3 @@ int open_outfile(FILE ** f, const char *name, const char *mode)
     }
     return 0;
 }
-
-/*tex The caller should set |tfm_buffer=NULL| and |tfm_size=0|. */
-
-int readbinfile(FILE * f, unsigned char **tfm_buffer, int *tfm_size)
-{
-    void *buf;
-    int size;
-    if (fseek(f, 0, SEEK_END) == 0) {
-        size = (int) ftell(f);
-        if (size > 0) {
-            buf = xmalloc((unsigned) size);
-            if (fseek(f, 0, SEEK_SET) == 0) {
-                if (fread((void *) buf, (size_t) size, 1, f) == 1) {
-                    *tfm_buffer = (unsigned char *) buf;
-                    *tfm_size = size;
-                    return 1;
-                }
-            }
-        } else {
-            *tfm_buffer = NULL;
-            *tfm_size = 0;
-            return 1;
-        }
-    }
-    /*tex Either seek failed or we have a zero-sized file. */
-    return 0;
-}
