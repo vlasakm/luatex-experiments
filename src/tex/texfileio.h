@@ -24,15 +24,8 @@
 extern int *input_file_callback_id;
 extern int read_file_callback_id[17];
 
-extern char *luatex_find_read_file(const char *s, int n, int callback_index);
-extern boolean luatex_open_input(FILE ** f_ptr, const char *fn, int filefmt,
-                                 const_string fopen_mode, boolean must_exist);
-extern boolean luatex_open_output(FILE ** f_ptr, const char *fn,
-                                  const_string fopen_mode);
-
 extern boolean lua_a_open_in(alpha_file * f, char *fn, int n);
 extern boolean lua_a_open_out(alpha_file * f, char *fn, int n);
-extern boolean lua_b_open_out(alpha_file * f, char *fn);
 extern void lua_a_close_in(alpha_file f, int n);
 extern void lua_a_close_out(alpha_file f);
 
@@ -98,12 +91,9 @@ extern char *pack_file_name(str_number n, str_number a, str_number e);
 
 #  define file_name_size 512
 
-#  define format_area_length 0  /* length of its area part */
 #  define format_ext_length 4   /* length of its `\.{.fmt}' part */
 #  define format_extension ".fmt"
                                 /* the extension, as a constant */
-
-extern char *TEX_format_default;
 
 extern char *open_fmt_file(void);
 
@@ -116,8 +106,6 @@ extern unsigned char *texmf_log_name;   /* full name of the log file */
 extern void open_log_file(void);
 extern char *get_full_log_name (void);
 extern void start_input(void);
-
-extern int open_outfile(FILE ** f, const char *name, const char *mode);
 
 extern boolean zopen_w_input(FILE **, const char *, const_string fopen_mode);
 extern boolean zopen_w_output(FILE **, const char *, const_string fopen_mode);

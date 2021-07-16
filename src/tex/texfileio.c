@@ -55,14 +55,7 @@ The program actually makes use also of a third kind of file, called a
 initialization. We shall define a word file later; but it will be possible for us
 to specify simple operations on word files before they are defined.
 
-We finally did away with |nameoffile| and |namelength|, but the variables have to
-be kept otherwise there will be link errors from |openclose.c| in the web2c
-library
-
 */
-
-char *nameoffile;
-int namelength;
 
 /*tex
 
@@ -82,7 +75,7 @@ int read_file_callback_id[17];
 /*tex
 
     Find an \.{\\input} or \.{\\read} file. |n| differentiates between those
-    case.
+    cases.
 
 */
 
@@ -91,7 +84,7 @@ int kpse_available(const char *m) {
     exit(1);
 }
 
-char *luatex_find_read_file(const char *s, int n, int callback_index)
+static char *luatex_find_read_file(const char *s, int n, int callback_index)
 {
     char *ftemp = NULL;
     int callback_id = callback_defined(callback_index);
@@ -104,20 +97,6 @@ char *luatex_find_read_file(const char *s, int n, int callback_index)
         if (fullnameoffile)
             free(fullnameoffile);
         fullnameoffile = xstrdup(ftemp);
-    }
-    return ftemp;
-}
-
-/*tex Find other files types. */
-
-char *luatex_find_file(const char *s, int callback_index)
-{
-    char *ftemp = NULL;
-    int callback_id = callback_defined(callback_index);
-    if (callback_id > 0) {
-        (void) run_callback(callback_id, "S->R", s, &ftemp);
-    } else {
-        kpse_available("find_read_file");
     }
     return ftemp;
 }
@@ -162,6 +141,17 @@ boolean lua_a_open_in(alpha_file * f, char *fn, int n)
     return ret;
 }
 
+static int open_outfile(FILE ** f, const char *name, const char *mode)
+{
+    FILE *res;
+    res = fopen(name, mode);
+    if (res != NULL) {
+        *f = res;
+        return 1;
+    }
+    return 0;
+}
+
 boolean lua_a_open_out(alpha_file * f, char *fn, int n)
 {
     boolean test;
@@ -185,25 +175,6 @@ boolean lua_a_open_out(alpha_file * f, char *fn, int n)
         }
     } else {
         kpse_available("lua_a_open_out");
-    }
-    return ret;
-}
-
-boolean lua_b_open_out(alpha_file * f, char *fn)
-{
-    boolean test;
-    char *fnam = NULL;
-    int callback_id;
-    boolean ret = false;
-    callback_id = callback_defined(find_output_file_callback);
-    if (callback_id > 0) {
-        test = run_callback(callback_id, "S->R", fn, &fnam);
-        if ((test) && (fnam != NULL) && (strlen(fnam) > 0)) {
-            ret = open_outfile(f, fnam, "wb");
-            free(fnam);
-        }
-    } else {
-        kpse_available("lua_b_open_out");
     }
     return ret;
 }
@@ -927,17 +898,4 @@ void zwclose(FILE * f)
 {
     (void) f;
     gzclose(gz_fmtfile);
-}
-
-/*tex Create the \DVI\ or \PDF\ file. */
-
-int open_outfile(FILE ** f, const char *name, const char *mode)
-{
-    FILE *res;
-    res = fopen(name, mode);
-    if (res != NULL) {
-        *f = res;
-        return 1;
-    }
-    return 0;
 }
