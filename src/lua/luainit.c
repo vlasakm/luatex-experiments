@@ -29,7 +29,9 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include <sys/stat.h>
 
-#include <getopt.h>
+#define OPTPARSE_IMPLEMENTATION
+#define OPTPARSE_API static
+#include "optparse.h"
 
 /*tex internalized strings: see luatex-api.h */
 
@@ -116,32 +118,27 @@ unsigned char show_luahashchars = 0;
 
 int utc_option = 0;
 
-/*tex
+extern int myoptind;
 
-Test whether getopt found an option ``A''. Assumes the option index is in the
-variable |option_index|, and the option table in a variable |long_options|.
+static struct optparse_long longopts[] = {
+    {"fmt", 'f', OPTPARSE_REQUIRED},
+    {"lua", 'l', OPTPARSE_REQUIRED},
+    {"interaction", 'I', OPTPARSE_REQUIRED},
+    {"jobname", 'j', OPTPARSE_REQUIRED},
 
-*/
+    {"luaonly", 'L', OPTPARSE_NONE},
+    {"luahashchars", 'Z', OPTPARSE_NONE},
+    {"utc", 'u', OPTPARSE_REQUIRED},
+    {"help", 'h', OPTPARSE_NONE},
+    {"ini", 'i', OPTPARSE_NONE},
+    {"halt-on-error", 'H', OPTPARSE_NONE},
+    {"version", 'v', OPTPARSE_NONE},
+    {"credits", 'c', OPTPARSE_NONE},
+    {"file-line-error-style", 'f', OPTPARSE_NONE},
+    {"no-file-line-error-style", 'F', OPTPARSE_NONE},
+    {"parse-first-line", 'p', OPTPARSE_NONE},
+    {"no-parse-first-line", 'P', OPTPARSE_NONE},
 
-#define ARGUMENT_IS(a) STREQ (long_options[option_index].name, a)
-
-static struct option long_options[] = {
-    {"fmt", 1, 0, 0},
-    {"lua", 1, 0, 0},
-    {"luaonly", 0, 0, 0},
-    {"luahashchars", 0, 0, 0},
-    {"utc", 0, &utc_option, 1},
-    {"help", 0, 0, 0},
-    {"ini", 0, &ini_version, 1},
-    {"interaction", 1, 0, 0},
-    {"halt-on-error", 0, &haltonerrorp, 1},
-    {"version", 0, 0, 0},
-    {"credits", 0, 0, 0},
-    {"file-line-error-style", 0, &filelineerrorstylep, 1},
-    {"no-file-line-error-style", 0, &filelineerrorstylep, -1},
-    {"jobname", 1, 0, 0},
-    {"parse-first-line", 0, &parsefirstlinep, 1},
-    {"no-parse-first-line", 0, &parsefirstlinep, -1},
     {0, 0, 0, 0}
 };
 
@@ -150,57 +147,63 @@ static void parse_options(int ac, char **av)
     /*tex The `getopt' return code. */
     int g;
     int option_index;
-    /*tex Dont whine. */
-    opterr = 0;
     if (strstr(argv[0], "texlua") != NULL) {
         lua_only = 1;
         luainit = 1;
     }
 
-    for (;;) {
-        g = getopt_long_only(ac, av, "+", long_options, &option_index);
-        if (g == -1) {
-            /*tex End of arguments, exit the loop. */
+    char *arg;
+    int option;
+    struct optparse options;
+    optparse_init(&options, argv);
+    while ((option = optparse_long(&options, longopts, NULL)) != -1) {
+        switch (option) {
+        case 'f': // --fmt
+            dump_name = options.optarg;
             break;
-        }
-        if (g == '?')  {
-            /*tex Unknown option. */
-            if (!luainit)
-                fprintf(stderr,"%s: unrecognized option '%s'\n", argv[0], argv[optind-1]);
-            continue;
-        }
-        /* We have no short option names. */
-        assert(g == 0);
-        if (ARGUMENT_IS("luaonly")) {
-            lua_only = 1;
-            lua_offset = optind;
+        case 'l': // --lua
+            startup_filename = options.optarg;
+            lua_offset = (options.optind - 1);
             luainit = 1;
-        } else if (ARGUMENT_IS("lua")) {
-            startup_filename = optarg;
-            lua_offset = (optind - 1);
-            luainit = 1;
-        } else if (ARGUMENT_IS("luahashchars")) {
-            show_luahashchars = 1;
-        } else if (ARGUMENT_IS("jobname")) {
-            c_job_name = optarg;
-        } else if (ARGUMENT_IS("fmt")) {
-            dump_name = optarg;
-        } else if (ARGUMENT_IS("interaction")) {
-            /* These numbers match CPP defines */
-            if (STREQ(optarg, "batchmode")) {
+            break;
+        case 'I': // --interaction
+            if (STREQ(options.optarg, "batchmode")) {
                 interactionoption = 0;
-            } else if (STREQ(optarg, "nonstopmode")) {
+            } else if (STREQ(options.optarg, "nonstopmode")) {
                 interactionoption = 1;
-            } else if (STREQ(optarg, "scrollmode")) {
+            } else if (STREQ(options.optarg, "scrollmode")) {
                 interactionoption = 2;
-            } else if (STREQ(optarg, "errorstopmode")) {
+            } else if (STREQ(options.optarg, "errorstopmode")) {
                 interactionoption = 3;
             } else {
-                WARNING1("Ignoring unknown argument `%s' to --interaction", optarg);
+                WARNING1("Ignoring unknown argument `%s' to --interaction", options.optarg);
             }
-        } else if (ARGUMENT_IS("help")) {
+            break;
+        case 'j': // --jobname
+            c_job_name = options.optarg;
+            break;
+
+        case 'L': // --luaonly
+            lua_offset = options.optind;
+            lua_only = 1;
+            luainit = 1;
+            break;
+        case 'Z': // --luahashchars
+            show_luahashchars = 1;
+            break;
+        case 'u': // --utc
+            utc_option = 1;
+            break;
+        case 'h': // --help
             usagehelp(LUATEX_IHELP, BUG_ADDRESS);
-        } else if (ARGUMENT_IS("version")) {
+            break;
+        case 'i': // --ini
+            ini_version = 1;
+            break;
+        case 'H': // --halt-on-error
+            haltonerrorp = 1;
+            break;
+        case 'v': // --version
             print_version_banner();
             /* *INDENT-OFF* */
             puts("\n\nExecute  '" my_name " --credits'  for credits and version details.\n\n"
@@ -211,31 +214,51 @@ static void parse_options(int ac, char **av)
                  "LuaTeX is Copyright 2021 Taco Hoekwater and the LuaTeX Team.\n");
             /* *INDENT-ON* */
             uexit(0);
-        } else if (ARGUMENT_IS("credits")) {
-            char *versions;
-            initversionstring(&versions);
-            print_version_banner();
-            /* *INDENT-OFF* */
-            puts("\n\nThe LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater, Luigi Scarso.\n\n"
-                 MyName " merges and builds upon (parts of) the code from these projects:\n\n"
-                 "tex       : Donald Knuth\n"
-                 "etex      : Peter Breitenlohner, Phil Taylor and friends\n"
-                 "omega     : John Plaice and Yannis Haralambous\n"
-                 "aleph     : Giuseppe Bilotta\n"
-                 "pdftex    : Han The Thanh and friends\n"
-                 "lua       : Roberto Ierusalimschy, Waldemar Celes and Luiz Henrique de Figueiredo\n"
-            );
-            /* *INDENT-ON* */
-            puts(versions);
+            break;
+        case 'c': {// --credits
+            //char *versions;
+            //initversionstring(&versions);
+            //print_version_banner();
+            ///* *INDENT-OFF* */
+            //puts("\n\nThe LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater, Luigi Scarso.\n\n"
+            //     MyName " merges and builds upon (parts of) the code from these projects:\n\n"
+            //     "tex       : Donald Knuth\n"
+            //     "etex      : Peter Breitenlohner, Phil Taylor and friends\n"
+            //     "omega     : John Plaice and Yannis Haralambous\n"
+            //     "aleph     : Giuseppe Bilotta\n"
+            //     "pdftex    : Han The Thanh and friends\n"
+            //     "lua       : Roberto Ierusalimschy, Waldemar Celes and Luiz Henrique de Figueiredo\n"
+            //);
+            ///* *INDENT-ON* */
+            //puts(versions);
             uexit(0);
-        }
+            break;
+	}
+        case 'e': // --file-line-error-style
+            filelineerrorstylep = 1;
+            break;
+        case 'E': // --no-file-line-error-style
+            filelineerrorstylep = -1;
+            break;
+        case 'p': // --parse-first-line
+            parsefirstlinep = 1;
+            break;
+        case 'P': // --no-parse-first-line
+            parsefirstlinep = -1;
+            break;
+        case '?':
+            /*tex Unknown option. */
+            fprintf(stderr, "%s: %s\n", argv[0], options.errmsg);
+            exit(EXIT_FAILURE);
+	}
     }
     if (lua_only) {
-        if (argv[optind]) {
-            startup_filename = xstrdup(argv[optind]);
-            lua_offset = optind;
+        if (arg = optparse_arg(&options)) {
+            startup_filename = xstrdup(arg);
+            lua_offset = options.optind;
         }
     }
+    myoptind = options.optind;
 }
 
 /*

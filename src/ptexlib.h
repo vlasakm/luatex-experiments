@@ -251,6 +251,8 @@ typedef struct scaled_whd_ {
     scaled dp; /* TeX depth */
 } scaled_whd;
 
+#include <stdint.h>
+
 typedef struct scaledpos_ {
     int64_t h;
     int64_t v;

@@ -206,16 +206,18 @@ main (int ac, string *av)
     hence, argc==0), we return with `last=first'.
 */
 
+int myoptind;
+
 void topenin(void)
 {
     int i;
 
     buffer[first] = 0; /* In case there are no arguments. */
 
-    if (optind < argc) {
+    if (myoptind < argc) {
         /* We have command line arguments. */
         int k = first;
-        for (i = optind; i < argc; i++) {
+        for (i = myoptind; i < argc; i++) {
             char *ptr = &(argv[i][0]);
             /*
                 We cannot use strcat, because we have multibyte UTF-8 input.
