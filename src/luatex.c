@@ -154,41 +154,8 @@ main (int ac, string *av)
 #endif
 {
     zig_main_hook();
-#  ifdef __EMX__
-    _wildcard(&ac, &av);
-    _response(&ac, &av);
-#  endif
-
-#  ifdef WIN32
-#    ifdef _MSC_VER
-    _set_invalid_parameter_handler(myInvalidParameterHandler);
-#    endif
-    _setmaxstdio(2048);
-/*
-    We choose to crash for fatal errors:
-
-    SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
-*/
-    setmode(fileno(stdin), _O_BINARY);
-#  endif
 
     lua_initialize(ac, av);
-
-#  ifdef WIN32
-    if (ac > 1) {
-        char *pp;
-        if ((strlen(av[ac-1]) > 2) && isalpha(av[ac-1][0]) && (av[ac-1][1] == ':') && (av[ac-1][2] == '\\')) {
-            for (pp=av[ac-1]+2; *pp; pp++) {
-            if (IS_KANJI(pp)) {
-                pp++;
-                continue;
-            }
-            if (*pp == '\\')
-                *pp = '/';
-            }
-        }
-    }
-#  endif
 
     /*
         Call the real main program.
@@ -280,19 +247,6 @@ void topenin(void)
 */
 
 #ifdef WIN32
-/* Win32 doesn't set SIGINT ... */
-static BOOL WINAPI catch_interrupt(DWORD arg)
-{
-    switch (arg) {
-    case CTRL_C_EVENT:
-    case CTRL_BREAK_EVENT:
-        interrupt = 1;
-        return TRUE;
-    default:
-        /* No need to set interrupt as we are exiting anyway */
-        return FALSE;
-    }
-}
 #else /* not WIN32 */
 static void catch_interrupt(int arg)
 {
@@ -350,7 +304,6 @@ void get_date_and_time(int *minutes, int *day, int *month, int *year)
             sigaction(SIGINT, &oa, (struct sigaction *) 0);
 #else /* no SA_INTERRUPT */
 #  ifdef WIN32
-        SetConsoleCtrlHandler(catch_interrupt, TRUE);
 #  else /* not WIN32 */
         void(*old_handler) (int);
 
