@@ -33,7 +33,8 @@ ptexlib.h must be included first!!!
 /* w2c/c-auto.h replacement */
 /* TODO(mvlasak): better integrate this */
 
-#define WEB2CVERSION " (mmtex " MMTEX_VERSION ")"
+/* Defined by build script */
+/*#define WEB2CVERSION " ()"*/
 
 #define EDITOR "vi +%d '%s'"
 
