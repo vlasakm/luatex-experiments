@@ -16,6 +16,52 @@ pub fn build(b: *std.build.Builder) void {
     zig_part.setTarget(target);
     zig_part.setBuildMode(mode);
 
+    const lua = b.addStaticLibrary("lua", null);
+    lua.addCSourceFiles(&.{
+        // core
+        "vendor/lua/lapi.c",
+        "vendor/lua/lcode.c",
+        "vendor/lua/lctype.c",
+        "vendor/lua/ldebug.c",
+        "vendor/lua/ldo.c",
+        "vendor/lua/ldump.c",
+        "vendor/lua/lfunc.c",
+        "vendor/lua/lgc.c",
+        "vendor/lua/llex.c",
+        "vendor/lua/lmem.c",
+        "vendor/lua/lobject.c",
+        "vendor/lua/lopcodes.c",
+        "vendor/lua/lparser.c",
+        "vendor/lua/lstate.c",
+        "vendor/lua/lstring.c",
+        "vendor/lua/ltable.c",
+        "vendor/lua/ltm.c",
+        "vendor/lua/lundump.c",
+        "vendor/lua/lvm.c",
+        "vendor/lua/lzio.c",
+        // lib
+        "vendor/lua/lauxlib.c",
+        "vendor/lua/lbaselib.c",
+        "vendor/lua/lbitlib.c",
+        "vendor/lua/lcorolib.c",
+        "vendor/lua/ldblib.c",
+        "vendor/lua/liolib.c",
+        "vendor/lua/lmathlib.c",
+        "vendor/lua/loslib.c",
+        "vendor/lua/lstrlib.c",
+        "vendor/lua/ltablib.c",
+        "vendor/lua/lutf8lib.c",
+        "vendor/lua/loadlib.c",
+        "vendor/lua/linit.c",
+    }, &.{
+        "-DLUA_COMPAT_5_2",
+        //"-DLUA_USE_POSIX",
+        //"-DLUA_USE_DLOPEN",
+    });
+    lua.linkLibC();
+    lua.setTarget(target);
+    lua.setBuildMode(mode);
+
     const exe = b.addExecutable("mmtex", null);
     exe.addCSourceFiles(&.{
         "src/font/dofont.c",
@@ -81,8 +127,10 @@ pub fn build(b: *std.build.Builder) void {
     });
     exe.defineCMacro("WEB2CVERSION", "\" (mmtex 20210515)\"");
     exe.addIncludeDir("src");
+    exe.addIncludeDir("vendor/lua");
     exe.linkLibC();
-    exe.linkSystemLibrary("lua5.3");
+    exe.linkLibrary(lua);
+    //exe.linkSystemLibrary("lua5.3");
     //exe.linkSystemLibrary("zlib");
     exe.linkLibrary(zig_part);
     exe.setTarget(target);
