@@ -278,11 +278,6 @@ scaled divide_scaled(scaled s, scaled m, int dd)
     return sign * q;
 }
 
-#ifdef _WIN32
-#undef floor
-#define floor win32_floor
-#endif
-
 /*tex
 
     The same function, but using doubles instead of integers (faster).
