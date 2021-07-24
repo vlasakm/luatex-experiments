@@ -1,7 +1,7 @@
 #ifndef WEB2C_C_AUTO_H
 #define WEB2C_C_AUTO_H
 
-#define WEB2CVERSION            " (mmtex " MMTEX_VERSION ")"
+#define WEB2CVERSION            " (mmtex test)"
 #define WEB2C_PACKAGE           "web2c"
 #define WEB2C_PACKAGE_BUGREPORT "tex-k@tug.org"
 #define WEB2C_PACKAGE_NAME      "Web2C"
@@ -31,7 +31,7 @@
 #define HAVE_GETWD               1
 #define HAVE_INTTYPES_H          1
 #define HAVE_LABS                1
-#define HAVE_LANGINFO_H          1
+//#define HAVE_LANGINFO_H          1
 #define HAVE_LIBFONTCONFIG       1
 #define HAVE_LIMITS_H            1
 #define HAVE_LOCALE_H            1
@@ -39,7 +39,7 @@
 #define HAVE_MEMCMP              1
 #define HAVE_MEMCPY              1
 #define HAVE_MEMORY_H            1
-#define HAVE_MKDTEMP             1
+//#define HAVE_MKDTEMP             1
 #define HAVE_MKSTEMP             1
 #define HAVE_MKTEMP              1
 #define HAVE_PUTENV              1
