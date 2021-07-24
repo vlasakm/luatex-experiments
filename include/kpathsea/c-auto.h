@@ -16,7 +16,7 @@
 #define HAVE_DECL_ISASCII        1
 #define HAVE_DECL_PUTENV         1
 #define HAVE_DIRENT_H            1
-#define HAVE_DLFCN_H             1
+//#define HAVE_DLFCN_H             1
 #define HAVE_FLOAT_H             1
 #define HAVE_FSEEKO              1
 #define HAVE_GETCWD              1
@@ -29,7 +29,7 @@
 #define HAVE_MKSTEMP             1
 #define HAVE_MKTEMP              1
 #define HAVE_PUTENV              1
-#define HAVE_PWD_H               1
+//#define HAVE_PWD_H               1
 #define HAVE_STDINT_H            1
 #define HAVE_STDLIB_H            1
 #define HAVE_STRCHR              1
@@ -42,9 +42,6 @@
 #define HAVE_SYS_TYPES_H         1
 #define HAVE_UNISTD_H            1
 #define STDC_HEADERS             1
-
-/* 64-bit only for now. */
-#define SIZEOF_LONG 8
 
 /* Don't make anything, please. */
 #define MAKE_OMEGA_OCP_BY_DEFAULT 0

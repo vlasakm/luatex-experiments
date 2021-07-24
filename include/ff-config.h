@@ -5,7 +5,7 @@
 
 /* All of this is standard. */
 #define HAVE_INTTYPES_H  1
-#define HAVE_LANGINFO_H  1
+//#define HAVE_LANGINFO_H  1
 #define HAVE_LONG_DOUBLE 1
 #define HAVE_MEMORY_H    1
 #define HAVE_STDLIB_H    1
