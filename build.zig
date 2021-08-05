@@ -7,10 +7,14 @@ pub fn build(b: *std.build.Builder) void {
     // means any target is allowed, and the default is native. Other options
     // for restricting supported target set are available.
     const target = b.standardTargetOptions(.{});
-
-    // Standard release options allow the person running `zig build` to select
-    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall.
+    // This provides the -Drelease option to the build user and does not give them the choice.
+    b.setPreferredReleaseMode(builtin.Mode.ReleaseFast);
     const mode = b.standardReleaseOptions();
+
+    const target_info = (std.zig.system.NativeTargetInfo.detect(b.allocator, target) catch @panic("failed to get target info")).target;
+    const arm_target = target_info.cpu.arch == .aarch64;
+    const windows_target = target_info.os.tag == .windows;
+    const macos_target = target_info.os.tag == .macos;
 
     const mmtex_inc = "include";
 
@@ -35,7 +39,6 @@ pub fn build(b: *std.build.Builder) void {
 
     zlib.setTarget(target);
     zlib.setBuildMode(mode);
-    zlib.addIncludeDir("libpng");
     zlib.linkLibC();
 
     const libpng = b.addStaticLibrary("libpng", null);
@@ -55,12 +58,16 @@ pub fn build(b: *std.build.Builder) void {
         "libpng/pngwrite.c",
         "libpng/pngwtran.c",
         "libpng/pngwutil.c",
-
-        // "libpng/arm/arm_init.c",
-        // "libpng/arm/palette_neon_intrinsics.c",
-        // "libpng/arm/filter_neon.S",
-        // "libpng/arm/filter_neon_intrinsics.c",
     }, &.{});
+
+    if (arm_target) {
+        libpng.addCSourceFiles(&.{
+            "libpng/arm/arm_init.c",
+            "libpng/arm/palette_neon_intrinsics.c",
+            "libpng/arm/filter_neon.S",
+            "libpng/arm/filter_neon_intrinsics.c",
+        }, &.{});
+    }
 
     libpng.setTarget(target);
     libpng.setBuildMode(mode);
@@ -69,6 +76,9 @@ pub fn build(b: *std.build.Builder) void {
     libpng.linkLibC();
 
     const kpathsea = b.addStaticLibrary("kpathsea", null);
+    const kpathsea_cflags = .{
+        "-DMAKE_KPSE_DLL",
+    };
     kpathsea.addCSourceFiles(&.{
         "src/kpathsea/kpathsea/absolute.c",
         "src/kpathsea/kpathsea/atou.c",
@@ -123,12 +133,14 @@ pub fn build(b: *std.build.Builder) void {
         "src/kpathsea/kpathsea/xrealloc.c",
         "src/kpathsea/kpathsea/xstat.c",
         "src/kpathsea/kpathsea/xstrdup.c",
+    }, &kpathsea_cflags);
 
-        //"src/kpathsea/kpathsea/mingw32.c",
-        //"src/kpathsea/kpathsea/knj.c",
-    }, &.{
-        "-DMAKE_KPSE_DLL",
-    });
+    if (windows_target) {
+        kpathsea.addCSourceFiles(&.{
+            "src/kpathsea/kpathsea/mingw32.c",
+            "src/kpathsea/kpathsea/knj.c",
+        }, &kpathsea_cflags);
+    }
 
     kpathsea.setTarget(target);
     kpathsea.setBuildMode(mode);
@@ -155,6 +167,24 @@ pub fn build(b: *std.build.Builder) void {
     w2c.linkLibC();
 
     const lua = b.addStaticLibrary("lua", null);
+    var lua_cflags = std.ArrayList([]const u8).init(b.allocator);
+    lua_cflags.appendSlice(&.{
+        "-DLUA_COMPAT_5_2",
+        "-DLUA_COMPAT_MODULE",
+    }) catch unreachable;
+
+    if (!windows_target) {
+        lua_cflags.appendSlice(&.{
+            "-DLUA_USE_DLOPEN",
+        }) catch unreachable;
+    } else {
+        lua_cflags.appendSlice(&.{
+            "-DLUA_USE_POSIX",
+        }) catch unreachable;
+    }
+
+    //"-DLUA_USE_DLOPEN",
+
     lua.addCSourceFiles(&.{
         // core
         "src/lua/src/lapi.c",
@@ -191,12 +221,7 @@ pub fn build(b: *std.build.Builder) void {
         "src/lua/src/lutf8lib.c",
         "src/lua/src/loadlib.c",
         "src/lua/src/linit.c",
-    }, &.{
-        "-DLUA_COMPAT_5_2",
-        "-DLUA_COMPAT_MODULE",
-        //"-DLUA_USE_POSIX",
-        //"-DLUA_USE_DLOPEN",
-    });
+    }, lua_cflags.items);
 
     lua.setTarget(target);
     lua.setBuildMode(mode);
@@ -216,7 +241,9 @@ pub fn build(b: *std.build.Builder) void {
         "src/mplib/src/avl.c",
         "src/mplib/src/decNumber.c",
         "src/mplib/src/decContext.c",
-    }, &.{});
+    }, &.{
+        "-DHAVE_CONFIG_H",
+    });
 
     mplib.setTarget(target);
     mplib.setBuildMode(mode);
@@ -495,7 +522,10 @@ pub fn build(b: *std.build.Builder) void {
     switch (mode) {
         builtin.Mode.ReleaseFast => {
             exe.strip = true;
-            //exe.want_lto = true;
+            if (!macos_target) {
+                // Mach-O doesn't support LTO, yet
+                exe.want_lto = true;
+            }
         },
         builtin.Mode.ReleaseSmall => {
             exe.strip = true;
