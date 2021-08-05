@@ -198,9 +198,10 @@ cc = meson.get_compiler('c')
 luatex_dependencies = [
   cc.find_library('m', required: false),
   cc.find_library('dl', required: false),
-  dependency('libpng'),
-  dependency('zlib'),
+  dependency('libpng', fallback: ['libpng', 'libpng_dep']),
+  dependency('zlib', fallback: ['zlib', 'zlib_dep']),
   lua_dep,
+  #dependency('lua53', fallback: ['lua', 'lua_dep']),
   mplib_dep,
   pplib_dep,
   kpathsea_dep,
