@@ -79,7 +79,7 @@ pub fn build(b: *std.build.Builder) void {
         "-DLUA_USE_POSIX",
         "-DLUA_USE_DLOPEN",
     });
-    exe.defineCMacro("WEB2CVERSION=\" (mmtex 20210515)\"");
+    exe.defineCMacro("WEB2CVERSION", "\" (mmtex 20210515)\"");
     exe.addIncludeDir("src");
     exe.linkLibC();
     exe.linkSystemLibrary("lua5.3");
